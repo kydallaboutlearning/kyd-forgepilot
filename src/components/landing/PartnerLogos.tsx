@@ -1,4 +1,5 @@
-import { logos } from "@/data/constants";
+
+// Removed invalid import: import { logos } from "@/data/constants";
 
 const logos = [
   { src: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", alt: "Microsoft" },
@@ -20,3 +21,4 @@ export default function PartnerLogos() {
     </section>
   );
 }
+
