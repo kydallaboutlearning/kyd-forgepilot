@@ -1,12 +1,23 @@
 
-import { Link, useLocation } from "react-router-dom";
-import { ArrowUpRight, Lightbulb, Rocket, Briefcase, Service, List, LayoutDashboard, Book, HelpCircle, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  Lightbulb,
+  Rocket,
+  Briefcase,
+  Wrench,
+  List,
+  LayoutDashboard,
+  Book,
+  HelpCircle,
+  FileText,
+} from "lucide-react";
 
 const nav = [
   { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-1.5" /> },
   { to: "#mission", label: "Mission", icon: <Rocket className="w-4 h-4 mr-1.5" /> },
   { to: "#works", label: "Works", icon: <Briefcase className="w-4 h-4 mr-1.5" /> },
-  { to: "#services", label: "Services", icon: <Service className="w-4 h-4 mr-1.5" /> },
+  { to: "#services", label: "Services", icon: <Wrench className="w-4 h-4 mr-1.5" /> },
   {
     label: "Pages",
     icon: <List className="w-4 h-4 mr-1.5" />,
@@ -29,7 +40,9 @@ function NavLinks() {
               <span className="cursor-pointer hover:text-primary transition flex items-center gap-1">
                 {item.icon}
                 {item.label}
-                <svg width={15} height={15} viewBox="0 0 20 20" className="ml-0.5 mt-0.5 opacity-70" fill="none"><path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width={15} height={15} viewBox="0 0 20 20" className="ml-0.5 mt-0.5 opacity-70" fill="none">
+                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
               <div className="absolute left-0 mt-2 bg-[#101010] rounded-xl border border-neutral-800 shadow-xl min-w-[180px] z-30 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                 <ul className="py-2">
