@@ -1,19 +1,20 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lightbulb, Rocket, Briefcase, Service, List, LayoutDashboard, Book, HelpCircle, FileText } from "lucide-react";
 
 const nav = [
-  { to: "#whyus", label: "Why Us" },
-  { to: "#mission", label: "Mission" },
-  { to: "#works", label: "Works" },
-  { to: "#services", label: "Services" },
+  { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-1.5" /> },
+  { to: "#mission", label: "Mission", icon: <Rocket className="w-4 h-4 mr-1.5" /> },
+  { to: "#works", label: "Works", icon: <Briefcase className="w-4 h-4 mr-1.5" /> },
+  { to: "#services", label: "Services", icon: <Service className="w-4 h-4 mr-1.5" /> },
   {
     label: "Pages",
+    icon: <List className="w-4 h-4 mr-1.5" />,
     dropdown: [
-      { to: "/portfolio", label: "Portfolio" },
-      { to: "/blog", label: "Blog" },
-      { to: "/dashboard", label: "Dashboard" },
-      { to: "/faq", label: "FAQ" },
+      { to: "/portfolio", label: "Portfolio", icon: <FileText className="w-4 h-4 mr-1.5" /> },
+      { to: "/blog", label: "Blog", icon: <Book className="w-4 h-4 mr-1.5" /> },
+      { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4 mr-1.5" /> },
+      { to: "/faq", label: "FAQ", icon: <HelpCircle className="w-4 h-4 mr-1.5" /> },
     ],
   },
 ];
@@ -25,17 +26,20 @@ function NavLinks() {
         if ("dropdown" in item) {
           return (
             <div className="group relative" key={item.label}>
-              <span className="cursor-pointer hover:text-primary transition flex items-center gap-1">{item.label}
+              <span className="cursor-pointer hover:text-primary transition flex items-center gap-1">
+                {item.icon}
+                {item.label}
                 <svg width={15} height={15} viewBox="0 0 20 20" className="ml-0.5 mt-0.5 opacity-70" fill="none"><path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </span>
-              <div className="absolute left-0 mt-2 bg-[#101010] rounded-xl border border-neutral-800 shadow-xl min-w-[160px] z-30 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+              <div className="absolute left-0 mt-2 bg-[#101010] rounded-xl border border-neutral-800 shadow-xl min-w-[180px] z-30 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                 <ul className="py-2">
                   {item.dropdown.map((drop) => (
                     <li key={drop.to}>
                       <Link
                         to={drop.to}
-                        className="block px-5 py-2 whitespace-nowrap text-neutral-200 hover:text-primary transition"
+                        className="flex items-center px-5 py-2 whitespace-nowrap text-neutral-200 hover:text-primary transition"
                       >
+                        {drop.icon}
                         {drop.label}
                       </Link>
                     </li>
@@ -49,9 +53,10 @@ function NavLinks() {
           <a
             key={item.to}
             href={item.to}
-            className="hover:text-primary transition"
+            className="hover:text-primary transition flex items-center"
             style={{ fontWeight: 400 }}
           >
+            {item.icon}
             {item.label}
           </a>
         );
@@ -62,7 +67,7 @@ function NavLinks() {
 
 export default function Header() {
   return (
-    <header className="relative w-full flex items-center justify-center bg-transparent py-7 px-4 select-none">
+    <header className="relative w-full flex items-center justify-center bg-transparent py-7 px-4 select-none z-50">
       {/* Dot grid background */}
       <svg
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-0"
@@ -86,7 +91,7 @@ export default function Header() {
           rounded-full bg-black bg-opacity-[0.82]
           border border-[#FFB74A]/40
           shadow-[0_0_0_1.5px_#FFB74A20]
-          "
+        "
         style={{
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30",
         }}
@@ -98,8 +103,7 @@ export default function Header() {
           style={{
             color: "#FFB74A",
             letterSpacing: "-0.02em",
-            textShadow:
-              "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
+            textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
           }}
         >
           Automa
