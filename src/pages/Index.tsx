@@ -1,4 +1,3 @@
-
 import Hero from "@/components/landing/Hero";
 import PartnerLogos from "@/components/landing/PartnerLogos";
 import Benefits from "@/components/landing/Benefits";
@@ -14,7 +13,7 @@ import FinalCTA from "@/components/landing/FinalCTA";
 
 export default function Index() {
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-background via-secondary to-background">
+    <div className="w-full min-h-screen flex flex-col bg-black">
       <Hero />
       <PartnerLogos />
       <Benefits />

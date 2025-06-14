@@ -1,3 +1,4 @@
+import { logos } from "@/data/constants";
 
 const logos = [
   { src: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", alt: "Microsoft" },
@@ -9,12 +10,11 @@ const logos = [
 
 export default function PartnerLogos() {
   return (
-    <section className="w-full py-8 md:py-10 flex flex-col items-center">
-      <div className="mb-2 text-muted-foreground text-base tracking-wider font-medium">Trusted by</div>
-      <div className="flex flex-wrap items-center justify-center gap-7 md:gap-14 opacity-80">
+    <section className="w-full py-9 md:py-12 flex flex-col items-center bg-neutral-900 border-y border-neutral-800">
+      <div className="mb-2 text-gray-400 text-base tracking-wider font-bold uppercase">Trusted by</div>
+      <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-85">
         {logos.map((logo) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img key={logo.alt} src={logo.src} alt={logo.alt} className="h-8 grayscale opacity-80 hover:opacity-100 transition-opacity duration-200" />
+          <img key={logo.alt} src={logo.src} alt={logo.alt} className="h-8 grayscale opacity-95 hover:opacity-100 transition-opacity duration-200" />
         ))}
       </div>
     </section>

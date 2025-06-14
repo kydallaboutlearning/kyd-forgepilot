@@ -26,13 +26,13 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <section className="w-full py-14 md:py-20 px-4 flex flex-col items-center">
-      <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">FAQs</h2>
+    <section className="w-full py-20 px-4 flex flex-col items-center bg-black border-b border-neutral-900">
+      <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wider mb-9 text-primary text-center">FAQs</h2>
       <Accordion type="single" collapsible className="w-full max-w-2xl border-none">
         {faqs.map((item, i) => (
           <AccordionItem key={i} value={"faq-" + i} className="border-b-0">
-            <AccordionTrigger className="text-lg font-medium">{item.q}</AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+            <AccordionTrigger className="text-lg font-semibold text-white">{item.q}</AccordionTrigger>
+            <AccordionContent className="text-gray-300">{item.a}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>

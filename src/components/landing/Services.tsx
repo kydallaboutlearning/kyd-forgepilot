@@ -1,4 +1,3 @@
-
 const services = [
   {
     name: "Custom Projects",
@@ -29,14 +28,14 @@ const services = [
 
 export default function Services() {
   return (
-    <section className="py-14 md:py-18 w-full flex flex-col items-center px-4">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Our Expertise</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
+    <section className="py-20 w-full flex flex-col items-center px-4 bg-black border-b border-neutral-900">
+      <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wider mb-10 text-primary text-center">Our Expertise</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl w-full">
         {services.map(s => (
-          <div key={s.name} className="flex flex-col items-center bg-card/70 border border-muted rounded-2xl px-7 py-8 shadow justify-center text-center animate-fade-in">
+          <div key={s.name} className="flex flex-col items-center bg-neutral-900 border border-neutral-800 rounded-2xl px-7 py-10 shadow text-center animate-fade-in">
             <div className="text-4xl mb-3">{s.icon}</div>
-            <div className="font-semibold text-lg mb-2">{s.name}</div>
-            <div className="text-muted-foreground">{s.desc}</div>
+            <div className="font-bold text-md mb-2 uppercase tracking-wide text-white">{s.name}</div>
+            <div className="text-gray-300">{s.desc}</div>
           </div>
         ))}
       </div>

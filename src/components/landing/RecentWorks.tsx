@@ -1,4 +1,3 @@
-
 const projects = [
   // Use Unsplash or placeholder images for now
   {
@@ -23,18 +22,18 @@ const projects = [
 
 export default function RecentWorks() {
   return (
-    <section className="w-full py-14 px-4 max-w-6xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Recent Works</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section className="w-full py-20 px-4 max-w-6xl mx-auto bg-black border-b border-neutral-900">
+      <h2 className="text-2xl md:text-3xl font-black uppercase mb-12 text-primary tracking-wider text-center">Recent Works</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {projects.map((proj) => (
-          <div className="bg-card/80 rounded-2xl shadow-lg overflow-hidden border animate-fade-in transition-transform hover:scale-105" key={proj.name}>
+          <div className="bg-neutral-900 rounded-2xl shadow-lg overflow-hidden border border-neutral-800 animate-fade-in transition-transform hover:scale-105" key={proj.name}>
             <img src={proj.image} alt={proj.name} className="w-full h-48 object-cover" />
             <div className="p-6">
-              <div className="text-lg font-semibold mb-1">{proj.name}</div>
-              <div className="text-muted-foreground mb-3">{proj.desc}</div>
+              <div className="text-lg font-bold uppercase text-white mb-1">{proj.name}</div>
+              <div className="text-gray-400 mb-3">{proj.desc}</div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {proj.metrics.map(metric => (
-                  <span key={metric} className="bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-xs font-semibold">{metric}</span>
+                  <span key={metric} className="bg-zinc-800 text-orange-400 rounded-full px-3 py-1 text-xs font-semibold">{metric}</span>
                 ))}
               </div>
             </div>
