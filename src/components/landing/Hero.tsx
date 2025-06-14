@@ -1,12 +1,13 @@
-
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import HeroAvailableTag from "./HeroAvailableTag";
+import HeroMainHeadline from "./HeroMainHeadline";
 
 export default function Hero() {
   return (
-    <section className="relative flex flex-col items-center justify-center py-48 md:py-56 px-4 text-center bg-black overflow-hidden min-h-[65vh]">
-      {/* Gold/orange dot grid background */}
-      <svg 
+    <section className="relative flex flex-col items-center justify-center py-40 md:py-56 px-4 text-center bg-black overflow-hidden min-h-[65vh]">
+      {/* Bg dot grid */}
+      <svg
         className="absolute left-0 top-0 w-full h-full pointer-events-none z-0"
         width="100%"
         height="100%"
@@ -18,40 +19,26 @@ export default function Hero() {
         </defs>
         <rect width="100%" height="100%" fill="url(#automatix-dots)" />
       </svg>
-      <motion.h1
-        initial={{ opacity: 0, y: 32 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.14, type: "spring" }}
-        className="z-10 text-center font-sans font-extrabold tracking-tight mb-8 text-white leading-tight"
-        style={{ 
-          fontSize: 'clamp(2.8rem,8vw,5rem)', 
-          lineHeight: 1.06,
-          letterSpacing: "-0.02em"
-        }}
+      {/* Available tag */}
+      <HeroAvailableTag />
+      {/* Main headline */}
+      <HeroMainHeadline />
+      {/* Subtext */}
+      <p className="z-10 max-w-xl mx-auto text-base md:text-xl text-gray-300 font-sans font-medium mb-7 md:mb-9"
+        style={{ letterSpacing: "0.007em" }}
       >
-        Dream Into Reality
-      </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, delay: 0.36 }}
-        className="z-10 max-w-xl mx-auto text-lg md:text-2xl text-gray-300 font-sans font-medium mb-9"
-        style={{
-          letterSpacing: "0.01em"
-        }}
+        Design services at your fingertips, Pause or cancel anytime.
+      </p>
+      {/* CTA Button */}
+      <a
+        href="#works"
+        className="z-10 group relative inline-flex items-center justify-center font-sans text-base md:text-lg font-semibold text-white border border-neutral-700 rounded-md px-7 py-3 mt-2 transition duration-200 bg-black/70 hover:bg-neutral-900 hover:border-primary focus:outline-none"
+        style={{ boxShadow: "0 4px 20px #19160c0b" }}
       >
-        We bring your vision to life with creativity and precision. Let&apos;s make it happen.
-      </motion.p>
-      <motion.a
-        whileHover={{ scale: 1.05 }}
-        href="#contact"
-        className="z-10 group relative inline-flex items-center font-sans font-semibold text-xl md:text-2xl text-[#FFB74A] transition duration-200 no-underline hover:brightness-125 hover:text-[#ffd993] focus:outline-none"
-        style={{ textShadow: "0 0 8px #ffb74a22" }}
-      >
-        Book A Call
-        <ArrowRight className="ml-2 w-6 h-6 stroke-[2.1] transition-transform group-hover:translate-x-1" />
-      </motion.a>
-      {/* Remove colored blurs */}
+        Learn More
+        <svg className="ml-2 w-5 h-5 -mt-0.5 text-primary transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 18 18"><path d="M5 9h8M9 5l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </a>
+      {/* Partner logos and additional info handled in another component */}
     </section>
   );
 }
