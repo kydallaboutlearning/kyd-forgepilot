@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agent_conversations: {
+        Row: {
+          agent_message_count: number | null
+          conversion: string | null
+          details: Json | null
+          ended_at: string | null
+          escalated: boolean | null
+          id: string
+          intent_accuracy: number | null
+          rating: number | null
+          session_id: string | null
+          started_at: string
+          user_message_count: number | null
+        }
+        Insert: {
+          agent_message_count?: number | null
+          conversion?: string | null
+          details?: Json | null
+          ended_at?: string | null
+          escalated?: boolean | null
+          id?: string
+          intent_accuracy?: number | null
+          rating?: number | null
+          session_id?: string | null
+          started_at?: string
+          user_message_count?: number | null
+        }
+        Update: {
+          agent_message_count?: number | null
+          conversion?: string | null
+          details?: Json | null
+          ended_at?: string | null
+          escalated?: boolean | null
+          id?: string
+          intent_accuracy?: number | null
+          rating?: number | null
+          session_id?: string | null
+          started_at?: string
+          user_message_count?: number | null
+        }
+        Relationships: []
+      }
       blog: {
         Row: {
           author: string | null
@@ -48,6 +90,114 @@ export type Database = {
           slug?: string
           tags?: string[] | null
           title?: string
+        }
+        Relationships: []
+      }
+      conversion_events: {
+        Row: {
+          event_at: string
+          event_type: string
+          extra: Json | null
+          id: string
+          page_slug: string | null
+          session_id: string | null
+        }
+        Insert: {
+          event_at?: string
+          event_type: string
+          extra?: Json | null
+          id?: string
+          page_slug?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          event_at?: string
+          event_type?: string
+          extra?: Json | null
+          id?: string
+          page_slug?: string | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      lead_submissions: {
+        Row: {
+          email: string | null
+          extra: Json | null
+          id: string
+          message: string | null
+          name: string | null
+          page_slug: string | null
+          phone: string | null
+          response_time_ms: number | null
+          session_id: string | null
+          source: string | null
+          status: string | null
+          submitted_at: string
+        }
+        Insert: {
+          email?: string | null
+          extra?: Json | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          page_slug?: string | null
+          phone?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          source?: string | null
+          status?: string | null
+          submitted_at?: string
+        }
+        Update: {
+          email?: string | null
+          extra?: Json | null
+          id?: string
+          message?: string | null
+          name?: string | null
+          page_slug?: string | null
+          phone?: string | null
+          response_time_ms?: number | null
+          session_id?: string | null
+          source?: string | null
+          status?: string | null
+          submitted_at?: string
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          device_type: string | null
+          extra: Json | null
+          id: string
+          location: string | null
+          referrer: string | null
+          session_id: string
+          slug: string
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          device_type?: string | null
+          extra?: Json | null
+          id?: string
+          location?: string | null
+          referrer?: string | null
+          session_id: string
+          slug: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          device_type?: string | null
+          extra?: Json | null
+          id?: string
+          location?: string | null
+          referrer?: string | null
+          session_id?: string
+          slug?: string
+          user_agent?: string | null
+          viewed_at?: string
         }
         Relationships: []
       }
