@@ -1,3 +1,5 @@
+
+import Header from "@/components/Header";
 import Hero from "@/components/landing/Hero";
 import PartnerLogos from "@/components/landing/PartnerLogos";
 import Benefits from "@/components/landing/Benefits";
@@ -14,6 +16,8 @@ import FinalCTA from "@/components/landing/FinalCTA";
 export default function Index() {
   return (
     <div className="w-full min-h-screen flex flex-col bg-black">
+      {/* Header visible at the very top */}
+      <Header />
       <Hero />
       <PartnerLogos />
       <Benefits />
