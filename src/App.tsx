@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +7,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Portfolio from "./pages/Portfolio";
 import Dashboard from "./pages/Dashboard";
+import DynamicPage from "./pages/[slug]";
+import BlogListPage from "./pages/blog";
+import BlogPostPage from "./pages/blog/[slug]";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,18 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* Dynamic CMS Pages */}
+          <Route path="/about" element={<DynamicPage />} />
+          <Route path="/services" element={<DynamicPage />} />
+          <Route path="/contact" element={<DynamicPage />} />
+          <Route path="/case-studies" element={<DynamicPage />} />
+          <Route path="/faq" element={<DynamicPage />} />
+          {/* Blog */}
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+          {/* Catch-all: Any custom pages */}
+          <Route path="/:slug" element={<DynamicPage />} />
+          {/* Add ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

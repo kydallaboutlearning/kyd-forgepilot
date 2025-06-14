@@ -9,7 +9,81 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      blog: {
+        Row: {
+          author: string | null
+          body: string | null
+          featured_image: string | null
+          id: string
+          last_updated: string
+          published_at: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          author?: string | null
+          body?: string | null
+          featured_image?: string | null
+          id?: string
+          last_updated?: string
+          published_at?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          author?: string | null
+          body?: string | null
+          featured_image?: string | null
+          id?: string
+          last_updated?: string
+          published_at?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          body: string | null
+          featured_image: string | null
+          id: string
+          last_updated: string
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          featured_image?: string | null
+          id?: string
+          last_updated?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          title: string
+        }
+        Update: {
+          body?: string | null
+          featured_image?: string | null
+          id?: string
+          last_updated?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
