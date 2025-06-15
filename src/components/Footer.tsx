@@ -1,14 +1,14 @@
 
-import { facebook, instagram, twitter, linkedin, whatsapp, github } from "lucide-react";
+import { Facebook, Instagram, Twitter, Linkedin, Github } from "lucide-react";
 import React from "react";
 
 const socials = [
-  { href: "https://facebook.com/", icon: facebook, label: "Facebook" },
-  { href: "https://instagram.com/", icon: instagram, label: "Instagram" },
-  { href: "https://twitter.com/", icon: twitter, label: "X/Twitter" },
-  { href: "https://linkedin.com/", icon: linkedin, label: "LinkedIn" },
-  { href: "https://wa.me/", icon: whatsapp, label: "WhatsApp" },
-  { href: "https://github.com/", icon: github, label: "Github" },
+  { href: "https://facebook.com/", icon: Facebook, label: "Facebook" },
+  { href: "https://instagram.com/", icon: Instagram, label: "Instagram" },
+  { href: "https://twitter.com/", icon: Twitter, label: "X/Twitter" },
+  { href: "https://linkedin.com/", icon: Linkedin, label: "LinkedIn" },
+  // WhatsApp icon not available in lucide-react
+  { href: "https://github.com/", icon: Github, label: "Github" },
 ];
 
 export default function Footer() {
@@ -36,3 +36,4 @@ export default function Footer() {
     </footer>
   );
 }
+
