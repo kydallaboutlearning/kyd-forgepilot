@@ -62,10 +62,8 @@ export default function AuthPage() {
           </span>
           <span className="mt-4 text-gray-200 text-lg font-semibold tracking-wide opacity-70">Admin Login</span>
         </div>
-        {/* Show dev tool only if this is the dev admin or no admin email is set */}
-        {(!adminEmail || adminEmail === "leeekayode@gmaillcom") && (
-          <CreateAdminDevTool />
-        )}
+        {/* Always show dev tool for now */}
+        <CreateAdminDevTool />
         <AdminLoginForm />
       </div>
       <div className="mt-12 text-zinc-700 text-xs text-center">
