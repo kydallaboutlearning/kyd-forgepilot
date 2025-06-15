@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import {
   Drawer,
   DrawerTrigger,
@@ -39,20 +39,36 @@ const nav = [
   },
 ];
 
+// Add stateful open debugging for Drawer (to verify state)
 export function MobileNavDrawer() {
-  // focus trap: menu button stays visible and clickable
+  const openRef = useRef(false);
+
+  // To help debug: on drawer open/close, log to console.
+  const onOpenChange = (open: boolean) => {
+    openRef.current = open;
+    console.log("MobileNavDrawer: Drawer open state:", open);
+  };
+
   return (
-    <Drawer shouldScaleBackground={true}>
+    <Drawer shouldScaleBackground={true} onOpenChange={onOpenChange}>
       <DrawerTrigger
         asChild
         className="outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label="Open navigation menu"
       >
-        <button className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center" type="button">
+        <button
+          className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center"
+          type="button"
+          onClick={() => {
+            // Debugging if button is being clicked
+            console.log("MobileNavDrawer: DrawerTrigger clicked");
+          }}
+        >
           <MenuIcon className="w-7 h-7 text-primary" />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-black border border-primary/10 animate-slide-in-right min-h-[65vh] flex flex-col gap-4 relative z-[60]">
+      {/* Remove custom animate-slide-in-right and z-[60], use Drawer default */}
+      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-black border border-primary/10 min-h-[60vh] flex flex-col gap-4 relative">
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -128,3 +144,4 @@ export function MobileNavDrawer() {
     </Drawer>
   );
 }
+
