@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/AppSidebar";
 import DashboardSiteSettings from "@/components/admin/DashboardSiteSettings";
 import DashboardPortfolio from "@/components/admin/DashboardPortfolio";
 import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
+import DashboardAdminSettings from "@/components/admin/DashboardAdminSettings";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard } from "lucide-react";
 
@@ -29,15 +29,16 @@ export default function Dashboard() {
                 Manage your site content and admin account here.
               </p>
             </header>
-
-            {/* Tabs for main dashboard actions */}
             <Tabs value={tab} onValueChange={setTab} className="w-full">
               <TabsList className="mb-8">
+                <TabsTrigger value="admin">Admin</TabsTrigger>
                 <TabsTrigger value="site">Site Settings</TabsTrigger>
                 <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
                 <TabsTrigger value="social">Social Links</TabsTrigger>
               </TabsList>
-
+              <TabsContent value="admin" className="w-full">
+                <DashboardAdminSettings />
+              </TabsContent>
               <TabsContent value="site" className="w-full">
                 <DashboardSiteSettings />
               </TabsContent>
@@ -54,4 +55,3 @@ export default function Dashboard() {
     </SidebarProvider>
   );
 }
-

@@ -20,15 +20,11 @@ type SiteSettings = {
   footer_text?: string;
   show_hero?: boolean;
   show_footer?: boolean;
-  admin_email?: string | null;
-  admin_password_hash?: string | null;
 };
 
 export default function DashboardSiteSettings() {
   const [settings, setSettings] = useState<SiteSettings>({});
   const [loading, setLoading] = useState(false);
-  const [adminPass, setAdminPass] = useState(""); // temp/plain input for new password
-  const [adminPass2, setAdminPass2] = useState("");
 
   // Fetch site settings on mount
   useEffect(() => {
@@ -63,21 +59,8 @@ export default function DashboardSiteSettings() {
     setLoading(true);
 
     let { id, ...updateFields } = settings;
-    // Handle admin password hashing if new value entered
     let updates: any = { ...updateFields };
-    if (settings.admin_email?.trim() && adminPass) {
-      if (adminPass !== adminPass2) {
-        toast({ variant: "destructive", title: "Passwords must match!" });
-        setLoading(false);
-        return;
-      }
-      const hash = await hashPassword(adminPass);
-      updates.admin_password_hash = hash;
-    } else if (adminPass) {
-      toast({ variant: "destructive", title: "Please set an admin email with the password." });
-      setLoading(false);
-      return;
-    }
+
     try {
       let result;
       if (id) {
@@ -102,8 +85,6 @@ export default function DashboardSiteSettings() {
         });
       } else {
         setSettings(result.data);
-        setAdminPass("");
-        setAdminPass2("");
         toast({ title: "Settings updated!" });
       }
     } finally {
@@ -115,39 +96,7 @@ export default function DashboardSiteSettings() {
     <div className="max-w-lg mx-auto w-full p-6 bg-card rounded-lg shadow">
       <form onSubmit={handleSubmit} className="space-y-5">
         <h2 className="font-bold text-2xl mb-2">Site Settings</h2>
-        {/* Admin Credential Settings */}
-        <div className="border-b border-border pb-4 mb-4">
-          <h3 className="font-semibold text-lg mb-2">Admin Credentials</h3>
-          <div className="grid gap-2">
-            <Label>Admin Login Email</Label>
-            <Input
-              value={settings.admin_email || ""}
-              onChange={e => setSettings(s => ({ ...s, admin_email: e.target.value }))}
-              placeholder="admin@agency.ai"
-              type="email"
-              autoComplete="username"
-              disabled={loading}
-            />
-            <Label>Set New Password (leave blank to keep current):</Label>
-            <Input
-              type="password"
-              value={adminPass}
-              autoComplete="new-password"
-              onChange={e => setAdminPass(e.target.value)}
-              placeholder="New password"
-              disabled={loading}
-            />
-            <Input
-              type="password"
-              value={adminPass2}
-              autoComplete="new-password"
-              onChange={e => setAdminPass2(e.target.value)}
-              placeholder="Repeat new password"
-              disabled={loading}
-            />
-            <div className="text-xs text-muted-foreground pt-1">Note: Saving will update both admin email and password if provided.</div>
-          </div>
-        </div>
+        {/* Site content settings (NO admin fields here) */}
         <div className="grid gap-2">
           <Label>Site Title</Label>
           <Input
@@ -242,10 +191,6 @@ export default function DashboardSiteSettings() {
           {loading ? "Saving..." : "Save"}
         </Button>
       </form>
-      {/* Current email info */}
-      <div className="text-xs text-zinc-400 mt-3">
-        Current admin email: <span className="font-mono">{settings.admin_email || "not set"}</span>
-      </div>
     </div>
   );
 }
