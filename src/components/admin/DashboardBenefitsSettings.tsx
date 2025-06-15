@@ -40,7 +40,7 @@ export function DashboardBenefitsSettings({
   isPending,
   onSubmit,
 }: DashboardBenefitsSettingsProps) {
-  // Safely normalize settings to always use full BenefitItem
+  // Always use fully constructed BenefitItems
   const [local, setLocal] = useState<BenefitsFormValues>({
     benefits_headline: settings.benefits_headline || "",
     benefits_items: normalizeBenefitItems(settings.benefits_items || []),
@@ -74,24 +74,25 @@ export function DashboardBenefitsSettings({
     return null;
   };
 
+  // Handles general field changes with normalization for array
   const onFieldChange = (key: keyof BenefitsFormValues, value: any) => {
     setLocal((prev) => {
       if (key === "benefits_items") {
-        // Always normalize here
         return { ...prev, benefits_items: normalizeBenefitItems(value) };
       }
       return { ...prev, [key]: value };
     });
   };
 
+  // Handles benefit item changes via full normalization after every update
   const onItemChange = (idx: number, key: keyof BenefitItem, value: any) => {
     setLocal((prev) => {
-      const items = prev.benefits_items.map((item, i) =>
+      const updated = prev.benefits_items.map((item, i) =>
         i === idx
           ? normalizeBenefitItems([{ ...item, [key]: value }])[0]
           : item
       );
-      return { ...prev, benefits_items: items };
+      return { ...prev, benefits_items: updated };
     });
   };
 
