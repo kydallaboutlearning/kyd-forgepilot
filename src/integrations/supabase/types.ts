@@ -497,6 +497,7 @@ export type Database = {
           hero_cta_label: string | null
           hero_cta_link: string | null
           hero_headline: string | null
+          hero_image_url: string | null
           hero_subtext: string | null
           id: string
           logo_url: string | null
@@ -517,6 +518,7 @@ export type Database = {
           hero_cta_label?: string | null
           hero_cta_link?: string | null
           hero_headline?: string | null
+          hero_image_url?: string | null
           hero_subtext?: string | null
           id?: string
           logo_url?: string | null
@@ -537,6 +539,7 @@ export type Database = {
           hero_cta_label?: string | null
           hero_cta_link?: string | null
           hero_headline?: string | null
+          hero_image_url?: string | null
           hero_subtext?: string | null
           id?: string
           logo_url?: string | null

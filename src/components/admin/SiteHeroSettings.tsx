@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -15,12 +14,14 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { ImageUpload } from "./ImageUpload";
 
 type HeroFields = {
   hero_headline: string;
   hero_subtext: string;
   hero_cta_label: string;
   hero_cta_link: string;
+  hero_image_url: string | null;
 };
 
 type SiteHeroProps = {
@@ -43,6 +44,10 @@ export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHer
       ...local,
       [e.target.name]: e.target.value,
     });
+  };
+  
+  const handleImageUpload = (url: string) => {
+    setLocal(prev => ({ ...prev, hero_image_url: url }));
   };
 
   const handleForm = (e: React.FormEvent) => {
@@ -76,6 +81,14 @@ export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHer
             <span className="font-medium text-neutral-300">CTA Link: </span>
             <span className="text-neutral-200">{current.hero_cta_link || <span className="italic text-neutral-600">Not set</span>}</span>
           </div>
+          <div className="pt-1">
+            <span className="font-medium text-neutral-300">Image: </span>
+            {current.hero_image_url ? (
+                <img src={current.hero_image_url} alt="Current Hero" className="mt-1 rounded-md max-h-32 w-auto object-cover border border-neutral-700" />
+            ) : (
+              <span className="text-neutral-200 ml-1"><span className="italic text-neutral-600">Not set</span></span>
+            )}
+          </div>
         </div>
       </div>
       <form 
@@ -87,14 +100,14 @@ export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHer
           <label className="block text-sm text-neutral-300 font-medium">Headline</label>
           <Input
             name="hero_headline"
-            value={local.hero_headline}
+            value={local.hero_headline ?? ""}
             onChange={handleChange}
             placeholder="Big headline"
           />
           <label className="block text-sm text-neutral-300 font-medium">Subtext</label>
           <Textarea
             name="hero_subtext"
-            value={local.hero_subtext}
+            value={local.hero_subtext ?? ""}
             onChange={handleChange}
             placeholder="Short description"
           />
@@ -103,7 +116,7 @@ export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHer
               <label className="block text-sm text-neutral-300 font-medium">CTA Label</label>
               <Input
                 name="hero_cta_label"
-                value={local.hero_cta_label}
+                value={local.hero_cta_label ?? ""}
                 onChange={handleChange}
                 placeholder="Call-to-action Label"
               />
@@ -112,12 +125,20 @@ export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHer
               <label className="block text-sm text-neutral-300 font-medium">CTA Link</label>
               <Input
                 name="hero_cta_link"
-                value={local.hero_cta_link}
+                value={local.hero_cta_link ?? ""}
                 onChange={handleChange}
                 placeholder="https:// or #anchor"
               />
             </div>
           </div>
+        </div>
+        <div className="pt-2">
+            <ImageUpload
+                bucketName="site-assets"
+                currentImageUrl={local.hero_image_url}
+                onUpload={handleImageUpload}
+                folder="hero"
+            />
         </div>
         <Button className="self-end mt-3" type="submit" disabled={isPending}>
           {isPending ? "Saving..." : "Save Hero"}

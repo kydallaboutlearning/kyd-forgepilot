@@ -19,6 +19,7 @@ type SiteSettings = {
   hero_subtext: string | null;
   hero_cta_label: string | null;
   hero_cta_link: string | null;
+  hero_image_url: string | null;
   footer_text: string | null;
   benefits_headline: string | null;
   benefits_items: BenefitItem[] | null;
@@ -70,11 +71,18 @@ export default function DashboardSiteSettings() {
     favicon_url: "",
   });
 
-  const [hero, setHero] = useState({
+  const [hero, setHero] = useState<{
+    hero_headline: string;
+    hero_subtext: string;
+    hero_cta_label: string;
+    hero_cta_link: string;
+    hero_image_url: string | null;
+  }>({
     hero_headline: "",
     hero_subtext: "",
     hero_cta_label: "",
     hero_cta_link: "",
+    hero_image_url: null,
   });
 
   const [benefits, setBenefits] = useState<{
@@ -103,6 +111,7 @@ export default function DashboardSiteSettings() {
       hero_subtext: settings.hero_subtext ?? "",
       hero_cta_label: settings.hero_cta_label ?? "",
       hero_cta_link: settings.hero_cta_link ?? "",
+      hero_image_url: settings.hero_image_url ?? null,
     });
     setBenefits({
       benefits_headline: settings.benefits_headline ?? "",
@@ -156,6 +165,7 @@ export default function DashboardSiteSettings() {
     hero_subtext: settings.hero_subtext ?? "",
     hero_cta_label: settings.hero_cta_label ?? "",
     hero_cta_link: settings.hero_cta_link ?? "",
+    hero_image_url: settings.hero_image_url ?? null,
   };
 
   const currentBenefits = {
