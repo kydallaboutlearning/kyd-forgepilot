@@ -1,29 +1,44 @@
 
+import {
+  Wrench,
+  Bot,
+  BarChart,
+  Brain,
+  LayoutDashboard,
+} from "lucide-react";
+
+// Selected icons:
+// - Custom Projects: Wrench
+// - Smart Automation: Brain
+// - Voice Agents: Bot
+// - Analytics Dashboards: BarChart
+// - AI Training: LayoutDashboard
+
 const services = [
   {
     name: "Custom Projects",
     desc: "Tailored automation solutions from zero to launch.",
-    icon: "🛠️"
+    icon: <Wrench className="w-9 h-9 text-primary" aria-hidden />,
   },
   {
     name: "Smart Automation",
     desc: "End-to-end process automation harnessing GPTs and modern APIs.",
-    icon: "⚡"
+    icon: <Brain className="w-9 h-9 text-primary" aria-hidden />,
   },
   {
     name: "Voice Agents",
     desc: "Conversational AI for calls, support, and engagement.",
-    icon: "🎤"
+    icon: <Bot className="w-9 h-9 text-primary" aria-hidden />,
   },
   {
     name: "Analytics Dashboards",
     desc: "Real-time insights and reporting on your operations.",
-    icon: "📊"
+    icon: <BarChart className="w-9 h-9 text-primary" aria-hidden />,
   },
   {
     name: "AI Training",
     desc: "Custom LLM and RAG-based agent deployments.",
-    icon: "🤖"
+    icon: <LayoutDashboard className="w-9 h-9 text-primary" aria-hidden />,
   }
 ]
 
@@ -38,7 +53,7 @@ export default function Services() {
             className="flex flex-col items-center bg-neutral-900 border border-neutral-800 rounded-2xl px-8 py-12 shadow-lg text-center animate-fade-in"
             style={{ minHeight: 260 }}
           >
-            <div className="text-4xl mb-3">{s.icon}</div>
+            <div className="mb-3">{s.icon}</div>
             <div className="font-bold text-md mb-2 uppercase tracking-wide text-white font-sans">{s.name}</div>
             <div className="text-gray-300 font-sans">{s.desc}</div>
           </div>
@@ -47,3 +62,4 @@ export default function Services() {
     </section>
   )
 }
+
