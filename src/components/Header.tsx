@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -112,46 +113,59 @@ export default function Header() {
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30",
         }}
       >
-        {/* Mobile: Hamburger */}
-        <div className="flex md:hidden items-center">
+        {/* Mobile layout: logo left, hamburger right */}
+        <div className="flex w-full items-center justify-between md:hidden">
+          <Link
+            to="/"
+            className="font-sans text-xl md:text-2xl font-semibold tracking-tight flex items-baseline mx-1 md:mx-0"
+            style={{
+              color: "#FFB74A",
+              letterSpacing: "-0.02em",
+              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
+            }}
+          >
+            Forge
+            <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
+          </Link>
           <MobileNavDrawer />
         </div>
-        {/* Logo */}
-        <Link
-          to="/"
-          className="font-sans text-xl md:text-2xl font-semibold tracking-tight flex items-baseline mx-1 md:mx-0"
-          style={{
-            color: "#FFB74A",
-            letterSpacing: "-0.02em",
-            textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
-          }}
-        >
-          Forge
-          <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
-        </Link>
-        {/* Nav */}
-        <div className="hidden md:flex flex-1 items-center justify-center ml-0 md:ml-4">
-          <NavLinks />
+        {/* Desktop: Logo left, center nav, CTA right */}
+        <div className="hidden md:flex flex-1 items-center justify-between w-full">
+          <Link
+            to="/"
+            className="font-sans text-2xl font-semibold tracking-tight flex items-baseline mx-1 md:mx-0"
+            style={{
+              color: "#FFB74A",
+              letterSpacing: "-0.02em",
+              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
+            }}
+          >
+            Forge
+            <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
+          </Link>
+          <div className="flex-1 flex items-center justify-center ml-0 md:ml-4">
+            <NavLinks />
+          </div>
+          <a
+            href="#contact"
+            className="
+              group flex items-center gap-2 
+              rounded-xl bg-black/60 border border-[#FFB74A44] px-5 py-2.5
+              font-semibold text-base text-neutral-200 hover:text-primary transition
+              shadow-[0_0_9px_0_#FFB74A33]
+              focus:outline-none
+              relative
+            "
+            style={{
+              boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22",
+            }}
+          >
+            Let&apos;s Talk
+            <ArrowUpRight className="w-4 h-4 ml-1 opacity-90 text-primary group-hover:translate-x-1 transition-transform" />
+          </a>
         </div>
-        {/* CTA */}
-        <a
-          href="#contact"
-          className="
-            hidden md:group md:flex items-center gap-2 
-            rounded-xl bg-black/60 border border-[#FFB74A44] px-5 py-2.5
-            font-semibold text-base text-neutral-200 hover:text-primary transition
-            shadow-[0_0_9px_0_#FFB74A33]
-            focus:outline-none
-            relative
-          "
-          style={{
-            boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22",
-          }}
-        >
-          Let&apos;s Talk
-          <ArrowUpRight className="w-4 h-4 ml-1 opacity-90 text-primary group-hover:translate-x-1 transition-transform" />
-        </a>
       </div>
     </header>
   );
 }
+

@@ -18,6 +18,7 @@ import {
   FileText,
   ArrowUpRight,
   Menu as MenuIcon,
+  X as CloseIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -43,14 +44,14 @@ export function MobileNavDrawer() {
     <Drawer>
       <DrawerTrigger
         asChild
-        className="md:hidden outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label="Open navigation menu"
       >
-        <button className="p-2 rounded-full hover:bg-neutral-900 transition">
+        <button className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center">
           <MenuIcon className="w-7 h-7 text-primary" />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="md:hidden px-4 py-6 !rounded-t-2xl bg-black border border-primary/10 animate-slide-in-right min-h-[75vh] flex flex-col gap-4 relative">
+      <DrawerContent className="px-4 py-6 !rounded-t-2xl bg-black border border-primary/10 animate-slide-in-right min-h-[70vh] flex flex-col gap-4 relative">
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -68,7 +69,7 @@ export function MobileNavDrawer() {
           <DrawerClose asChild>
             <button className="text-white p-2 w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-900" aria-label="Close navigation">
               <span className="sr-only">Close navigation</span>
-              X
+              <CloseIcon className="w-7 h-7" />
             </button>
           </DrawerClose>
         </div>
