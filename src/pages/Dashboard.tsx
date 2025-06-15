@@ -6,7 +6,7 @@ import DashboardPortfolio from "@/components/admin/DashboardPortfolio";
 import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { LayoutDashboard, Sun, Moon } from "lucide-react";
+import { LayoutDashboard } from "lucide-react";
 
 export default function Dashboard() {
   const [tab, setTab] = useState("site");
@@ -17,7 +17,7 @@ export default function Dashboard() {
         {/* Sidebar */}
         <AppSidebar />
         {/* Main Content */}
-        <main className="flex-1 min-h-screen relative z-10">
+        <main className="flex-1 min-h-screen">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
             {/* Header */}
             <header className="mb-10">
