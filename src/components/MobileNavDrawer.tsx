@@ -1,4 +1,3 @@
-
 import React, { useRef } from "react";
 import {
   Drawer,
@@ -68,7 +67,13 @@ export function MobileNavDrawer() {
         </button>
       </DrawerTrigger>
       {/* Remove custom animate-slide-in-right and z-[60], use Drawer default */}
-      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-black border border-primary/10 min-h-[60vh] flex flex-col gap-4 relative">
+      <DrawerContent
+        className="px-3 py-5 !rounded-t-2xl bg-yellow-300 border-4 border-red-600 min-h-[60vh] flex flex-col gap-4 relative z-[9999]"
+        style={{
+          background: 'rgba(255,255,80,0.95)',
+          border: '6px solid #ff0000',
+        }}
+      >
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -144,4 +149,3 @@ export function MobileNavDrawer() {
     </Drawer>
   );
 }
-
