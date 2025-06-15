@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -102,7 +101,7 @@ export function DashboardBenefitsSettings({
     setShowConfirm(false);
   }
 
-  // Normalize current values before passing as props to ensure correct shape
+  // Normalize current values ONLY for the form (which requires required fields)
   const normalizedCurrent = {
     benefits_headline: current.benefits_headline || "",
     benefits_items: normalizeBenefitItems(current.benefits_items || []),
@@ -110,7 +109,8 @@ export function DashboardBenefitsSettings({
 
   return (
     <>
-      <DashboardBenefitsCurrentContent current={normalizedCurrent} />
+      {/* Pass raw current props here: */}
+      <DashboardBenefitsCurrentContent current={current} />
       <DashboardBenefitsForm
         local={local}
         isPending={isPending}
