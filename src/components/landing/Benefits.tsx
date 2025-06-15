@@ -1,4 +1,3 @@
-
 import { Brain, ThumbsUp, Users } from "lucide-react";
 
 const items = [
@@ -101,10 +100,9 @@ export default function Benefits() {
           90% {transform: translateY(-2px);}
         }
         .animate-bounce-benefit {
-          animation: bounce-benefit 2.15s cubic-bezier(0.41,0.63,0.43,1.12) infinite;
+          animation: bounce-benefit 3.4s cubic-bezier(0.41,0.63,0.43,1.12) infinite;
         }
       `}</style>
     </section>
   );
 }
-
