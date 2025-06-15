@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BenefitItem, BenefitItemIcon } from "@/types/cms";
@@ -82,9 +81,9 @@ export function DashboardBenefitsForm({
                     <SelectTrigger className="w-36">
                       {/* Selected value: show icon and name */}
                       <span className="flex items-center gap-2">
-                        {item.icon && iconMap[item.icon] ? (
+                        {item.icon && typeof iconMap[item.icon] === "function" ? (
                           <span className="inline-flex items-center">
-                            {iconMap[item.icon]({ className: "w-4 h-4 mr-1" })}
+                            {iconMap[item.icon]!({ className: "w-4 h-4 mr-1" })}
                             <span>{item.icon}</span>
                           </span>
                         ) : (
@@ -97,7 +96,9 @@ export function DashboardBenefitsForm({
                       {iconOptions.map(icon => (
                         <SelectItem key={icon} value={icon}>
                           <span className="flex items-center gap-2">
-                            {iconMap[icon] ? iconMap[icon]({ className: "w-4 h-4" }) : null}
+                            {typeof iconMap[icon] === "function"
+                              ? iconMap[icon]!({ className: "w-4 h-4" })
+                              : null}
                             <span>{icon}</span>
                           </span>
                         </SelectItem>
@@ -149,4 +150,3 @@ export function DashboardBenefitsForm({
     </form>
   );
 }
-
