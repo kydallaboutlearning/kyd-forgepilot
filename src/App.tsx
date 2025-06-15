@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import DynamicPage from "./pages/[slug]";
 import BlogListPage from "./pages/blog";
 import BlogPostPage from "./pages/blog/[slug]";
+import ProjectCaseStudy from "./pages/portfolio/[projectId]";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/portfolio/:projectId" element={<ProjectCaseStudy />} />
           <Route path="/dashboard" element={<Dashboard />} />
           {/* Dynamic CMS Pages */}
           <Route path="/about" element={<DynamicPage />} />
