@@ -30,12 +30,10 @@ type BenefitsFormValues = z.infer<typeof formSchema>;
 
 interface DashboardBenefitsSettingsProps {
   settings: Partial<BenefitsFormValues>;
-  current: Partial<BenefitsFormValues>;
+  current: { benefits_headline?: string | null; benefits_items?: any[] | null };
   isPending: boolean;
   onSubmit: (values: BenefitsFormValues) => void;
 }
-
-// Removed duplicate iconOptions definition here
 
 export function DashboardBenefitsSettings({
   settings,
@@ -100,13 +98,17 @@ export function DashboardBenefitsSettings({
   function confirm() {
     onSubmit(local);
     setShowConfirm(false);
-  }
+  };
+
+  // Convert current data to proper format for display component
+  const currentConvertedForDisplay: { benefits_headline?: string | null; benefits_items?: BenefitItem[] | null } = {
+    benefits_headline: current.benefits_headline,
+    benefits_items: current.benefits_items ? normalizeBenefitItems(current.benefits_items) : null,
+  };
 
   return (
     <>
-      {/* Always pass raw current, which is partial, to the display card */}
-      <DashboardBenefitsCurrentContent current={current} />
-      {/* Pass local state which has the required structure for the form */}
+      <DashboardBenefitsCurrentContent current={currentConvertedForDisplay} />
       <DashboardBenefitsForm
         local={local}
         isPending={isPending}
