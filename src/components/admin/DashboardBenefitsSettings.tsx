@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -101,19 +102,13 @@ export function DashboardBenefitsSettings({
     setShowConfirm(false);
   }
 
-  // Always normalize current values before passing to form
-  const normalizedCurrent = {
-    benefits_headline: current.benefits_headline || "",
-    benefits_items: normalizeBenefitItems(current.benefits_items || []),
-  };
-
   return (
     <>
       {/* Always pass raw current, which is partial, to the display card */}
       <DashboardBenefitsCurrentContent current={current} />
-      {/* Always pass normalized required values to the form */}
+      {/* Pass local state which has the required structure for the form */}
       <DashboardBenefitsForm
-        local={normalizedCurrent}
+        local={local}
         isPending={isPending}
         onFieldChange={onFieldChange}
         onItemChange={onItemChange}
