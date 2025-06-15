@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Hero from "@/components/landing/Hero";
 import PartnerLogos from "@/components/landing/PartnerLogos";
@@ -24,8 +25,23 @@ export default function Index() {
       <ContactCTA />
       <RecentWorks />
       <Metrics />
-      <Services />
-      <Pricing />
+      {/* 
+        Set correct id for "Services" so #services works ("Our Expertise" section).
+        If Services component already uses <section id="services"> internally, 
+        you can remove this outer wrapper, but to ensure scroll always works, 
+        we do it here.
+      */}
+      <section id="services">
+        <Services />
+      </section>
+      {/* 
+        Same for pricing: ensure #pricing points to pricing section.
+        If Pricing component already sets <section id="pricing"> internally, you can remove this,
+        but this wrapper guarantees anchor scroll works everywhere.
+      */}
+      <section id="pricing">
+        <Pricing />
+      </section>
       <Testimonials />
       <Team />
       <FAQ />
