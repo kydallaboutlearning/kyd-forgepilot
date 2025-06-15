@@ -76,13 +76,13 @@ export default function DashboardAdminSettings() {
           .update(updates)
           .eq("id", id)
           .select()
-          .single();
+          .maybeSingle();
       } else {
         result = await supabase
           .from("site_settings")
           .insert([updates])
           .select()
-          .single();
+          .maybeSingle();
       }
       if (result.error) {
         toast({
@@ -90,11 +90,17 @@ export default function DashboardAdminSettings() {
           title: "Update failed",
           description: result.error.message,
         });
-      } else {
-        setSettings(result.data);
+      } else if (result.data) {
+        setSettings(result.data); // always store most-recent (including id for next update)
         setAdminPass("");
         setAdminPass2("");
         toast({ title: "Admin updated!" });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Update failed",
+          description: "No row returned. Something went wrong."
+        });
       }
     } finally {
       setLoading(false);
