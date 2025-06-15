@@ -12,6 +12,7 @@ import Team from "@/components/landing/Team";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/Footer";
+import ContactCTA from "@/components/landing/ContactCTA";
 
 export default function Index() {
   return (
@@ -21,6 +22,7 @@ export default function Index() {
       <Hero />
       <PartnerLogos />
       <Benefits />
+      <ContactCTA />
       <CTA />
       <RecentWorks />
       <Metrics />

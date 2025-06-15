@@ -492,6 +492,10 @@ export type Database = {
           admin_password_hash: string | null
           benefits_headline: string | null
           benefits_items: Json | null
+          contact_cta_button_label: string | null
+          contact_cta_button_url: string | null
+          contact_cta_headline: string | null
+          contact_cta_subtext: string | null
           favicon_url: string | null
           footer_text: string | null
           hero_cta_label: string | null
@@ -513,6 +517,10 @@ export type Database = {
           admin_password_hash?: string | null
           benefits_headline?: string | null
           benefits_items?: Json | null
+          contact_cta_button_label?: string | null
+          contact_cta_button_url?: string | null
+          contact_cta_headline?: string | null
+          contact_cta_subtext?: string | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null
@@ -534,6 +542,10 @@ export type Database = {
           admin_password_hash?: string | null
           benefits_headline?: string | null
           benefits_items?: Json | null
+          contact_cta_button_label?: string | null
+          contact_cta_button_url?: string | null
+          contact_cta_headline?: string | null
+          contact_cta_subtext?: string | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null

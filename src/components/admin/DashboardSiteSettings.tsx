@@ -7,6 +7,7 @@ import { SiteHeroSettings } from "./SiteHeroSettings";
 import { type BenefitItem } from "@/types/cms";
 import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
 import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
+import { DashboardContactCTASettings } from "./DashboardContactCTASettings";
 
 // Types
 type SiteSettings = {
@@ -24,6 +25,10 @@ type SiteSettings = {
   benefits_headline: string | null;
   benefits_items: BenefitItem[] | null;
   recent_works_headline: string | null;
+  contact_cta_headline?: string | null;
+  contact_cta_subtext?: string | null;
+  contact_cta_button_label?: string | null;
+  contact_cta_button_url?: string | null;
 };
 
 export default function DashboardSiteSettings() {
@@ -97,6 +102,14 @@ export default function DashboardSiteSettings() {
     recent_works_headline: "",
   });
 
+  // Contact CTA
+  const [contactCTA, setContactCTA] = useState({
+    contact_cta_headline: "",
+    contact_cta_subtext: "",
+    contact_cta_button_label: "",
+    contact_cta_button_url: "",
+  });
+
   // Keep form state in-sync with backend, but only for editing — display always uses backend directly!
   useEffect(() => {
     if (!settings) return;
@@ -119,6 +132,12 @@ export default function DashboardSiteSettings() {
     });
     setRecentWorks({
       recent_works_headline: settings.recent_works_headline ?? "",
+    });
+    setContactCTA({
+      contact_cta_headline: settings.contact_cta_headline ?? "",
+      contact_cta_subtext: settings.contact_cta_subtext ?? "",
+      contact_cta_button_label: settings.contact_cta_button_label ?? "",
+      contact_cta_button_url: settings.contact_cta_button_url ?? "",
     });
   }, [settings]);
 
@@ -177,6 +196,13 @@ export default function DashboardSiteSettings() {
     recent_works_headline: settings.recent_works_headline ?? "",
   };
 
+  const currentContactCTA = {
+    contact_cta_headline: settings.contact_cta_headline ?? "",
+    contact_cta_subtext: settings.contact_cta_subtext ?? "",
+    contact_cta_button_label: settings.contact_cta_button_label ?? "",
+    contact_cta_button_url: settings.contact_cta_button_url ?? "",
+  };
+
   return (
     <div className="space-y-10">
       <SiteHeaderSettings
@@ -200,6 +226,12 @@ export default function DashboardSiteSettings() {
       <DashboardRecentWorksSettings
         settings={recentWorks}
         current={currentRecentWorks}
+        isPending={mutation.isPending}
+        onSubmit={vals => mutation.mutate(vals)}
+      />
+      <DashboardContactCTASettings
+        settings={contactCTA}
+        current={currentContactCTA}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
