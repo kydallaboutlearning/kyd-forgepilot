@@ -1,36 +1,13 @@
+
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { type BenefitItem, type BenefitItemIcon } from "@/types/cms";
-import { Trash } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+import DashboardBenefitsConfirmDialog from "./DashboardBenefitsConfirmDialog";
+import { DashboardBenefitItemEditor } from "./DashboardBenefitItemEditor";
 
 // validation schemas
 const benefitItemSchema = z.object({
@@ -61,14 +38,12 @@ export function DashboardBenefitsSettings({
   isPending,
   onSubmit,
 }: DashboardBenefitsSettingsProps) {
-  // Local state for editing values
   const [local, setLocal] = useState<BenefitsFormValues>({
     benefits_headline: settings.benefits_headline || "",
     benefits_items: settings.benefits_items || [],
   });
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Keep local in sync with latest settings
   useEffect(() => {
     setLocal({
       benefits_headline: settings.benefits_headline || "",
@@ -76,22 +51,16 @@ export function DashboardBenefitsSettings({
     });
   }, [settings]);
 
-  // react-hook-form set up
   const form = useForm<BenefitsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: local,
     mode: "onChange",
-    values: local, // For controlled form from local state
+    values: local,
   });
 
   useEffect(() => {
     form.reset(local);
   }, [local, form]);
-
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "benefits_items",
-  });
 
   // Icon preview utility
   const renderIcon = (icon: BenefitItemIcon | undefined) => {
@@ -102,7 +71,6 @@ export function DashboardBenefitsSettings({
     return null;
   };
 
-  // Controlled input update
   const onFieldChange = (key: keyof BenefitsFormValues, value: any) => {
     setLocal((prev) => ({
       ...prev,
@@ -110,7 +78,6 @@ export function DashboardBenefitsSettings({
     }));
   };
 
-  // Used for field array item
   const onItemChange = (idx: number, key: keyof BenefitItem, value: any) => {
     setLocal((prev) => {
       const items = [...prev.benefits_items];
@@ -119,13 +86,18 @@ export function DashboardBenefitsSettings({
     });
   };
 
-  // Save form triggers confirmation dialog
+  const handleDelete = (idx: number) => {
+    onFieldChange(
+      "benefits_items",
+      local.benefits_items.filter((_, i) => i !== idx)
+    );
+  };
+
   const handleForm = (e: React.FormEvent) => {
     e.preventDefault();
     setShowConfirm(true);
   };
 
-  // Confirm (submit) changes
   function confirm() {
     onSubmit(local);
     setShowConfirm(false);
@@ -179,55 +151,15 @@ export function DashboardBenefitsSettings({
           <label className="block text-sm text-neutral-300 font-medium">Benefit Items</label>
           <div className="space-y-4 mt-2">
             {local.benefits_items.map((item, index) => (
-              <div key={index} className="flex items-start gap-4 p-4 border rounded-md bg-neutral-900">
-                <div className="flex-1 space-y-4">
-                  <div>
-                    <label className="block text-xs text-neutral-300 font-medium">Title</label>
-                    <Input
-                      value={item.title}
-                      onChange={e => onItemChange(index, "title", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-neutral-300 font-medium">Description</label>
-                    <Input
-                      value={item.desc}
-                      onChange={e => onItemChange(index, "desc", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-neutral-300 font-medium">Icon</label>
-                    <Select
-                      value={item.icon}
-                      onValueChange={value => onItemChange(index, "icon", value)}
-                    >
-                      <SelectTrigger className="w-36">
-                        <SelectValue placeholder="Select an icon" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {iconOptions.map(icon => (
-                          <SelectItem key={icon} value={icon}>
-                            <span className="flex items-center gap-2">
-                              {renderIcon(icon)}
-                              <span>{icon}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => onFieldChange(
-                    "benefits_items", local.benefits_items.filter((_, i) => i !== index)
-                  )}
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </div>
+              <DashboardBenefitItemEditor
+                key={index}
+                item={item}
+                index={index}
+                iconOptions={iconOptions}
+                renderIcon={renderIcon}
+                onItemChange={onItemChange}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
           {local.benefits_items.length < 3 && (
@@ -252,33 +184,11 @@ export function DashboardBenefitsSettings({
         </Button>
       </form>
 
-      {/* Confirmation Dialog: same design/copy as hero section, but for benefits */}
-      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure you want to update the "Why Automate with Us" section?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This will overwrite the previous content for this section. Do you want to continue?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel asChild>
-              <button type="button" className="mt-0">Cancel</button>
-            </AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <button
-                type="button"
-                className="bg-primary text-white px-4 py-2 rounded"
-                onClick={confirm}
-              >
-                Yes, save changes
-              </button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DashboardBenefitsConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        onConfirm={confirm}
+      />
     </>
   );
 }
