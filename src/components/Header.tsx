@@ -10,13 +10,14 @@ import {
   Book,
   HelpCircle,
   FileText,
+  DollarSign,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 
 const nav = [
   { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-1.5" /> },
-  { to: "#mission", label: "Mission", icon: <Rocket className="w-4 h-4 mr-1.5" /> },
+  { to: "#pricing", label: "Pricing", icon: <DollarSign className="w-4 h-4 mr-1.5" /> },
   { to: "#works", label: "Works", icon: <Briefcase className="w-4 h-4 mr-1.5" /> },
   { to: "#services", label: "Services", icon: <Wrench className="w-4 h-4 mr-1.5" /> },
   {

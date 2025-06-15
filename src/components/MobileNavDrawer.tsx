@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Sheet,
@@ -21,14 +20,16 @@ import {
   ArrowUpRight,
   Menu as MenuIcon,
   X as CloseIcon,
+  DollarSign,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Update nav for mobile: replace "Mission" with "Pricing" and use correct icons
 const nav = [
   { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-2 inline-block" /> },
-  { to: "#mission", label: "Mission", icon: <Rocket className="w-4 h-4 mr-2 inline-block" /> },
+  { to: "#pricing", label: "Pricing", icon: <DollarSign className="w-4 h-4 mr-2 inline-block" /> }, // new: Pricing
   { to: "#works", label: "Works", icon: <Briefcase className="w-4 h-4 mr-2 inline-block" /> },
-  { to: "#services", label: "Services", icon: <Wrench className="w-4 h-4 mr-2 inline-block" /> },
+  { to: "#services", label: "Services", icon: <Wrench className="w-4 h-4 mr-2 inline-block" /> }, // Our Expertise section
   {
     label: "Pages",
     icon: <List className="w-4 h-4 mr-2 inline-block" />,
