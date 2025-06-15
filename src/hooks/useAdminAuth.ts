@@ -23,6 +23,7 @@ export function useAdminAuth() {
   // Login
   async function login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     setLoading(true);
+    console.log("[AdminAuth] Attempt login for", email);
     // Find matching admin user (SQL: select email,password_hash where email)
     const { data, error } = await supabase
       .from("admin_users")
@@ -30,12 +31,20 @@ export function useAdminAuth() {
       .eq("email", email)
       .maybeSingle();
 
-    if (error || !data) {
+    if (error) {
+      console.log("[AdminAuth] Supabase error:", error);
       setLoading(false);
-      return { success: false, error: "Admin not found" };
+      return { success: false, error: `Supabase error: ${error.message ?? error}` };
+    }
+    if (!data) {
+      console.log("[AdminAuth] No matching admin found for", email);
+      setLoading(false);
+      return { success: false, error: `Admin not found for email: ${email}` };
     }
     // Compare hash
+    console.log("[AdminAuth] DB hash:", data.password_hash);
     const ok = await comparePassword(password, data.password_hash);
+    console.log("[AdminAuth] Password compare result:", ok);
     if (!ok) {
       setLoading(false);
       return { success: false, error: "Incorrect password" };
@@ -61,3 +70,4 @@ export function useAdminAuth() {
     isAuthenticated: !!adminEmail
   };
 }
+

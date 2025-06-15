@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,8 @@ export default function AdminLogin() {
       setErr(null);
       navigate("/dashboard");
     } else {
-      setErr(error ?? "Invalid credentials.");
+      // Show error and all details encountered
+      setErr((error ?? "Invalid credentials.") + " (check browser console for debug info)");
     }
   }
 
@@ -36,6 +36,9 @@ export default function AdminLogin() {
       <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
       {err && <div className="text-destructive text-sm">{err}</div>}
       <Button className="w-full" type="submit">Log In</Button>
+      <div className="text-xs text-muted-foreground mt-2 text-center">
+        Debug mode: check the browser console for step-by-step login results.
+      </div>
     </form>
   );
 }
