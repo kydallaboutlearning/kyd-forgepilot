@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect, useRef } from "react";
@@ -25,7 +24,7 @@ export default function DashboardSiteSettings() {
   const mounted = useRef(false);
 
   // Fetch current site settings (assume single row)
-  const { data: settings, isLoading, refetch } = useQuery({
+  const { data: settings, isLoading } = useQuery({
     queryKey: ["site_settings"],
     queryFn: async () => {
       const { data, error } = await supabase.from("site_settings").select("*").limit(1).maybeSingle();
@@ -34,7 +33,6 @@ export default function DashboardSiteSettings() {
     },
   });
 
-  // For update requests
   const mutation = useMutation({
     mutationFn: async (updates: Partial<SiteSettings>) => {
       if (!settings?.id) throw new Error("No site_settings row loaded");
@@ -50,7 +48,7 @@ export default function DashboardSiteSettings() {
     },
   });
 
-  // Local state for Header form
+  // --- Fix: always mirror query data in both local state and child props after every query update ---
   const [header, setHeader] = useState({
     site_title: "",
     site_subtitle: "",
@@ -58,7 +56,6 @@ export default function DashboardSiteSettings() {
     favicon_url: "",
   });
 
-  // Local state for Hero form
   const [hero, setHero] = useState({
     hero_headline: "",
     hero_subtext: "",
@@ -69,8 +66,6 @@ export default function DashboardSiteSettings() {
   // Realtime sync for site_settings (ADMIN DASHBOARD)
   useEffect(() => {
     mounted.current = true;
-
-    // Subscribe to realtime changes in site_settings
     const channel = supabase
       .channel("admin_site_settings_rt")
       .on(
@@ -82,34 +77,43 @@ export default function DashboardSiteSettings() {
         },
         (payload) => {
           if (!mounted.current) return;
-          // Refetch on any change event (insert, update, delete)
           queryClient.invalidateQueries({ queryKey: ["site_settings"] });
         }
       )
       .subscribe();
-
     return () => {
       mounted.current = false;
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
 
+  // --- Fix: Always keep header and hero state in sync with backend data
   useEffect(() => {
-    if (settings) {
-      setHeader({
-        site_title: settings.site_title ?? "",
-        site_subtitle: settings.site_subtitle ?? "",
-        logo_url: settings.logo_url ?? "",
-        favicon_url: settings.favicon_url ?? "",
-      });
-      setHero({
-        hero_headline: settings.hero_headline ?? "",
-        hero_subtext: settings.hero_subtext ?? "",
-        hero_cta_label: settings.hero_cta_label ?? "",
-        hero_cta_link: settings.hero_cta_link ?? "",
-      });
-    }
-  }, [settings]);
+    // Defensive: do not set values unless whole settings row is loaded
+    if (!settings) return;
+    setHeader({
+      site_title: settings.site_title ?? "",
+      site_subtitle: settings.site_subtitle ?? "",
+      logo_url: settings.logo_url ?? "",
+      favicon_url: settings.favicon_url ?? "",
+    });
+    setHero({
+      hero_headline: settings.hero_headline ?? "",
+      hero_subtext: settings.hero_subtext ?? "",
+      hero_cta_label: settings.hero_cta_label ?? "",
+      hero_cta_link: settings.hero_cta_link ?? "",
+    });
+  }, [
+    settings?.site_title,
+    settings?.site_subtitle,
+    settings?.logo_url,
+    settings?.favicon_url,
+    settings?.hero_headline,
+    settings?.hero_subtext,
+    settings?.hero_cta_label,
+    settings?.hero_cta_link,
+    settings, // include fallback for initial loading
+  ]);
 
   if (isLoading || !settings) {
     return <div className="py-10 text-center text-white">Loading settings…</div>;
