@@ -22,8 +22,6 @@ type Portfolio = {
   testimonial: { name: string; quote: string } | null;
   contact_email: string;
   contact_calendly: string;
-  is_featured?: boolean;
-  featured_order?: number | null;
 };
 
 const initialState: Portfolio = {
@@ -42,8 +40,6 @@ const initialState: Portfolio = {
   testimonial: null,
   contact_email: "",
   contact_calendly: "",
-  is_featured: false,
-  featured_order: null,
 };
 
 export default function DashboardPortfolio() {
@@ -59,16 +55,12 @@ export default function DashboardPortfolio() {
     const { data, error } = await supabase
       .from("portfolio_items")
       .select("*")
-      .order("is_featured", { ascending: false })
-      .order("featured_order", { ascending: true, nullsFirst: true })
       .order("date", { ascending: false });
     if (error) toast({ variant: "destructive", title: "Error", description: error.message });
     if (data) {
       setItems(
         data.map((item: any) => ({
           ...item,
-          is_featured: !!item.is_featured,
-          featured_order: item.featured_order ?? null,
           images: Array.isArray(item.images)
             ? item.images
             : typeof item.images === "string"
@@ -130,6 +122,7 @@ export default function DashboardPortfolio() {
     setLoading(true);
     const item = editing!;
     const { id, ...fields } = item;
+    // Ensure arrays are indeed arrays—if not, fallback to empty arrays of string
     const prepared = {
       ...fields,
       tags: Array.isArray(fields.tags)
@@ -155,8 +148,6 @@ export default function DashboardPortfolio() {
       images: fields.images,
       results: Array.isArray(fields.results) ? fields.results : [],
       testimonial: fields.testimonial,
-      is_featured: !!fields.is_featured,
-      featured_order: fields.is_featured ? (fields.featured_order ?? 0) : null,
     };
     let result;
     if (id) {
@@ -324,34 +315,6 @@ export default function DashboardPortfolio() {
           <Input value={editing.contact_email} onChange={e => setEditing(s => ({ ...s!, contact_email: e.target.value }))} />
           <Label>Contact Calendly</Label>
           <Input value={editing.contact_calendly} onChange={e => setEditing(s => ({ ...s!, contact_calendly: e.target.value }))} />
-          <Label>
-            <input
-              type="checkbox"
-              checked={!!editing.is_featured}
-              onChange={e =>
-                setEditing(s =>
-                  ({ ...s!, is_featured: e.target.checked, featured_order: e.target.checked ? (s!.featured_order ?? 1) : null })
-                )
-              }
-              className="mr-2"
-            />
-            Featured in Recent Works
-          </Label>
-          {editing.is_featured && (
-            <div>
-              <Label>Featured Order (lower number = first; fill in for each featured item)</Label>
-              <Input
-                type="number"
-                min={1}
-                max={99}
-                value={editing.featured_order ?? 1}
-                onChange={e =>
-                  setEditing(s => ({ ...s!, featured_order: Number(e.target.value) }))
-                }
-                className="w-28"
-              />
-            </div>
-          )}
           <div className="flex gap-3 mt-2">
             <Button type="submit" disabled={loading}>{editing.id ? "Update" : "Create"}</Button>
             <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
@@ -371,7 +334,6 @@ export default function DashboardPortfolio() {
                 <th className="text-left font-medium pb-2">Title</th>
                 <th className="text-left font-medium pb-2">Category</th>
                 <th className="text-left font-medium pb-2">Date</th>
-                <th className="text-center font-medium pb-2">Featured</th>
                 <th />
               </tr>
             </thead>
@@ -381,15 +343,6 @@ export default function DashboardPortfolio() {
                   <td>{item.title}</td>
                   <td>{item.category}</td>
                   <td>{item.date}</td>
-                  <td className="text-center">
-                    {item.is_featured ? (
-                      <span className="text-green-500 font-bold">
-                        Yes{item.featured_order ? ` (#${item.featured_order})` : ""}
-                      </span>
-                    ) : (
-                      <span className="text-neutral-500">No</span>
-                    )}
-                  </td>
                   <td className="text-right">
                     <Button size="sm" variant="outline" onClick={() => startEdit(item)}>Edit</Button>
                     <Button size="sm" variant="destructive" className="ml-2" onClick={() => handleDelete(item.id)}>Delete</Button>
