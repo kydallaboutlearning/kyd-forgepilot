@@ -6,6 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 type SiteSettings = {
   id: string;
@@ -52,9 +63,11 @@ export default function DashboardSiteSettings() {
   const [header, setHeader] = useState<Partial<SiteSettings>>({});
   // Local state for Hero form
   const [hero, setHero] = useState<Partial<SiteSettings>>({});
+  // Confirmation dialogs
+  const [showHeaderConfirm, setShowHeaderConfirm] = useState(false);
+  const [showHeroConfirm, setShowHeroConfirm] = useState(false);
 
   // Pre-fill forms when settings loads
-  // (Only on first load)
   useState(() => {
     if (settings) {
       setHeader({
@@ -86,7 +99,7 @@ export default function DashboardSiteSettings() {
 
   const handleHeaderSubmit = (e: FormEvent) => {
     e.preventDefault();
-    mutation.mutate(header);
+    setShowHeaderConfirm(true);
   };
 
   const handleHeroChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -98,12 +111,35 @@ export default function DashboardSiteSettings() {
 
   const handleHeroSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setShowHeroConfirm(true);
+  };
+
+  const confirmHeaderUpdate = () => {
+    mutation.mutate(header);
+    setShowHeaderConfirm(false);
+  };
+
+  const confirmHeroUpdate = () => {
     mutation.mutate(hero);
+    setShowHeroConfirm(false);
   };
 
   return (
     <div className="space-y-8">
       {/* Header (Logo, Title, Subtitle, Favicon) */}
+      <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
+        <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Header Settings</h2>
+        <div className="flex flex-col md:flex-row gap-4 text-sm">
+          <div className="flex-1">
+            <div><span className="font-medium text-neutral-300">Site Title:</span> <span className="text-neutral-200">{settings.site_title || <span className="italic text-neutral-600">Not set</span>}</span></div>
+            <div><span className="font-medium text-neutral-300">Site Subtitle:</span> <span className="text-neutral-200">{settings.site_subtitle || <span className="italic text-neutral-600">Not set</span>}</span></div>
+          </div>
+          <div className="flex-1">
+            <div><span className="font-medium text-neutral-300">Logo URL:</span> <span className="text-neutral-200">{settings.logo_url || <span className="italic text-neutral-600">Not set</span>}</span></div>
+            <div><span className="font-medium text-neutral-300">Favicon URL:</span> <span className="text-neutral-200">{settings.favicon_url || <span className="italic text-neutral-600">Not set</span>}</span></div>
+          </div>
+        </div>
+      </div>
       <form
         onSubmit={handleHeaderSubmit}
         className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4"
@@ -147,7 +183,36 @@ export default function DashboardSiteSettings() {
           Save Header
         </Button>
       </form>
+      <AlertDialog open={showHeaderConfirm} onOpenChange={setShowHeaderConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to update the Header settings?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will overwrite the previous site header information. Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <button type="button" className="mt-0">Cancel</button>
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <button type="button" className="bg-primary text-white px-4 py-2 rounded" onClick={confirmHeaderUpdate}>
+                Yes, save changes
+              </button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {/* Hero Section */}
+      <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
+        <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Hero Section</h2>
+        <div className="space-y-1 text-sm">
+          <div><span className="font-medium text-neutral-300">Headline:</span> <span className="text-neutral-200">{settings.hero_headline || <span className="italic text-neutral-600">Not set</span>}</span></div>
+          <div><span className="font-medium text-neutral-300">Subtext:</span> <span className="text-neutral-200">{settings.hero_subtext || <span className="italic text-neutral-600">Not set</span>}</span></div>
+          <div><span className="font-medium text-neutral-300">CTA Label:</span> <span className="text-neutral-200">{settings.hero_cta_label || <span className="italic text-neutral-600">Not set</span>}</span></div>
+          <div><span className="font-medium text-neutral-300">CTA Link:</span> <span className="text-neutral-200">{settings.hero_cta_link || <span className="italic text-neutral-600">Not set</span>}</span></div>
+        </div>
+      </div>
       <form
         onSubmit={handleHeroSubmit}
         className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4"
@@ -193,6 +258,26 @@ export default function DashboardSiteSettings() {
           Save Hero
         </Button>
       </form>
+      <AlertDialog open={showHeroConfirm} onOpenChange={setShowHeroConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to update the Hero section?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will overwrite the previous hero content. Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <button type="button" className="mt-0">Cancel</button>
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <button type="button" className="bg-primary text-white px-4 py-2 rounded" onClick={confirmHeroUpdate}>
+                Yes, save changes
+              </button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
