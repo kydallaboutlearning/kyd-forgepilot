@@ -101,7 +101,7 @@ export function DashboardBenefitsSettings({
     setShowConfirm(false);
   }
 
-  // Normalize current values ONLY for the form (which requires required fields)
+  // Always normalize current values before passing to form
   const normalizedCurrent = {
     benefits_headline: current.benefits_headline || "",
     benefits_items: normalizeBenefitItems(current.benefits_items || []),
@@ -109,10 +109,11 @@ export function DashboardBenefitsSettings({
 
   return (
     <>
-      {/* Pass raw current props here: */}
+      {/* Always pass raw current, which is partial, to the display card */}
       <DashboardBenefitsCurrentContent current={current} />
+      {/* Always pass normalized required values to the form */}
       <DashboardBenefitsForm
-        local={local}
+        local={normalizedCurrent}
         isPending={isPending}
         onFieldChange={onFieldChange}
         onItemChange={onItemChange}
