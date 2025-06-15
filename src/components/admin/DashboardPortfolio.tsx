@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,21 +8,21 @@ import { toast } from "@/hooks/use-toast";
 
 type Portfolio = {
   id?: string;
-  title?: string;
-  description?: string;
-  images?: string[];
-  video_url?: string;
-  date?: string;
-  category?: string;
-  tags?: string[];
-  summary?: string;
-  problem?: string[];
-  solution?: string[];
-  tech_stack?: string[];
-  results?: { kpi: string; desc: string }[];
-  testimonial?: { name: string; quote: string } | null;
-  contact_email?: string;
-  contact_calendly?: string;
+  title: string;
+  description: string;
+  images: string[];
+  video_url: string;
+  date: string;
+  category: string;
+  tags: string[];
+  summary: string;
+  problem: string[];
+  solution: string[];
+  tech_stack: string[];
+  results: { kpi: string; desc: string }[];
+  testimonial: { name: string; quote: string } | null;
+  contact_email: string;
+  contact_calendly: string;
 };
 
 const initialState: Portfolio = {
@@ -47,17 +47,75 @@ export default function DashboardPortfolio() {
   const [items, setItems] = useState<Portfolio[]>([]);
   const [editing, setEditing] = useState<Portfolio | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Load portfolio items
   const fetchItems = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from("portfolio_items").select("*").order("date", { ascending: false });
+    const { data, error } = await supabase
+      .from("portfolio_items")
+      .select("*")
+      .order("date", { ascending: false });
     if (error) toast({ variant: "destructive", title: "Error", description: error.message });
-    if (data) setItems(data);
+    if (data) {
+      setItems(
+        data.map((item: any) => ({
+          ...item,
+          images: Array.isArray(item.images)
+            ? item.images
+            : typeof item.images === "string"
+            ? JSON.parse(item.images)
+            : item.images && typeof item.images === "object"
+            ? (item.images as string[])
+            : [],
+          tags: Array.isArray(item.tags) ? item.tags : [],
+          problem: Array.isArray(item.problem) ? item.problem : [],
+          solution: Array.isArray(item.solution) ? item.solution : [],
+          tech_stack: Array.isArray(item.tech_stack) ? item.tech_stack : [],
+          results: Array.isArray(item.results)
+            ? item.results
+            : item.results
+            ? JSON.parse(item.results)
+            : [],
+          testimonial: item.testimonial
+            ? typeof item.testimonial === "string"
+              ? JSON.parse(item.testimonial)
+              : item.testimonial
+            : null,
+        }))
+      );
+    }
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, []);
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  // Handle file upload
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const filePath = `${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage
+      .from("portfolio-images")
+      .upload(filePath, file, { cacheControl: "3600", upsert: false });
+    setUploading(false);
+    if (error) {
+      toast({ variant: "destructive", title: "Upload failed", description: error.message });
+    } else {
+      const url = `${supabase.storage
+        .from("portfolio-images")
+        .getPublicUrl(filePath).data.publicUrl}`;
+      setEditing((s) =>
+        s ? { ...s, images: [...(s.images || []), url] } : null
+      );
+      toast({ title: "Uploaded!", description: "Image added to this project." });
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   // Save (insert/update) portfolio item
   async function handleSave(e: React.FormEvent) {
@@ -65,27 +123,51 @@ export default function DashboardPortfolio() {
     setLoading(true);
     const item = editing!;
     const { id, ...fields } = item;
-    // Ensure types for arrays
-    if (fields.tags && typeof fields.tags === "string") fields.tags = fields.tags.split(",").map((t: string) => t.trim());
-    if (fields.problem && typeof fields.problem === "string") fields.problem = fields.problem.split("\n").filter(Boolean);
-    if (fields.solution && typeof fields.solution === "string") fields.solution = fields.solution.split("\n").filter(Boolean);
+    // Ensure arrays are indeed arrays
+    const prepared = {
+      ...fields,
+      tags: Array.isArray(fields.tags)
+        ? fields.tags
+        : typeof fields.tags === "string"
+        ? fields.tags.split(",").map((t: string) => t.trim())
+        : [],
+      problem: Array.isArray(fields.problem)
+        ? fields.problem
+        : typeof fields.problem === "string"
+        ? fields.problem.split("\n").filter(Boolean)
+        : [],
+      solution: Array.isArray(fields.solution)
+        ? fields.solution
+        : typeof fields.solution === "string"
+        ? fields.solution.split("\n").filter(Boolean)
+        : [],
+      tech_stack: Array.isArray(fields.tech_stack)
+        ? fields.tech_stack
+        : typeof fields.tech_stack === "string"
+        ? fields.tech_stack.split(",").map((x: string) => x.trim())
+        : [],
+      images: fields.images,
+      results: Array.isArray(fields.results) ? fields.results : [],
+      testimonial: fields.testimonial,
+    };
     let result;
     if (id) {
-      result = await supabase.from("portfolio_items").update(fields).eq("id", id).select().single();
+      result = await supabase.from("portfolio_items").update(prepared).eq("id", id).select().single();
     } else {
-      result = await supabase.from("portfolio_items").insert([fields]).select().single();
+      result = await supabase.from("portfolio_items").insert([prepared]).select().single();
     }
     if (result?.error) {
       toast({ variant: "destructive", title: "Failed", description: result.error.message });
     } else {
-      toast({ title: item.id ? "Updated!" : "Created!" });
+      toast({ title: id ? "Updated!" : "Created!" });
       setEditing(null);
       fetchItems();
     }
     setLoading(false);
   }
 
-  const startEdit = (item?: Portfolio) => setEditing(item ? { ...item } : { ...initialState });
+  const startEdit = (item?: Portfolio) =>
+    setEditing(item ? { ...item } : { ...initialState });
 
   async function handleDelete(id?: string) {
     if (!id) return;
@@ -100,8 +182,16 @@ export default function DashboardPortfolio() {
     setLoading(false);
   }
 
+  function handleRemoveImage(idx: number) {
+    setEditing((s) =>
+      !s
+        ? s
+        : { ...s, images: s.images.filter((_, i) => i !== idx) }
+    );
+  }
+
   return (
-    <div className="mt-12 max-w-3xl mx-auto">
+    <div className="mt-6 max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-bold text-xl">Portfolio Projects</h2>
         <Button size="sm" variant="default" onClick={() => startEdit()}>Add New Project</Button>
@@ -109,65 +199,88 @@ export default function DashboardPortfolio() {
       {editing && (
         <form onSubmit={handleSave} className="space-y-4 bg-muted/40 p-6 rounded-lg mb-8">
           <Label>Project Title</Label>
-          <Input value={editing.title || ""} onChange={e => setEditing(s => ({ ...s!, title: e.target.value }))} required />
+          <Input value={editing.title} onChange={e => setEditing(s => ({ ...s!, title: e.target.value }))} required />
           <Label>Description (plain text)</Label>
-          <Input value={editing.description || ""} onChange={e => setEditing(s => ({ ...s!, description: e.target.value }))} />
+          <Input value={editing.description} onChange={e => setEditing(s => ({ ...s!, description: e.target.value }))} />
           <Label>Summary</Label>
-          <Input value={editing.summary || ""} onChange={e => setEditing(s => ({ ...s!, summary: e.target.value }))} />
+          <Input value={editing.summary} onChange={e => setEditing(s => ({ ...s!, summary: e.target.value }))} />
           <Label>Date</Label>
-          <Input type="date" value={editing.date || ""} onChange={e => setEditing(s => ({ ...s!, date: e.target.value }))} />
+          <Input type="date" value={editing.date} onChange={e => setEditing(s => ({ ...s!, date: e.target.value }))} />
           <Label>Category</Label>
-          <Input value={editing.category || ""} onChange={e => setEditing(s => ({ ...s!, category: e.target.value }))} />
+          <Input value={editing.category} onChange={e => setEditing(s => ({ ...s!, category: e.target.value }))} />
           <Label>Tag(s) (comma separated)</Label>
-          <Input value={Array.isArray(editing.tags) ? editing.tags.join(", ") : editing.tags || ""} onChange={e => setEditing(s => ({ ...s!, tags: e.target.value }))} />
-          <Label>Images (comma separated URLs)</Label>
-          <Input value={Array.isArray(editing.images) ? editing.images.join(",") : editing.images || ""} onChange={e => setEditing(s => ({ ...s!, images: e.target.value.split(",").map((x:string)=>x.trim()) }))} />
+          <Input value={editing.tags.join(", ")} onChange={e => setEditing(s => ({ ...s!, tags: e.target.value.split(",").map(x => x.trim()).filter(Boolean) }))} />
+          <Label>Images</Label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {editing.images.map((img, idx) => (
+              <div key={img} className="relative inline-block group w-20 h-16">
+                <img src={img} alt={`Img ${idx}`}>
+                </img>
+                <button type="button" onClick={() => handleRemoveImage(idx)}
+                  className="absolute top-0 right-0 text-xs text-white bg-black/80 px-1 rounded opacity-80 hover:bg-red-600 transition">
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <input
+            className="block mb-3"
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            disabled={uploading}
+          />
           <Label>Video URL</Label>
-          <Input value={editing.video_url || ""} onChange={e => setEditing(s => ({ ...s!, video_url: e.target.value }))} />
+          <Input value={editing.video_url} onChange={e => setEditing(s => ({ ...s!, video_url: e.target.value }))} />
           <Label>Problem (one per line)</Label>
-          <textarea className="w-full rounded bg-card p-2" rows={2} value={Array.isArray(editing.problem) ? editing.problem.join("\n") : editing.problem || ""} onChange={e => setEditing(s => ({ ...s!, problem: e.target.value }))} />
+          <textarea className="w-full rounded bg-card p-2" rows={2}
+            value={editing.problem.join("\n")}
+            onChange={e => setEditing(s => ({ ...s!, problem: e.target.value.split("\n").filter(Boolean) }))} />
           <Label>Solution (one per line)</Label>
-          <textarea className="w-full rounded bg-card p-2" rows={2} value={Array.isArray(editing.solution) ? editing.solution.join("\n") : editing.solution || ""} onChange={e => setEditing(s => ({ ...s!, solution: e.target.value }))} />
+          <textarea className="w-full rounded bg-card p-2" rows={2}
+            value={editing.solution.join("\n")}
+            onChange={e => setEditing(s => ({ ...s!, solution: e.target.value.split("\n").filter(Boolean) }))} />
           <Label>Tech Stack (comma separated)</Label>
-          <Input value={Array.isArray(editing.tech_stack) ? editing.tech_stack.join(", ") : editing.tech_stack || ""} onChange={e => setEditing(s => ({ ...s!, tech_stack: e.target.value }))} />
+          <Input value={editing.tech_stack.join(", ")} onChange={e => setEditing(s => ({ ...s!, tech_stack: e.target.value.split(",").map(x => x.trim()).filter(Boolean) }))} />
           <Label>Results (format: kpi|desc per line)</Label>
-          <textarea className="w-full rounded bg-card p-2" rows={2} value={Array.isArray(editing.results)
-            ? editing.results.map(r => `${r.kpi}|${r.desc}`).join("\n")
-            : editing.results || ""}
+          <textarea className="w-full rounded bg-card p-2" rows={2}
+            value={editing.results.map(r => `${r.kpi}|${r.desc}`).join("\n")}
             onChange={e =>
               setEditing(s => ({
                 ...s!,
                 results: e.target.value
                   .split("\n")
                   .map(line => {
-                    const [kpi, desc] = line.split("|");
-                    return kpi && desc ? { kpi: kpi.trim(), desc: desc.trim() } : null;
+                    const [kpi, ...descArr] = line.split("|");
+                    return kpi && descArr.length
+                      ? { kpi: kpi.trim(), desc: descArr.join("|").trim() }
+                      : null;
                   })
                   .filter(Boolean) as { kpi: string; desc: string }[]
               }))
-            }
-          />
+            } />
           <Label>Testimonial (format: name|quote — leave blank for none)</Label>
           <Input value={editing.testimonial ? `${editing.testimonial.name}|${editing.testimonial.quote}` : ""}
-              onChange={e => {
-                const val = e.target.value;
-                if (!val) setEditing(s => ({ ...s!, testimonial: null }));
-                else {
-                  const [name, ...quoteArr] = val.split("|");
-                  setEditing(s => ({
-                    ...s!,
-                    testimonial: name && quoteArr.length
-                      ? { name: name.trim(), quote: quoteArr.join("|").trim() }
-                      : null
-                  }));
-                }
+            onChange={e => {
+              const val = e.target.value;
+              if (!val) setEditing(s => ({ ...s!, testimonial: null }));
+              else {
+                const [name, ...quoteArr] = val.split("|");
+                setEditing(s => ({
+                  ...s!,
+                  testimonial: name && quoteArr.length
+                    ? { name: name.trim(), quote: quoteArr.join("|").trim() }
+                    : null
+                }));
               }
+            }
             }
           />
           <Label>Contact Email</Label>
-          <Input value={editing.contact_email || ""} onChange={e => setEditing(s => ({ ...s!, contact_email: e.target.value }))} />
+          <Input value={editing.contact_email} onChange={e => setEditing(s => ({ ...s!, contact_email: e.target.value }))} />
           <Label>Contact Calendly</Label>
-          <Input value={editing.contact_calendly || ""} onChange={e => setEditing(s => ({ ...s!, contact_calendly: e.target.value }))} />
+          <Input value={editing.contact_calendly} onChange={e => setEditing(s => ({ ...s!, contact_calendly: e.target.value }))} />
           <div className="flex gap-3 mt-2">
             <Button type="submit" disabled={loading}>{editing.id ? "Update" : "Create"}</Button>
             <Button type="button" variant="secondary" onClick={() => setEditing(null)}>Cancel</Button>
@@ -209,3 +322,5 @@ export default function DashboardPortfolio() {
     </div>
   );
 }
+
+// 🚨 This file is getting too large! Consider refactoring to smaller components for maintainability.
