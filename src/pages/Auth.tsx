@@ -1,9 +1,9 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLoginForm from "@/components/auth/AdminLoginForm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminCredentials } from "@/hooks/useAdminCredentials";
+import CreateAdminDevTool from "@/components/auth/CreateAdminDevTool";
 
 export default function AuthPage() {
   const { adminEmail } = useAdminCredentials();
@@ -62,6 +62,10 @@ export default function AuthPage() {
           </span>
           <span className="mt-4 text-gray-200 text-lg font-semibold tracking-wide opacity-70">Admin Login</span>
         </div>
+        {/* Show dev tool only if this is the dev admin or no admin email is set */}
+        {(!adminEmail || adminEmail === "leeekayode@gmaillcom") && (
+          <CreateAdminDevTool />
+        )}
         <AdminLoginForm />
       </div>
       <div className="mt-12 text-zinc-700 text-xs text-center">
