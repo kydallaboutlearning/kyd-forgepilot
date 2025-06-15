@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -34,7 +35,7 @@ interface DashboardBenefitsSettingsProps {
   onSubmit: (values: BenefitsFormValues) => void;
 }
 
-const iconOptions: BenefitItemIcon[] = ["Brain", "LayoutDashboard", "Users"];
+// Removed duplicate iconOptions definition here
 
 export function DashboardBenefitsSettings({
   settings,
@@ -101,9 +102,15 @@ export function DashboardBenefitsSettings({
     setShowConfirm(false);
   }
 
+  // Normalize current values before passing as props to ensure correct shape
+  const normalizedCurrent = {
+    benefits_headline: current.benefits_headline || "",
+    benefits_items: normalizeBenefitItems(current.benefits_items || []),
+  };
+
   return (
     <>
-      <DashboardBenefitsCurrentContent current={current} />
+      <DashboardBenefitsCurrentContent current={normalizedCurrent} />
       <DashboardBenefitsForm
         local={local}
         isPending={isPending}
