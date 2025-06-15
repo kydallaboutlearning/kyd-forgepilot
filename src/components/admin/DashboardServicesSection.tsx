@@ -1,10 +1,20 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Wrench, Bot, BarChart, Brain, LayoutDashboard } from "lucide-react";
+
+// Map string keys to Lucide icon components
+const ICONS = {
+  wrench: Wrench,
+  brain: Brain,
+  bot: Bot,
+  "bar-chart": BarChart,
+  "layout-dashboard": LayoutDashboard,
+};
 
 type Service = {
   id: string;
@@ -91,17 +101,22 @@ export function DashboardServicesSection() {
       <h2 className="text-lg font-bold text-primary mb-3">Services</h2>
       {isLoading ? <div>Loading…</div> :
         <div className="space-y-2">
-          {services.map(s => (
-            <div key={s.id} className="border border-neutral-700 rounded-lg p-2 flex items-center gap-4">
-              <span className="w-8 h-8 flex items-center justify-center text-primary">{s.icon}</span>
-              <div className="flex-1">
-                <div className="font-semibold text-white">{s.name}</div>
-                <div className="text-gray-400 text-sm">{s.description}</div>
+          {services.map(s => {
+            const IconComp = ICONS[s.icon as keyof typeof ICONS];
+            return (
+              <div key={s.id} className="border border-neutral-700 rounded-lg p-2 flex items-center gap-4">
+                <span className="w-8 h-8 flex items-center justify-center text-primary">
+                  {IconComp ? <IconComp /> : s.icon}
+                </span>
+                <div className="flex-1">
+                  <div className="font-semibold text-white">{s.name}</div>
+                  <div className="text-gray-400 text-sm">{s.description}</div>
+                </div>
+                <Button size="icon" variant="ghost" onClick={() => startEdit(s)}><Pencil className="w-5 h-5" /></Button>
+                <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(s.id)}><Trash2 className="w-5 h-5" /></Button>
               </div>
-              <Button size="icon" variant="ghost" onClick={() => startEdit(s)}><Pencil className="w-5 h-5" /></Button>
-              <Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate(s.id)}><Trash2 className="w-5 h-5" /></Button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       }
       <Button className="mt-4" onClick={startAdd}><Plus className="mr-2 w-4 h-4" /> Add Service</Button>
