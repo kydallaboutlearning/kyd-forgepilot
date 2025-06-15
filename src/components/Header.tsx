@@ -1,3 +1,5 @@
+
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -14,6 +16,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileNavDrawer } from "./MobileNavDrawer";
 
+// Nav config
 const nav = [
   { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-1.5" /> },
   { to: "#mission", label: "Mission", icon: <Rocket className="w-4 h-4 mr-1.5" /> },
@@ -81,10 +84,32 @@ function NavLinks() {
 
 export default function Header() {
   const isMobile = useIsMobile();
+  // detect if scrolled a bit
+  const [scrolled, setScrolled] = useState(false);
 
+  useEffect(() => {
+    function onScroll() {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Animate: on scroll, increase bg opacity & add shadow
   return (
-    <header className="relative w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-5 md:px-4 select-none z-50">
-      {/* Dot grid background */}
+    <header
+      className={`
+        sticky top-0 w-full flex items-center justify-center
+        transition-all duration-300 z-[100]
+        ${scrolled ? "bg-black/95 shadow-[0_2px_32px_0_#ffb74a16] backdrop-blur-sm animate-fade-in" : "bg-transparent"}
+      `}
+      style={{ WebkitBackdropFilter: scrolled ? "blur(3px)" : undefined }}
+    >
+      {/* Dot grid bg always behind header */}
       <svg
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-0"
         width="100%"
@@ -97,14 +122,15 @@ export default function Header() {
         </defs>
         <rect width="100%" height="100%" fill="url(#forgepilot-dot-header)" />
       </svg>
-      {/* Main header bar */}
+      {/* Actual nav */}
       <div
         className={`
           relative z-10 w-full max-w-5xl
           flex items-center
           justify-between
           py-2 md:py-[0.5rem] px-2 sm:px-4 md:px-8
-          rounded-2xl md:rounded-full bg-black bg-opacity-[0.95] md:bg-opacity-[0.82]
+          rounded-2xl md:rounded-full
+          bg-black bg-opacity-[0.95] md:bg-opacity-[0.82]
           border border-[#FFB74A]/40
           shadow-[0_0_0_1.5px_#FFB74A20]
           transition-all
@@ -113,7 +139,7 @@ export default function Header() {
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30",
         }}
       >
-        {/* MOBILE: logo left, hamburger menu right */}
+        {/* MOBILE: logo left, hamburger right */}
         <div className="flex w-full items-center justify-between md:hidden h-12">
           <Link
             to="/"
@@ -127,10 +153,9 @@ export default function Header() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          {/* Z-50 ensures drawer trigger stays clickable */}
           <div className="z-50"><MobileNavDrawer /></div>
         </div>
-        {/* TABLET & DESKTOP: logo left, nav center, CTA right */}
+        {/* DESKTOP: */}
         <div className="hidden md:flex w-full items-center justify-between gap-2 min-h-[56px]">
           <Link
             to="/"
