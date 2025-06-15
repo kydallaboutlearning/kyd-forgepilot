@@ -54,6 +54,7 @@ export default function DashboardAdminSettings() {
     let { id, ...updateFields } = settings;
     let updates: any = { ...updateFields };
 
+    // Password checks
     if (settings.admin_email?.trim() && adminPass) {
       if (adminPass !== adminPass2) {
         toast({ variant: "destructive", title: "Passwords must match!" });
@@ -84,6 +85,10 @@ export default function DashboardAdminSettings() {
           .select()
           .maybeSingle();
       }
+
+      // Debug log what was returned
+      console.log("Admin settings Save result:", result);
+
       if (result.error) {
         toast({
           variant: "destructive",
@@ -96,12 +101,32 @@ export default function DashboardAdminSettings() {
         setAdminPass2("");
         toast({ title: "Admin updated!" });
       } else {
-        toast({
-          variant: "destructive",
-          title: "Update failed",
-          description: "No row returned. Something went wrong."
-        });
+        // Fallback: fetch most-recent admin settings row
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("id,admin_email,admin_password_hash")
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setSettings(data);
+          setAdminPass("");
+          setAdminPass2("");
+          toast({ title: "Admin updated!" });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Update failed",
+            description: "No row returned. Something went wrong.",
+          });
+        }
       }
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Update failed",
+        description: err.message || "Unknown error",
+      });
     } finally {
       setLoading(false);
     }
