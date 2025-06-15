@@ -78,12 +78,12 @@ export const MOCK_PROJECTS = [
 export default function Portfolio() {
   const [projects, setProjects] = useState(MOCK_PROJECTS);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>("all"); // Set default to "all"
 
   const categories = Array.from(new Set(projects.map((p) => p.category)));
   const filtered = projects.filter(
     (p) =>
-      (!filter || filter === "" || p.category === filter) &&
+      (!filter || filter === "all" || p.category === filter) && // Adjust for "all"
       (search === "" ||
         p.title.toLowerCase().includes(search.toLowerCase()) ||
         p.description.toLowerCase().includes(search.toLowerCase()))
@@ -111,10 +111,12 @@ export default function Portfolio() {
             </div>
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="min-w-[140px] bg-neutral-900 border-neutral-800 text-white focus:ring-primary/70">
-                <SelectValue placeholder="All Categories">{filter || "All"}</SelectValue>
+                <SelectValue placeholder="All Categories">
+                  {filter === "all" ? "All" : filter}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-neutral-900 border-neutral-800 text-white z-50">
-                <SelectItem key="all" value="">All</SelectItem>
+                <SelectItem key="all" value="all">All</SelectItem>
                 {categories.map(c => (
                   <SelectItem key={c} value={c}>{c}</SelectItem>
                 ))}
