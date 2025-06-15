@@ -488,6 +488,8 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          admin_email: string | null
+          admin_password_hash: string | null
           favicon_url: string | null
           footer_text: string | null
           hero_cta_label: string | null
@@ -503,6 +505,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          admin_email?: string | null
+          admin_password_hash?: string | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null
@@ -518,6 +522,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          admin_email?: string | null
+          admin_password_hash?: string | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null

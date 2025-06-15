@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { comparePassword } from "@/utils/hash";
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -13,40 +14,77 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect if already signed in as admin
+  // Pull admin credentials for validation
+  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminPasswordHash, setAdminPasswordHash] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch latest credentials
+    (async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("admin_email, admin_password_hash")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      setAdminEmail(data?.admin_email ?? null);
+      setAdminPasswordHash(data?.admin_password_hash ?? null);
+    })();
+  }, []);
+
+  // Redirect if signed in as admin
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      const adminEmail = "admin@agency.ai";
-      if (data.session && data.session.user.email?.toLowerCase() === adminEmail) {
+      if (data.session && data.session.user.email?.toLowerCase() === adminEmail?.toLowerCase()) {
         navigate("/dashboard", { replace: true });
       }
     });
-  }, [navigate]);
+  }, [navigate, adminEmail]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
-    const adminEmail = "admin@agency.ai";
-    if (email.trim().toLowerCase() !== adminEmail) {
-      setErr("Only admin login is allowed.");
+
+    // Validate credentials against site_settings entry
+    if (!adminEmail || !adminPasswordHash) {
+      setErr("No admin credentials configured. Please set them in the dashboard.");
       setLoading(false);
       return;
     }
-    // Try to sign in with Supabase
-    const { error } = await supabase.auth.signInWithPassword({
+    if (email.trim().toLowerCase() !== adminEmail.trim().toLowerCase()) {
+      setErr("Only the configured admin login is allowed.");
+      setLoading(false);
+      return;
+    }
+    // Check password hash (local, not via Supabase Auth)
+    const ok = await comparePassword(password, adminPasswordHash);
+    if (!ok) {
+      setErr("Invalid credentials.");
+      setLoading(false);
+      return;
+    }
+    // Log in with Supabase Auth (register if user doesn't exist!)
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) {
-      setErr("Invalid credentials. (demo: admin@agency.ai / admin)");
-      setLoading(false);
-      return;
+    if (signInErr) {
+      // Try sign up if not exists
+      const { error: signUpErr } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/dashboard` }
+      });
+      if (signUpErr) {
+        setErr("Error logging in: " + (signUpErr.message || "unknown"));
+        setLoading(false);
+        return;
+      }
     }
-    // Give Supabase client a moment to refresh session before navigation
     setTimeout(() => {
       navigate("/dashboard");
-    }, 600);
+    }, 700);
     setLoading(false);
   }
 
@@ -122,7 +160,8 @@ export default function AuthPage() {
                 focus-visible:bg-zinc-900/90
                 focus-visible:ring-2 focus-visible:ring-primary transition-all
               "
-              placeholder="admin@agency.ai"
+              placeholder={adminEmail || "admin@agency.ai"}
+              autoComplete="username"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -150,6 +189,7 @@ export default function AuthPage() {
                 focus-visible:ring-2 focus-visible:ring-primary transition-all
               "
               placeholder="••••••••"
+              autoComplete="current-password"
             />
           </div>
           {err && (
@@ -177,9 +217,11 @@ export default function AuthPage() {
               "Log in"
             )}
           </Button>
-          <div className="text-xs text-center text-zinc-400 mt-2 opacity-75">
-            Demo credentials: <span className="font-mono">admin@agency.ai / admin</span>
-          </div>
+          {adminEmail && (
+            <div className="text-xs text-center text-zinc-400 mt-1 opacity-80">
+              Login as: <span className="font-mono">{adminEmail}</span>
+            </div>
+          )}
         </form>
       </div>
       <div className="mt-12 text-zinc-700 text-xs text-center">
