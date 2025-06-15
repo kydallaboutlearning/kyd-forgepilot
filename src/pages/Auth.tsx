@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -51,7 +50,25 @@ export default function AuthPage() {
       return;
     }
 
-    // Log in with Supabase Auth (register if user doesn't exist!)
+    // Clean up previous auth state (robustness)
+    try {
+      // Remove all Supabase/local auth tokens for a fresh login
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+      Object.keys(sessionStorage || {}).forEach((key) => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+      await supabase.auth.signOut({ scope: "global" });
+    } catch (_) {
+      // ignore
+    }
+
+    // Try log in with Supabase Auth (register if user doesn't exist!)
     const { error: signInErr } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -64,14 +81,31 @@ export default function AuthPage() {
         options: { emailRedirectTo: `${window.location.origin}/dashboard` },
       });
       if (signUpErr) {
-        setErr("Error logging in: " + (signUpErr.message || "unknown"));
+        // If this error is "Email not confirmed", show friendly message
+        if (
+          signUpErr.message &&
+          (signUpErr.message.toLowerCase().includes("confirm") ||
+            signUpErr.message.toLowerCase().includes("email not confirmed"))
+        ) {
+          setErr(
+            "Please check your email to confirm your account before logging in."
+          );
+        } else {
+          setErr("Error logging in: " + (signUpErr.message || "unknown"));
+        }
+        setLoading(false);
+        return;
+      } else {
+        // Show message for confirmation step
+        setErr(
+          "A confirmation email was sent to your address. Please confirm and log in again."
+        );
         setLoading(false);
         return;
       }
     }
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 700);
+    // Success: force full redirect
+    window.location.href = "/dashboard";
     setLoading(false);
   }
 
@@ -204,11 +238,11 @@ export default function AuthPage() {
               "Log in"
             )}
           </Button>
-          {adminEmail && (
-            <div className="text-xs text-center text-zinc-400 mt-1 opacity-80">
-              Login as: <span className="font-mono">{adminEmail}</span>
-            </div>
-          )}
+          {/* Optionally, show a generic note for first-time signup */}
+          <div className="text-xs text-center text-zinc-400 mt-3 opacity-70">
+            {adminEmail &&
+              "If this is your first time logging in, you may need to confirm your email to activate your admin account."}
+          </div>
         </form>
       </div>
       <div className="mt-12 text-zinc-700 text-xs text-center">
