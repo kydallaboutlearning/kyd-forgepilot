@@ -1,3 +1,5 @@
+
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -82,6 +84,22 @@ function NavLinks() {
 
 export default function Header() {
   const isMobile = useIsMobile();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 12);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Check initial
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Adjust opacity based on scroll
+  const backgroundClasses = scrolled
+    ? "bg-black bg-opacity-[0.85] md:bg-opacity-[0.82] border border-[#FFB74A]/40"
+    : "bg-black bg-opacity-[0.6] md:bg-opacity-[0.52] border border-[#FFB74A]/20";
 
   return (
     <header
@@ -90,7 +108,7 @@ export default function Header() {
         zIndex: 100,
         pointerEvents: "auto",
         height: "80px",
-        minHeight: "56px" // for mobile toolbar height
+        minHeight: "56px"
       }}
     >
       {/* Dot grid background */}
@@ -113,10 +131,10 @@ export default function Header() {
           flex items-center
           justify-between
           py-2 md:py-[0.5rem] px-2 sm:px-4 md:px-8
-          rounded-2xl md:rounded-full bg-black bg-opacity-[0.95] md:bg-opacity-[0.82]
-          border border-[#FFB74A]/40
+          rounded-2xl md:rounded-full
           shadow-[0_0_0_1.5px_#FFB74A20]
-          transition-all
+          transition-all duration-300
+          ${backgroundClasses}
         `}
         style={{
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30"
