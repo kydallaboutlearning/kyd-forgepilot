@@ -1,5 +1,4 @@
-
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -8,15 +7,7 @@ import { type BenefitItem, type BenefitItemIcon } from "@/types/cms";
 import { useEffect, useState } from "react";
 import DashboardBenefitsConfirmDialog from "./DashboardBenefitsConfirmDialog";
 import { DashboardBenefitItemEditor } from "./DashboardBenefitItemEditor";
-
-// Factory for a new, empty benefit item
-function createEmptyBenefitItem(): BenefitItem {
-  return {
-    title: "",
-    desc: "",
-    icon: "Brain",
-  };
-}
+import { createEmptyBenefitItem, normalizeBenefitItems } from "./benefitItemUtils";
 
 // validation schemas
 const benefitItemSchema = z.object({
@@ -27,7 +18,9 @@ const benefitItemSchema = z.object({
 
 const formSchema = z.object({
   benefits_headline: z.string().min(1, "Headline is required"),
-  benefits_items: z.array(benefitItemSchema).max(3, "You can have a maximum of 3 benefits."),
+  benefits_items: z
+    .array(benefitItemSchema)
+    .max(3, "You can have a maximum of 3 benefits."),
 });
 
 type BenefitsFormValues = z.infer<typeof formSchema>;
@@ -47,16 +40,17 @@ export function DashboardBenefitsSettings({
   isPending,
   onSubmit,
 }: DashboardBenefitsSettingsProps) {
+  // Safely normalize settings to always use full BenefitItem
   const [local, setLocal] = useState<BenefitsFormValues>({
     benefits_headline: settings.benefits_headline || "",
-    benefits_items: settings.benefits_items || [],
+    benefits_items: normalizeBenefitItems(settings.benefits_items || []),
   });
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     setLocal({
       benefits_headline: settings.benefits_headline || "",
-      benefits_items: settings.benefits_items || [],
+      benefits_items: normalizeBenefitItems(settings.benefits_items || []),
     });
   }, [settings]);
 
@@ -81,16 +75,22 @@ export function DashboardBenefitsSettings({
   };
 
   const onFieldChange = (key: keyof BenefitsFormValues, value: any) => {
-    setLocal((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setLocal((prev) => {
+      if (key === "benefits_items") {
+        // Always normalize here
+        return { ...prev, benefits_items: normalizeBenefitItems(value) };
+      }
+      return { ...prev, [key]: value };
+    });
   };
 
   const onItemChange = (idx: number, key: keyof BenefitItem, value: any) => {
     setLocal((prev) => {
-      const items = [...prev.benefits_items];
-      items[idx] = { ...items[idx], [key]: value };
+      const items = prev.benefits_items.map((item, i) =>
+        i === idx
+          ? normalizeBenefitItems([{ ...item, [key]: value }])[0]
+          : item
+      );
       return { ...prev, benefits_items: items };
     });
   };
