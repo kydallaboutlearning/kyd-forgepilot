@@ -1,169 +1,100 @@
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
-import { ImageUpload } from "./ImageUpload";
 
-type HeroFields = {
+interface HeroFields {
   hero_headline: string;
   hero_subtext: string;
   hero_cta_label: string;
   hero_cta_link: string;
   hero_image_url: string | null;
-};
+}
 
-type SiteHeroProps = {
+type Props = {
   hero: HeroFields;
   current: HeroFields;
   isPending: boolean;
-  onSubmit: (updates: HeroFields) => void;
+  onSubmit: (vals: HeroFields) => void;
 };
 
-export function SiteHeroSettings({ hero, current, isPending, onSubmit }: SiteHeroProps) {
-  const [local, setLocal] = useState(hero);
-  const [showConfirm, setShowConfirm] = useState(false);
+export function SiteHeroSettings({ hero, current, isPending, onSubmit }: Props) {
+  const [form, setForm] = useState(hero);
 
   useEffect(() => {
-    setLocal(hero);
+    setForm(hero);
   }, [hero]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setLocal({
-      ...local,
-      [e.target.name]: e.target.value,
-    });
-  };
-  
-  const handleImageUpload = (url: string) => {
-    setLocal(prev => ({ ...prev, hero_image_url: url }));
-  };
-
-  const handleForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowConfirm(true);
-  };
-
-  function confirm() {
-    onSubmit(local);
-    setShowConfirm(false);
-  }
-
   return (
-    <>
-      <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
-        <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Hero Section</h2>
-        <div className="space-y-1 text-sm">
-          <div>
-            <span className="font-medium text-neutral-300">Headline: </span>
-            <span className="text-neutral-200">{current.hero_headline || <span className="italic text-neutral-600">Not set</span>}</span>
-          </div>
-          <div>
-            <span className="font-medium text-neutral-300">Subtext: </span>
-            <span className="text-neutral-200">{current.hero_subtext || <span className="italic text-neutral-600">Not set</span>}</span>
-          </div>
-          <div>
-            <span className="font-medium text-neutral-300">CTA Label: </span>
-            <span className="text-neutral-200">{current.hero_cta_label || <span className="italic text-neutral-600">Not set</span>}</span>
-          </div>
-          <div>
-            <span className="font-medium text-neutral-300">CTA Link: </span>
-            <span className="text-neutral-200">{current.hero_cta_link || <span className="italic text-neutral-600">Not set</span>}</span>
-          </div>
-          <div className="pt-1">
-            <span className="font-medium text-neutral-300">Image: </span>
-            {current.hero_image_url ? (
-                <img src={current.hero_image_url} alt="Current Hero" className="mt-1 rounded-md max-h-32 w-auto object-cover border border-neutral-700" />
-            ) : (
-              <span className="text-neutral-200 ml-1"><span className="italic text-neutral-600">Not set</span></span>
-            )}
-          </div>
-        </div>
-      </div>
-      <form 
-        onSubmit={handleForm}
-        className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4"
+    <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 mb-6 max-w-2xl">
+      <h3 className="text-lg font-bold mb-4 text-primary">Hero Section Settings</h3>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          onSubmit(form);
+        }}
+        className="space-y-6"
       >
-        <h2 className="text-xl font-semibold text-white mb-1">Hero Section</h2>
-        <div className="space-y-3">
-          <label className="block text-sm text-neutral-300 font-medium">Headline</label>
+        <div>
+          <label className="block font-semibold text-white mb-1">Headline</label>
           <Input
-            name="hero_headline"
-            value={local.hero_headline ?? ""}
-            onChange={handleChange}
-            placeholder="Big headline"
+            type="text"
+            value={form.hero_headline}
+            onChange={e => setForm(f => ({ ...f, hero_headline: e.target.value }))}
+            disabled={isPending}
           />
-          <label className="block text-sm text-neutral-300 font-medium">Subtext</label>
-          <Textarea
-            name="hero_subtext"
-            value={local.hero_subtext ?? ""}
-            onChange={handleChange}
-            placeholder="Short description"
+        </div>
+        <div>
+          <label className="block font-semibold text-white mb-1">Subtext</label>
+          <Input
+            type="text"
+            value={form.hero_subtext}
+            onChange={e => setForm(f => ({ ...f, hero_subtext: e.target.value }))}
+            disabled={isPending}
           />
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex-1">
-              <label className="block text-sm text-neutral-300 font-medium">CTA Label</label>
-              <Input
-                name="hero_cta_label"
-                value={local.hero_cta_label ?? ""}
-                onChange={handleChange}
-                placeholder="Call-to-action Label"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm text-neutral-300 font-medium">CTA Link</label>
-              <Input
-                name="hero_cta_link"
-                value={local.hero_cta_link ?? ""}
-                onChange={handleChange}
-                placeholder="https:// or #anchor"
-              />
-            </div>
-          </div>
         </div>
-        <div className="pt-2">
-            <ImageUpload
-                bucketName="site-assets"
-                currentImageUrl={local.hero_image_url}
-                onUpload={handleImageUpload}
-                folder="hero"
-            />
+        <div>
+          <label className="block font-semibold text-white mb-1">CTA Label</label>
+          <Input
+            type="text"
+            value={form.hero_cta_label}
+            onChange={e => setForm(f => ({ ...f, hero_cta_label: e.target.value }))}
+            disabled={isPending}
+          />
         </div>
-        <Button className="self-end mt-3" type="submit" disabled={isPending}>
-          {isPending ? "Saving..." : "Save Hero"}
-        </Button>
+        <div>
+          <label className="block font-semibold text-white mb-1">CTA Link</label>
+          <Input
+            type="text"
+            value={form.hero_cta_link}
+            onChange={e => setForm(f => ({ ...f, hero_cta_link: e.target.value }))}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <label className="block font-semibold text-white mb-1">Image URL</label>
+          <Input
+            type="text"
+            value={form.hero_image_url || ""}
+            onChange={e => setForm(f => ({ ...f, hero_image_url: e.target.value }))}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <Button type="submit" disabled={isPending}>Save</Button>
+        </div>
       </form>
-      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to update the Hero section?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will overwrite the previous hero content. Do you want to continue?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel asChild>
-              <button type="button" className="mt-0">Cancel</button>
-            </AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <button type="button" className="bg-primary text-white px-4 py-2 rounded" onClick={confirm}>
-                Yes, save changes
-              </button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <div className="mt-4">
+        <span className="text-xs text-gray-400 block">Current values:</span>
+        <ul className="text-xs text-gray-300 list-disc list-inside space-y-1">
+          <li><b>Headline:</b> {current.hero_headline}</li>
+          <li><b>Subtext:</b> {current.hero_subtext}</li>
+          <li><b>CTA Label:</b> {current.hero_cta_label}</li>
+          <li><b>CTA Link:</b> {current.hero_cta_link}</li>
+          <li><b>Image:</b> {current.hero_image_url}</li>
+        </ul>
+      </div>
+    </section>
   );
 }
+

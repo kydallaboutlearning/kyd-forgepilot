@@ -1,156 +1,89 @@
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
 
-type SiteHeaderProps = {
-  header: {
-    site_title: string;
-    site_subtitle: string;
-    logo_url: string;
-    favicon_url: string;
-  };
-  current: {
-    site_title: string;
-    site_subtitle: string;
-    logo_url: string;
-    favicon_url: string;
-  };
+interface HeaderFields {
+  site_title: string;
+  site_subtitle: string;
+  logo_url: string;
+  favicon_url: string;
+}
+
+type Props = {
+  header: HeaderFields;
+  current: HeaderFields;
   isPending: boolean;
-  onSubmit: (updates: {
-    site_title: string;
-    site_subtitle: string;
-    logo_url: string;
-    favicon_url: string;
-  }) => void;
+  onSubmit: (vals: HeaderFields) => void;
 };
 
-export function SiteHeaderSettings({ header, current, isPending, onSubmit }: SiteHeaderProps) {
-  const [local, setLocal] = useState(header);
-  const [showConfirm, setShowConfirm] = useState(false);
+export function SiteHeaderSettings({ header, current, isPending, onSubmit }: Props) {
+  const [form, setForm] = useState(header);
 
   useEffect(() => {
-    setLocal(header);
+    setForm(header);
   }, [header]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocal({
-      ...local,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleForm = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowConfirm(true);
-  };
-
-  function confirm() {
-    onSubmit(local);
-    setShowConfirm(false);
-  }
-
   return (
-    <>
-      <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
-        <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Header Settings</h2>
-        <div className="flex flex-col md:flex-row gap-4 text-sm">
-          <div className="flex-1">
-            <div>
-              <span className="font-medium text-neutral-300">Site Title: </span>
-              <span className="text-neutral-200">{current.site_title || <span className="italic text-neutral-600">Not set</span>}</span>
-            </div>
-            <div>
-              <span className="font-medium text-neutral-300">Site Subtitle: </span>
-              <span className="text-neutral-200">{current.site_subtitle || <span className="italic text-neutral-600">Not set</span>}</span>
-            </div>
-          </div>
-          <div className="flex-1">
-            <div>
-              <span className="font-medium text-neutral-300">Logo URL: </span>
-              <span className="text-neutral-200">{current.logo_url || <span className="italic text-neutral-600">Not set</span>}</span>
-            </div>
-            <div>
-              <span className="font-medium text-neutral-300">Favicon URL: </span>
-              <span className="text-neutral-200">{current.favicon_url || <span className="italic text-neutral-600">Not set</span>}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <form 
-        onSubmit={handleForm} 
-        className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4"
+    <section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 mb-6 max-w-2xl">
+      <h3 className="text-lg font-bold mb-4 text-primary">Header Settings</h3>
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          onSubmit(form);
+        }}
+        className="space-y-6"
       >
-        <h2 className="text-xl font-semibold text-white mb-1">Header</h2>
-        <div className="flex flex-col md:flex-row gap-5">
-          <div className="flex-1 space-y-3">
-            <label className="block text-sm text-neutral-300 font-medium">Site Title</label>
-            <Input
-              name="site_title"
-              value={local.site_title}
-              onChange={handleChange}
-              placeholder="Site Title"
-            />
-            <label className="block text-sm text-neutral-300 font-medium">Site Subtitle</label>
-            <Input
-              name="site_subtitle"
-              value={local.site_subtitle}
-              onChange={handleChange}
-              placeholder="Site Subtitle"
-            />
-          </div>
-          <div className="flex-1 space-y-3">
-            <label className="block text-sm text-neutral-300 font-medium">Logo URL</label>
-            <Input
-              name="logo_url"
-              value={local.logo_url}
-              onChange={handleChange}
-              placeholder="Logo Image URL"
-            />
-            <label className="block text-sm text-neutral-300 font-medium">Favicon URL</label>
-            <Input
-              name="favicon_url"
-              value={local.favicon_url}
-              onChange={handleChange}
-              placeholder="Favicon Image URL"
-            />
-          </div>
+        <div>
+          <label className="block font-semibold text-white mb-1">Site Title</label>
+          <Input
+            type="text"
+            value={form.site_title}
+            onChange={e => setForm(f => ({ ...f, site_title: e.target.value }))}
+            disabled={isPending}
+          />
         </div>
-        <Button className="self-end mt-3" type="submit" disabled={isPending}>
-          {isPending ? "Saving..." : "Save Header"}
-        </Button>
+        <div>
+          <label className="block font-semibold text-white mb-1">Site Subtitle</label>
+          <Input
+            type="text"
+            value={form.site_subtitle}
+            onChange={e => setForm(f => ({ ...f, site_subtitle: e.target.value }))}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <label className="block font-semibold text-white mb-1">Logo URL</label>
+          <Input
+            type="text"
+            value={form.logo_url}
+            onChange={e => setForm(f => ({ ...f, logo_url: e.target.value }))}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <label className="block font-semibold text-white mb-1">Favicon URL</label>
+          <Input
+            type="text"
+            value={form.favicon_url}
+            onChange={e => setForm(f => ({ ...f, favicon_url: e.target.value }))}
+            disabled={isPending}
+          />
+        </div>
+        <div>
+          <Button type="submit" disabled={isPending}>Save</Button>
+        </div>
       </form>
-      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to update the Header settings?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will overwrite the previous site header information. Do you want to continue?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel asChild>
-              <button type="button" className="mt-0">Cancel</button>
-            </AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <button type="button" className="bg-primary text-white px-4 py-2 rounded" onClick={confirm}>
-                Yes, save changes
-              </button>
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <div className="mt-4">
+        <span className="text-xs text-gray-400 block">Current values:</span>
+        <ul className="text-xs text-gray-300 list-disc list-inside space-y-1">
+          <li><b>Title:</b> {current.site_title}</li>
+          <li><b>Subtitle:</b> {current.site_subtitle}</li>
+          <li><b>Logo:</b> {current.logo_url}</li>
+          <li><b>Favicon:</b> {current.favicon_url}</li>
+        </ul>
+      </div>
+    </section>
   );
 }
+
