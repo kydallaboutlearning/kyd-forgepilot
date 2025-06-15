@@ -1,4 +1,3 @@
-
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -93,6 +92,13 @@ export function DashboardBenefitsSettings({
     );
   };
 
+  const handleAddBenefit = () => {
+    onFieldChange("benefits_items", [
+      ...local.benefits_items,
+      { title: "", desc: "", icon: "Brain" } as BenefitItem,
+    ]);
+  };
+
   const handleForm = (e: React.FormEvent) => {
     e.preventDefault();
     setShowConfirm(true);
@@ -134,7 +140,7 @@ export function DashboardBenefitsSettings({
         </div>
       </div>
 
-      {/* Editable Form: match logic and design of hero section */}
+      {/* Editable Form */}
       <form onSubmit={handleForm} className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4">
         <h2 className="text-xl font-semibold text-white mb-1">Why Automate with Us Section</h2>
         <div className="space-y-3">
@@ -168,12 +174,7 @@ export function DashboardBenefitsSettings({
               variant="outline"
               size="sm"
               className="mt-4"
-              onClick={() =>
-                onFieldChange("benefits_items", [
-                  ...local.benefits_items,
-                  { title: "", desc: "", icon: "Brain" },
-                ])
-              }
+              onClick={handleAddBenefit}
             >
               Add Benefit
             </Button>
