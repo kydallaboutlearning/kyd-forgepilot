@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ interface HeaderFields {
   site_subtitle: string;
   logo_url: string;
   favicon_url: string;
+  highlighted_portfolio_limit?: number;
 }
 
 type Props = {
@@ -71,6 +71,17 @@ export function SiteHeaderSettings({ header, current, isPending, onSubmit }: Pro
           />
         </div>
         <div>
+          <label className="block font-semibold text-white mb-1"># of Highlighted Projects (Recent Works)</label>
+          <Input
+            type="number"
+            min={1}
+            value={form.highlighted_portfolio_limit ?? 3}
+            onChange={e => setForm(f => ({ ...f, highlighted_portfolio_limit: Number(e.target.value) }))}
+            disabled={isPending}
+          />
+          <span className="text-xs text-gray-400">Used for homepage Recent Works section</span>
+        </div>
+        <div>
           <Button type="submit" disabled={isPending}>Save</Button>
         </div>
       </form>
@@ -81,9 +92,9 @@ export function SiteHeaderSettings({ header, current, isPending, onSubmit }: Pro
           <li><b>Subtitle:</b> {current.site_subtitle}</li>
           <li><b>Logo:</b> {current.logo_url}</li>
           <li><b>Favicon:</b> {current.favicon_url}</li>
+          <li><b>Highlighted Portfolio Limit:</b> {current.highlighted_portfolio_limit ?? 3}</li>
         </ul>
       </div>
     </section>
   );
 }
-

@@ -23,6 +23,7 @@ const initialState: Portfolio = {
   testimonial: null,
   contact_email: "",
   contact_calendly: "",
+  highlighted: false,
 };
 
 export default function DashboardPortfolio() {
@@ -65,6 +66,7 @@ export default function DashboardPortfolio() {
               ? JSON.parse(item.testimonial)
               : item.testimonial
             : null,
+          highlighted: item.highlighted ?? false, // add highlighted!
         }))
       );
     }
@@ -102,10 +104,9 @@ export default function DashboardPortfolio() {
   // Save (insert/update) portfolio item
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     const item = editing!;
+    setLoading(true);
     const { id, ...fields } = item;
-    // Ensure arrays are indeed arrays—if not, fallback to empty arrays of string
     const prepared = {
       ...fields,
       tags: Array.isArray(fields.tags)
@@ -131,6 +132,7 @@ export default function DashboardPortfolio() {
       images: fields.images,
       results: Array.isArray(fields.results) ? fields.results : [],
       testimonial: fields.testimonial,
+      highlighted: !!fields.highlighted, // ensure boolean
     };
     let result;
     if (id) {

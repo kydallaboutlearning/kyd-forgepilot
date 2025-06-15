@@ -29,6 +29,7 @@ type SiteSettings = {
   contact_cta_subtext?: string | null;
   contact_cta_button_label?: string | null;
   contact_cta_button_url?: string | null;
+  highlighted_portfolio_limit: number; // add for admin field
 };
 
 export default function DashboardSiteSettings() {
@@ -68,12 +69,13 @@ export default function DashboardSiteSettings() {
     },
   });
 
-  // Form state (for editing fields, always initialized from backend)
+  // Form state (editing fields)
   const [header, setHeader] = useState({
     site_title: "",
     site_subtitle: "",
     logo_url: "",
     favicon_url: "",
+    highlighted_portfolio_limit: 3, // add for admin field
   });
 
   const [hero, setHero] = useState<{
@@ -118,6 +120,7 @@ export default function DashboardSiteSettings() {
       site_subtitle: settings.site_subtitle ?? "",
       logo_url: settings.logo_url ?? "",
       favicon_url: settings.favicon_url ?? "",
+      highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3, // set initial
     });
     setHero({
       hero_headline: settings.hero_headline ?? "",
@@ -177,6 +180,7 @@ export default function DashboardSiteSettings() {
     site_subtitle: settings.site_subtitle ?? "",
     logo_url: settings.logo_url ?? "",
     favicon_url: settings.favicon_url ?? "",
+    highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3, // add for display
   };
 
   const currentHero = {

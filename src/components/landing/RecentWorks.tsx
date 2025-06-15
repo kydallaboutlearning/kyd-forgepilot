@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
@@ -48,29 +47,36 @@ export default function RecentWorks() {
     const fetchContent = async () => {
       setLoading(true);
 
+      // Fetch both headline and limit
       const settingsPromise = supabase
         .from("site_settings")
-        .select("recent_works_headline")
+        .select("recent_works_headline, highlighted_portfolio_limit")
         .limit(1)
         .maybeSingle();
 
-      const projectsPromise = supabase
+      // Only get `highlighted` portfolio items, sort by date desc, limit to configured count
+      let highlightedLimit = 3;
+      let headlineText = defaultHeadline;
+
+      const settingsResult = await settingsPromise;
+      if (settingsResult.data?.recent_works_headline)
+        headlineText = settingsResult.data.recent_works_headline;
+      if (settingsResult.data?.highlighted_portfolio_limit > 0)
+        highlightedLimit = settingsResult.data.highlighted_portfolio_limit;
+
+      setHeadline(headlineText);
+
+      const projectsResult = await supabase
         .from("portfolio_items")
         .select("id, title, description, images, results")
+        .eq("highlighted", true)
         .order("date", { ascending: false })
-        .limit(3);
-
-      const [settingsResult, projectsResult] = await Promise.all([
-        settingsPromise,
-        projectsPromise,
-      ]);
-
-      if (settingsResult.data?.recent_works_headline) {
-        setHeadline(settingsResult.data.recent_works_headline);
-      }
+        .limit(highlightedLimit);
 
       if (projectsResult.data) {
         setProjects(projectsResult.data as Project[]);
+      } else {
+        setProjects([]);
       }
 
       setLoading(false);

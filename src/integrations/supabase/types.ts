@@ -403,6 +403,7 @@ export type Database = {
           contact_email: string | null
           date: string | null
           description: string | null
+          highlighted: boolean | null
           id: string
           images: Json | null
           order_index: number | null
@@ -422,6 +423,7 @@ export type Database = {
           contact_email?: string | null
           date?: string | null
           description?: string | null
+          highlighted?: boolean | null
           id?: string
           images?: Json | null
           order_index?: number | null
@@ -441,6 +443,7 @@ export type Database = {
           contact_email?: string | null
           date?: string | null
           description?: string | null
+          highlighted?: boolean | null
           id?: string
           images?: Json | null
           order_index?: number | null
@@ -503,6 +506,7 @@ export type Database = {
           hero_headline: string | null
           hero_image_url: string | null
           hero_subtext: string | null
+          highlighted_portfolio_limit: number | null
           id: string
           logo_url: string | null
           recent_works_headline: string | null
@@ -528,6 +532,7 @@ export type Database = {
           hero_headline?: string | null
           hero_image_url?: string | null
           hero_subtext?: string | null
+          highlighted_portfolio_limit?: number | null
           id?: string
           logo_url?: string | null
           recent_works_headline?: string | null
@@ -553,6 +558,7 @@ export type Database = {
           hero_headline?: string | null
           hero_image_url?: string | null
           hero_subtext?: string | null
+          highlighted_portfolio_limit?: number | null
           id?: string
           logo_url?: string | null
           recent_works_headline?: string | null
