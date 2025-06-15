@@ -1,9 +1,12 @@
-import React, { useRef } from "react";
+
+import React from "react";
 import {
   Drawer,
   DrawerTrigger,
   DrawerContent,
   DrawerClose,
+  DrawerTitle,
+  DrawerDescription,
 } from "@/components/ui/drawer";
 import {
   Lightbulb,
@@ -38,18 +41,9 @@ const nav = [
   },
 ];
 
-// Add stateful open debugging for Drawer (to verify state)
 export function MobileNavDrawer() {
-  const openRef = useRef(false);
-
-  // To help debug: on drawer open/close, log to console.
-  const onOpenChange = (open: boolean) => {
-    openRef.current = open;
-    console.log("MobileNavDrawer: Drawer open state:", open);
-  };
-
   return (
-    <Drawer shouldScaleBackground={true} onOpenChange={onOpenChange}>
+    <Drawer shouldScaleBackground={true}>
       <DrawerTrigger
         asChild
         className="outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -58,22 +52,15 @@ export function MobileNavDrawer() {
         <button
           className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center"
           type="button"
-          onClick={() => {
-            // Debugging if button is being clicked
-            console.log("MobileNavDrawer: DrawerTrigger clicked");
-          }}
         >
           <MenuIcon className="w-7 h-7 text-primary" />
         </button>
       </DrawerTrigger>
-      {/* Remove custom animate-slide-in-right and z-[60], use Drawer default */}
-      <DrawerContent
-        className="px-3 py-5 !rounded-t-2xl bg-yellow-300 border-4 border-red-600 min-h-[60vh] flex flex-col gap-4 relative z-[9999]"
-        style={{
-          background: 'rgba(255,255,80,0.95)',
-          border: '6px solid #ff0000',
-        }}
-      >
+      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-[#101010] border-t border-neutral-800 min-h-[60vh] flex flex-col gap-4">
+        <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
+        <DrawerDescription className="sr-only">
+          The main navigation menu for the site.
+        </DrawerDescription>
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
