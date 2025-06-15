@@ -12,6 +12,10 @@ import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
 import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
 import { DashboardContactCTASettings } from "./DashboardContactCTASettings";
 import { DashboardServicesSection } from "./DashboardServicesSection";
+import { PricingSettingsSection } from "./site-settings/PricingSettingsSection";
+import { TestimonialsSettingsSection } from "./site-settings/TestimonialsSettingsSection";
+import { TeamSettingsSection } from "./site-settings/TeamSettingsSection";
+import { FinalCTASettingsSection } from "./site-settings/FinalCTASettingsSection";
 
 // Types
 type SiteSettings = {
@@ -244,6 +248,10 @@ export default function DashboardSiteSettings() {
         onSubmit={vals => mutation.mutate(vals)}
       />
       <DashboardServicesSection />
+      <PricingSettingsSection />
+      <TestimonialsSettingsSection />
+      <TeamSettingsSection />
+      <FinalCTASettingsSection />
       {/* Repeat: <DashboardPricingSection />, <DashboardTestimonialsSection />, etc. */}
     </div>
   );
