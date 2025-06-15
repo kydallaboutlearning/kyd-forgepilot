@@ -1,13 +1,13 @@
 
 import React from "react";
 import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerClose,
-  DrawerTitle,
-  DrawerDescription,
-} from "@/components/ui/drawer";
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetClose,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import {
   Lightbulb,
   Rocket,
@@ -43,8 +43,8 @@ const nav = [
 
 export function MobileNavDrawer() {
   return (
-    <Drawer shouldScaleBackground={true}>
-      <DrawerTrigger
+    <Sheet>
+      <SheetTrigger
         asChild
         className="outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label="Open navigation menu"
@@ -55,12 +55,12 @@ export function MobileNavDrawer() {
         >
           <MenuIcon className="w-7 h-7 text-primary" />
         </button>
-      </DrawerTrigger>
-      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-[#101010] border-t border-neutral-800 min-h-[60vh] flex flex-col gap-4">
-        <DrawerTitle className="sr-only">Navigation Menu</DrawerTitle>
-        <DrawerDescription className="sr-only">
+      </SheetTrigger>
+      <SheetContent side="left" className="px-3 py-5 bg-[#101010] border-r border-neutral-800 flex flex-col gap-4 w-full max-w-sm">
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+        <SheetDescription className="sr-only">
           The main navigation menu for the site.
-        </DrawerDescription>
+        </SheetDescription>
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -75,12 +75,12 @@ export function MobileNavDrawer() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          <DrawerClose asChild>
+          <SheetClose asChild>
             <button className="text-white p-2 w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-900" aria-label="Close navigation">
               <span className="sr-only">Close navigation</span>
               <CloseIcon className="w-7 h-7" />
             </button>
-          </DrawerClose>
+          </SheetClose>
         </div>
         <nav>
           <ul className="flex flex-col gap-1.5 text-lg font-medium">
@@ -132,7 +132,7 @@ export function MobileNavDrawer() {
           Let&apos;s Talk
           <ArrowUpRight className="w-4 h-4 ml-1 opacity-90 text-primary group-hover:translate-x-1 transition-transform" />
         </a>
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 }
