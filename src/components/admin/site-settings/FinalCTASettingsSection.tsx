@@ -54,7 +54,7 @@ export function FinalCTASettingsSection() {
   return (
     <section className="mb-16">
       <h2 className="text-lg font-bold text-primary mb-3">Final Call To Action</h2>
-      <form onSubmit={handleSubmit} className="space-y-2 max-w-xl">
+      <form onSubmit={handleSubmit} className="space-y-2 max-w-xl bg-[#18181a] border border-neutral-700 rounded-lg p-6">
         <Input name="headline" value={form.headline ?? cta.headline ?? ""} onChange={handleChange} placeholder="Headline" />
         <Input name="subtext" value={form.subtext ?? cta.subtext ?? ""} onChange={handleChange} placeholder="Subtext" />
         <Input name="button_label" value={form.button_label ?? cta.button_label ?? ""} onChange={handleChange} placeholder="Button Label" />
@@ -66,3 +66,4 @@ export function FinalCTASettingsSection() {
     </section>
   );
 }
+

@@ -75,34 +75,46 @@ export default function DashboardSocialLinks() {
   const startEdit = (item?: SocialLink) => setEditing(item ? { ...item } : { ...initialState });
 
   return (
-    <div className="max-w-lg mx-auto bg-card rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-3">Footer Social Links</h2>
+    <section className="mb-16">
+      <h2 className="text-lg font-bold text-primary mb-3">Footer Social Links</h2>
       <Button size="sm" variant="default" className="mb-4" onClick={() => startEdit()}>
         Add New Link
       </Button>
       {editing && (
-        <form onSubmit={handleSave} className="space-y-4 mb-8">
-          <Label>Name (eg: Github)</Label>
-          <Input
-            value={editing.label}
-            onChange={e => setEditing(s => ({ ...s!, label: e.target.value }))}
-            required
-            placeholder="Platform name"
-          />
-          <Label>URL</Label>
-          <Input
-            value={editing.url}
-            onChange={e => setEditing(s => ({ ...s!, url: e.target.value }))}
-            required
-            placeholder="e.g. https://github.com/username"
-          />
-          <Label>Icon (lucide icon name, eg: github, instagram, facebook)</Label>
-          <Input
-            value={editing.icon}
-            onChange={e => setEditing(s => ({ ...s!, icon: e.target.value }))}
-            required
-            placeholder="lucide-react icon name"
-          />
+        <form
+          onSubmit={handleSave}
+          className="space-y-3 bg-[#18181a] border border-neutral-700 rounded-lg p-6 w-full max-w-lg mx-auto mb-8"
+        >
+          <div>
+            <Label>Name (eg: Github)</Label>
+            <Input
+              value={editing.label}
+              onChange={e => setEditing(s => ({ ...s!, label: e.target.value }))}
+              required
+              placeholder="Platform name"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>URL</Label>
+            <Input
+              value={editing.url}
+              onChange={e => setEditing(s => ({ ...s!, url: e.target.value }))}
+              required
+              placeholder="e.g. https://github.com/username"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Icon (lucide icon name, eg: github, instagram, facebook)</Label>
+            <Input
+              value={editing.icon}
+              onChange={e => setEditing(s => ({ ...s!, icon: e.target.value }))}
+              required
+              placeholder="lucide-react icon name"
+              className="mt-1"
+            />
+          </div>
           <div className="flex gap-3 mt-2">
             <Button type="submit" disabled={loading}>
               {editing.id ? "Update" : "Create"}
@@ -119,39 +131,33 @@ export default function DashboardSocialLinks() {
         ) : links.length === 0 ? (
           <div className="text-center text-muted-foreground p-4">No social links yet.</div>
         ) : (
-          <table className="w-full mt-2">
-            <thead>
-              <tr className="text-muted-foreground text-xs">
-                <th className="text-left py-1">Name</th>
-                <th className="text-left py-1">URL</th>
-                <th className="text-left py-1">Icon</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {links.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.label}</td>
-                  <td>
-                    <a href={item.url} className="underline text-primary" target="_blank" rel="noopener noreferrer">
-                      {item.url}
-                    </a>
-                  </td>
-                  <td className="capitalize">{item.icon}</td>
-                  <td className="text-right">
-                    <Button size="sm" variant="outline" onClick={() => startEdit(item)}>
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="destructive" className="ml-2" onClick={() => handleDelete(item.id)}>
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="space-y-1 max-w-lg mx-auto mt-2">
+            {links.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-center justify-between px-3 py-2 rounded-lg border border-neutral-700 bg-[#18181a] mb-0"
+              >
+                <div>
+                  <div className="font-semibold text-white">{item.label}</div>
+                  <a href={item.url} className="text-primary underline text-sm" target="_blank" rel="noopener noreferrer">
+                    {item.url}
+                  </a>
+                  <div className="capitalize text-xs text-muted-foreground">{item.icon}</div>
+                </div>
+                <div className="flex gap-1">
+                  <Button size="sm" variant="outline" onClick={() => startEdit(item)}>
+                    Edit
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)}>
+                    Delete
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
-    </div>
+    </section>
   );
 }
+

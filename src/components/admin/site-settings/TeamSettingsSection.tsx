@@ -90,7 +90,7 @@ export function TeamSettingsSection() {
       {isLoading ? <div>Loading…</div> : (
         <div className="space-y-2">
           {members.map(t => (
-            <div key={t.id} className="border border-neutral-700 rounded-lg p-2 flex items-center gap-4">
+            <div key={t.id} className="border border-neutral-700 rounded-lg p-4 flex items-center gap-4 bg-[#18181a]">
               <div className="flex-1">
                 <div className="font-semibold text-white">{t.name}</div>
                 <div className="text-gray-400 text-sm">{t.role}</div>
@@ -129,3 +129,4 @@ export function TeamSettingsSection() {
     </section>
   );
 }
+

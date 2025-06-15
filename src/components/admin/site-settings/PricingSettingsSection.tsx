@@ -95,7 +95,7 @@ export function PricingSettingsSection() {
       {isLoading ? <div>Loading…</div> : (
         <div className="space-y-2">
           {plans.map(plan => (
-            <div key={plan.id} className="border border-neutral-700 rounded-lg p-2 flex items-center gap-4">
+            <div key={plan.id} className="border border-neutral-700 rounded-lg p-4 flex items-center gap-4 bg-[#18181a]">
               <div className="flex-1">
                 <div className="font-semibold text-white">{plan.name}</div>
                 <div className="text-gray-400 text-sm">${plan.price_monthly}/mo, ${plan.price_yearly}/yr</div>
@@ -135,3 +135,4 @@ export function PricingSettingsSection() {
     </section>
   );
 }
+
