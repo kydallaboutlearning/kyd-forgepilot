@@ -16,33 +16,36 @@ type Project = {
 };
 
 export default function PortfolioCard({ project }: { project: Project }) {
-  // Use placeholder if images is empty or broken
+  // All cards the same min height for grid uniformity.
   return (
-    <div className="bg-neutral-950 rounded-2xl shadow-lg border border-neutral-800 flex flex-col overflow-hidden animate-fade-in p-6 transition-all duration-200 hover:shadow-2xl hover:border-primary/40">
-      <div className="flex flex-row gap-4 items-start mb-1">
-        <span className="bg-primary/10 rounded px-3 py-1 text-xs font-bold text-primary tracking-wide uppercase">
+    <div className="bg-neutral-950 rounded-2xl shadow-lg border-2 border-[#FFB74A] flex flex-col overflow-hidden p-0 min-h-[455px] max-w-full transition-all duration-200 hover:shadow-2xl hover:border-primary/70">
+      {/* Category & Date */}
+      <div className="flex flex-row gap-4 items-start px-6 pt-6 pb-1">
+        <span className="bg-primary/90 rounded px-3 py-1 text-xs font-bold text-primary-foreground tracking-wide uppercase">
           {project.category}
         </span>
         <span className="text-xs text-neutral-400 ml-auto font-mono">{new Date(project.date).toLocaleDateString()}</span>
       </div>
-      <h2 className="text-xl md:text-2xl leading-snug font-bold mb-2 text-white">{project.title}</h2>
-      <div className="mb-3 min-h-[40px]">
+      {/* Title */}
+      <h2 className="text-xl md:text-2xl leading-snug font-bold mb-2 px-6 text-white">{project.title}</h2>
+      {/* Description */}
+      <div className="mb-3 min-h-[38px] px-6">
         <RichTextRenderer html={project.description} />
       </div>
-      {project.images.length > 0 ? (
-        <ImageGallery images={project.images} />
-      ) : (
-        <div
-          className="w-full aspect-video bg-neutral-900 flex items-center justify-center rounded-lg my-2 border border-neutral-800"
-          style={{ minHeight: 90 }}
-        >
-          <ImageIcon size={40} className="text-muted-foreground opacity-40" />
+      {/* Full-width image/placeholder */}
+      <div className="w-full aspect-[16/9] bg-neutral-900 flex items-center justify-center rounded-none overflow-hidden relative border-y border-[#FFB74A]">
+        <ImageGallery images={project.images} cardMode />
+      </div>
+      {/* Video (if present) */}
+      {project.video && (
+        <div className="px-6 pt-4">
+          <VideoPlayer video={project.video} />
         </div>
       )}
-      {project.video && <div className="mt-4"><VideoPlayer video={project.video} /></div>}
-      <div className="flex gap-2 flex-wrap mt-4">
+      {/* Tags */}
+      <div className="flex gap-2 flex-wrap mt-4 px-6 pb-6">
         {project.tags.map(tag => (
-          <span key={tag} className="bg-primary/20 px-3 py-1 rounded-full text-xs font-semibold text-primary">
+          <span key={tag} className="bg-primary/80 px-3 py-1 rounded-full text-xs font-semibold text-primary-foreground">
             #{tag}
           </span>
         ))}

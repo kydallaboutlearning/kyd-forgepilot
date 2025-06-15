@@ -4,11 +4,37 @@ import { Image as ImageIcon } from "lucide-react";
 
 const PLACEHOLDER = "/placeholder.svg";
 
-export default function ImageGallery({ images }: { images: string[] }) {
+// Added cardMode for PortfolioCard: stretches single image/placeholder, hides buttons/thumbnails
+export default function ImageGallery({ images, cardMode = false }: { images: string[]; cardMode?: boolean }) {
   const [open, setOpen] = useState<number | null>(null);
   const [imgError, setImgError] = useState<Record<number, boolean>>({});
 
-  // Show at least 1 placeholder if images array is missing/empty
+  // Card mode: always show a big 16:9 image (or placeholder)
+  if (cardMode) {
+    const imgSrc = images && images.length > 0 && !imgError[0] ? images[0] : null;
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt="Project preview"
+            className="w-full h-full object-cover object-center transition-all duration-200 min-h-[140px]"
+            onError={() => setImgError((err) => ({ ...err, 0: true }))}
+            style={{ aspectRatio: "16/9", borderRadius: 0, border: "none" }}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center bg-neutral-900"
+            style={{ aspectRatio: "16/9", minHeight: 140 }}
+          >
+            <ImageIcon size={46} className="text-[#FFB74A] opacity-50" />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Default mode (for lightbox/gallery)
   if (!images || images.length === 0) {
     return (
       <div className="flex flex-wrap gap-3 mt-2">
