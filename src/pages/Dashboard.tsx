@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/AppSidebar";
 import DashboardSiteSettings from "@/components/admin/DashboardSiteSettings";
@@ -7,58 +7,9 @@ import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
 import DashboardAdminSettings from "@/components/admin/DashboardAdminSettings";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useAdminCredentials } from "@/hooks/useAdminCredentials";
 
 export default function Dashboard() {
   const [tab, setTab] = useState("site");
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const { adminEmail, loading: loadingAdminCreds } = useAdminCredentials();
-
-  useEffect(() => {
-    let isMounted = true;
-    const checkAuth = async () => {
-      // Wait for adminEmail to load
-      if (loadingAdminCreds) return;
-
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
-      const loggedInEmail = session?.user?.email?.toLowerCase();
-      const expectedEmail = adminEmail?.toLowerCase();
-
-      if (!session || !loggedInEmail || !expectedEmail || loggedInEmail !== expectedEmail) {
-        navigate("/auth", { replace: true });
-      } else {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    // Correct: Get subscription from { data: { subscription } }
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      const loggedInEmail = session?.user?.email?.toLowerCase();
-      const expectedEmail = adminEmail?.toLowerCase();
-      if (!session || !loggedInEmail || !expectedEmail || loggedInEmail !== expectedEmail) {
-        navigate("/auth", { replace: true });
-      }
-    });
-
-    return () => {
-      isMounted = false;
-      subscription?.unsubscribe();
-    };
-  }, [navigate, adminEmail, loadingAdminCreds]);
-
-  if (loading || loadingAdminCreds) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#101013] text-white text-xl">
-        Loading dashboard...
-      </div>
-    );
-  }
 
   return (
     <SidebarProvider>
