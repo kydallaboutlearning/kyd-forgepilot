@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { SiteHeaderSettings } from "./SiteHeaderSettings";
 import { SiteHeroSettings } from "./SiteHeroSettings";
@@ -22,6 +22,7 @@ type SiteSettings = {
 
 export default function DashboardSiteSettings() {
   const queryClient = useQueryClient();
+  const mounted = useRef(false);
 
   // Fetch current site settings (assume single row)
   const { data: settings, isLoading, refetch } = useQuery({
@@ -42,7 +43,6 @@ export default function DashboardSiteSettings() {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["site_settings"] });
-      await refetch();
       toast({ title: "Site settings updated", description: "Your changes are live." });
     },
     onError: (e: any) => {
@@ -65,6 +65,34 @@ export default function DashboardSiteSettings() {
     hero_cta_label: "",
     hero_cta_link: "",
   });
+
+  // Realtime sync for site_settings (ADMIN DASHBOARD)
+  useEffect(() => {
+    mounted.current = true;
+
+    // Subscribe to realtime changes in site_settings
+    const channel = supabase
+      .channel("admin_site_settings_rt")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "site_settings",
+        },
+        (payload) => {
+          if (!mounted.current) return;
+          // Refetch on any change event (insert, update, delete)
+          queryClient.invalidateQueries({ queryKey: ["site_settings"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      mounted.current = false;
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   useEffect(() => {
     if (settings) {
