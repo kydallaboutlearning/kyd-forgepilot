@@ -243,7 +243,6 @@ export default function DashboardSiteSettings() {
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
-      {/* NEW: SERVICES ADMIN */}
       <DashboardServicesSection />
       {/* Repeat: <DashboardPricingSection />, <DashboardTestimonialsSection />, etc. */}
     </div>
