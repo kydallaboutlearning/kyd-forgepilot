@@ -412,7 +412,7 @@ const SidebarContent = React.forwardRef<
 SidebarContent.displayName = "SidebarContent"
 
 // Refactored: import reusable sidebar subcomponents from the sidebar directory now
-export * from "./ui/sidebar/index";
+export * from "./sidebar";
 
 const SidebarMenuAction = React.forwardRef<
   HTMLButtonElement,
