@@ -1,57 +1,55 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { hashPassword, comparePassword } from "@/utils/hash";
 
-// Key for localStorage (can adjust/namespace if needed)
+// Key for localStorage
 const ADMIN_SESSION_KEY = "fp.admin.session";
 
-/**
- * Stores only the admin's email if logged in (no JWT; access is via DB only!).
- */
 export function useAdminAuth() {
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminToken, setAdminToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check localStorage on mount for persisted admin session
   useEffect(() => {
     const stored = localStorage.getItem(ADMIN_SESSION_KEY);
-    if (stored) setAdminEmail(stored);
+    if (stored) setAdminToken(stored);
     setLoading(false);
   }, []);
 
-  // Login
-  async function login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  // Login with token
+  async function login(token: string): Promise<{ success: boolean; error?: string }> {
     setLoading(true);
-    console.log("[AdminAuth] Attempt login for", email);
-    // Find matching admin user (SQL: select email,password_hash where email)
+    console.log("[AdminAuth] Attempt login with token");
+    
+    // Find matching admin token
     const { data, error } = await supabase
-      .from("admin_users")
-      .select("email,password_hash")
-      .eq("email", email)
+      .from("admin_tokens")
+      .select("token, is_active")
+      .eq("token", token)
+      .eq("is_active", true)
       .maybeSingle();
 
     if (error) {
       console.log("[AdminAuth] Supabase error:", error);
       setLoading(false);
-      return { success: false, error: `Supabase error: ${error.message ?? error}` };
+      return { success: false, error: `Database error: ${error.message}` };
     }
+    
     if (!data) {
-      console.log("[AdminAuth] No matching admin found for", email);
+      console.log("[AdminAuth] No matching active token found");
       setLoading(false);
-      return { success: false, error: `Admin not found for email: ${email}` };
+      return { success: false, error: "Invalid or inactive token" };
     }
-    // Compare hash
-    console.log("[AdminAuth] DB hash:", data.password_hash);
-    const ok = await comparePassword(password, data.password_hash);
-    console.log("[AdminAuth] Password compare result:", ok);
-    if (!ok) {
-      setLoading(false);
-      return { success: false, error: "Incorrect password" };
-    }
+
+    // Update last used timestamp
+    await supabase
+      .from("admin_tokens")
+      .update({ last_used_at: new Date().toISOString() })
+      .eq("token", token);
+
     // Store in localStorage 
-    localStorage.setItem(ADMIN_SESSION_KEY, email);
-    setAdminEmail(email);
+    localStorage.setItem(ADMIN_SESSION_KEY, token);
+    setAdminToken(token);
     setLoading(false);
     return { success: true };
   }
@@ -59,15 +57,14 @@ export function useAdminAuth() {
   // Logout
   function logout() {
     localStorage.removeItem(ADMIN_SESSION_KEY);
-    setAdminEmail(null);
+    setAdminToken(null);
   }
 
   return {
-    adminEmail,
+    adminToken,
     loading,
     login,
     logout,
-    isAuthenticated: !!adminEmail
+    isAuthenticated: !!adminToken
   };
 }
-
