@@ -1,38 +1,15 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/AppSidebar";
 import DashboardSiteSettings from "@/components/admin/DashboardSiteSettings";
 import DashboardPortfolio from "@/components/admin/DashboardPortfolio";
 import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Dashboard() {
-  const [authenticated, setAuthenticated] = useState(false);
   const [tab, setTab] = useState("site");
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        navigate("/auth");
-      } else {
-        setAuthenticated(true);
-      }
-    };
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) navigate("/auth");
-      else setAuthenticated(true);
-    });
-    checkAuth();
-    return () => listener?.subscription.unsubscribe();
-  }, [navigate]);
-
-  if (!authenticated) return null;
 
   return (
     <SidebarProvider>
@@ -43,12 +20,11 @@ export default function Dashboard() {
             <Button
               variant="secondary"
               size="sm"
-              onClick={async () => {
-                await supabase.auth.signOut();
+              onClick={() => {
                 window.location.href = "/auth";
               }}
             >
-              Log out
+              Go to Login
             </Button>
           </div>
           <SidebarTrigger />
