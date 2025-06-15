@@ -18,8 +18,9 @@ export default function DashboardAdminSettings() {
   const [loading, setLoading] = useState(false);
   const [adminPass, setAdminPass] = useState(""); // temp input for new password
   const [adminPass2, setAdminPass2] = useState("");
+  const [supabaseUser, setSupabaseUser] = useState<any>(null);
 
-  // Fetch admin settings on mount
+  // Fetch admin settings and current user on mount
   useEffect(() => {
     setLoading(true);
     (async () => {
@@ -31,15 +32,14 @@ export default function DashboardAdminSettings() {
           .limit(1)
           .maybeSingle();
 
-        if (error) {
-          toast({
-            variant: "destructive",
-            title: "Error loading admin settings",
-            description: error.message,
-          });
-        } else if (data) {
+        if (!error && data) {
           setSettings(data);
         }
+
+        const { data: userData } = await supabase.auth.getUser();
+        setSupabaseUser(userData?.user || null);
+      } catch (e) {
+        // ignore
       } finally {
         setLoading(false);
       }
@@ -89,6 +89,50 @@ export default function DashboardAdminSettings() {
       // Debug log what was returned
       console.log("Admin settings Save result:", result);
 
+      // --- Now update Supabase Auth user email or password if needed ---
+      let changed = false;
+      // Only allow updating current auth user
+      const currentUser = supabaseUser;
+      if (currentUser && settings.admin_email && currentUser.email) {
+        // If email is being changed
+        if (settings.admin_email !== currentUser.email) {
+          // Update email
+          const { error: emailErr } = await supabase.auth.updateUser({ email: settings.admin_email });
+          if (emailErr) {
+            toast({
+              variant: "destructive",
+              title: "Failed to update Supabase Auth email",
+              description: emailErr.message,
+            });
+            setLoading(false);
+            return;
+          }
+          changed = true;
+        }
+        // If password is being changed
+        if (adminPass) {
+          const { error: passErr } = await supabase.auth.updateUser({ password: adminPass });
+          if (passErr) {
+            toast({
+              variant: "destructive",
+              title: "Failed to update Supabase Auth password",
+              description: passErr.message,
+            });
+            setLoading(false);
+            return;
+          }
+          changed = true;
+        }
+      } else if (!currentUser) {
+        toast({
+          variant: "destructive",
+          title: "Not logged in as the admin user.",
+          description: "Login with the correct admin account to change credentials.",
+        });
+        setLoading(false);
+        return;
+      }
+
       if (result.error) {
         toast({
           variant: "destructive",
@@ -96,10 +140,11 @@ export default function DashboardAdminSettings() {
           description: result.error.message,
         });
       } else if (result.data) {
-        setSettings(result.data); // always store most-recent (including id for next update)
+        setSettings(result.data);
         setAdminPass("");
         setAdminPass2("");
         toast({ title: "Admin updated!" });
+        if (changed) toast({ title: "Account update - please re-login if prompted." });
       } else {
         // Fallback: fetch most-recent admin settings row
         const { data, error } = await supabase
@@ -163,7 +208,7 @@ export default function DashboardAdminSettings() {
             placeholder="Repeat new password"
             disabled={loading}
           />
-          <div className="text-xs text-muted-foreground pt-1">Note: Saving will update admin email and password if provided.</div>
+          <div className="text-xs text-muted-foreground pt-1">Note: Saving will update admin email and password if provided. It will update the current logged in account (if available).</div>
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Saving..." : "Save"}
