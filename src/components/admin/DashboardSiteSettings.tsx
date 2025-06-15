@@ -34,10 +34,13 @@ export default function DashboardSiteSettings() {
     },
   });
 
-  // Mutation for site settings update
+  // Mutation for site settings update (add debug log)
   const mutation = useMutation({
     mutationFn: async (updates: Partial<SiteSettings>) => {
       if (!settings?.id) throw new Error("No site_settings row loaded");
+      // DEBUG: Log what we're actually sending
+      console.log("[DASHBOARD] Sending updates to Supabase:", updates);
+
       // Only update provided keys
       const { error } = await supabase.from("site_settings").update(updates).eq("id", settings.id);
       if (error) throw error;
