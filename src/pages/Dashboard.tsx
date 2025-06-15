@@ -1,11 +1,11 @@
+
 import { useState } from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/AppSidebar";
 import DashboardSiteSettings from "@/components/admin/DashboardSiteSettings";
 import DashboardPortfolio from "@/components/admin/DashboardPortfolio";
 import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { LayoutDashboard } from "lucide-react";
 
 export default function Dashboard() {
@@ -18,59 +18,40 @@ export default function Dashboard() {
         <AppSidebar />
         {/* Main Content */}
         <main className="flex-1 min-h-screen">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
             {/* Header */}
-            <header className="mb-10">
+            <header className="mb-8">
               <div className="flex items-center gap-2">
                 <LayoutDashboard className="text-primary" size={32} />
                 <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
               </div>
               <p className="text-muted-foreground mt-2 text-base">
-                Welcome back! Here’s what’s happening today.
+                Manage your site content and admin account here.
               </p>
             </header>
-            {/* Stats Cards */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <Card className="bg-[#191921] border border-border shadow-none">
-                <CardContent className="py-6">
-                  <p className="text-sm text-muted-foreground mb-2">Total Projects</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-white">12</span>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#191921] border border-border shadow-none">
-                <CardContent className="py-6">
-                  <p className="text-sm text-muted-foreground mb-2">Active Users</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-white">51</span>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#191921] border border-border shadow-none">
-                <CardContent className="py-6">
-                  <p className="text-sm text-muted-foreground mb-2">Uptime</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-white">99.98%</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </section>
-            {/* Main content placeholder */}
-            <section>
-              <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-              <div className="rounded-lg border border-border bg-[#16161a] p-6 flex flex-col gap-2">
-                <button className="py-2 px-4 rounded bg-primary text-primary-foreground max-w-xs font-semibold hover:bg-primary/80 transition">
-                  New Project
-                </button>
-                <button className="py-2 px-4 rounded bg-muted text-foreground max-w-xs font-semibold hover:bg-muted/80 transition">
-                  View Portfolio
-                </button>
-              </div>
-            </section>
+
+            {/* Tabs for main dashboard actions */}
+            <Tabs value={tab} onValueChange={setTab} className="w-full">
+              <TabsList className="mb-8">
+                <TabsTrigger value="site">Site Settings</TabsTrigger>
+                <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+                <TabsTrigger value="social">Social Links</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="site" className="w-full">
+                <DashboardSiteSettings />
+              </TabsContent>
+              <TabsContent value="portfolio" className="w-full">
+                <DashboardPortfolio />
+              </TabsContent>
+              <TabsContent value="social" className="w-full">
+                <DashboardSocialLinks />
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
       </div>
     </SidebarProvider>
   );
 }
+
