@@ -11,13 +11,16 @@ import { LayoutDashboard } from "lucide-react";
 export default function Dashboard() {
   const [tab, setTab] = useState("site");
 
+  // Header height to match Header.tsx (80px)
+  const HEADER_HEIGHT = 80;
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-[#101013] w-full">
         {/* Sidebar */}
         <AppSidebar />
         {/* Main Content */}
-        <main className="flex-1 min-h-screen">
+        <main className="flex-1 min-h-screen" style={{ paddingTop: HEADER_HEIGHT }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
             {/* Header */}
             <header className="mb-8">

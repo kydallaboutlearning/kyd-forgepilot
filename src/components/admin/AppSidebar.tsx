@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -25,7 +24,7 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-[#101013] text-white">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Admin</SidebarGroupLabel>
