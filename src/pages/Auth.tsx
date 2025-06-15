@@ -1,9 +1,10 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -12,23 +13,41 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Only allow login for the single admin credential
-  function handleSubmit(e: React.FormEvent) {
+  // Redirect if already signed in as admin
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      const adminEmail = "admin@agency.ai";
+      if (data.session && data.session.user.email?.toLowerCase() === adminEmail) {
+        navigate("/dashboard", { replace: true });
+      }
+    });
+  }, [navigate]);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
-    // Demo: hardcoded admin credentials
-    if (
-      email.trim().toLowerCase() === "admin@agency.ai" &&
-      password === "admin"
-    ) {
+    const adminEmail = "admin@agency.ai";
+    if (email.trim().toLowerCase() !== adminEmail) {
+      setErr("Only admin login is allowed.");
       setLoading(false);
-      setErr(null);
-      navigate("/dashboard");
-    } else {
-      setErr("Invalid credentials (demo: admin@agency.ai / admin)");
-      setLoading(false);
+      return;
     }
+    // Try to sign in with Supabase
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setErr("Invalid credentials. (demo: admin@agency.ai / admin)");
+      setLoading(false);
+      return;
+    }
+    // Give Supabase client a moment to refresh session before navigation
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 600);
+    setLoading(false);
   }
 
   return (
@@ -40,7 +59,7 @@ export default function AuthPage() {
           bg-[rgba(22,22,26,0.92)] shadow-2xl
           px-8 py-10
           flex flex-col gap-8
-          backdrop-blur-sm
+          backdrop-blur-md
           animate-fade-in
         "
       >
