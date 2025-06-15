@@ -11,6 +11,8 @@ type Project = {
   description: string;
   images: string[];
   results: { kpi: string; desc: string }[] | null;
+  is_featured?: boolean;
+  featured_order?: number | null;
 };
 
 const defaultHeadline = "Recent Works";
@@ -56,9 +58,10 @@ export default function RecentWorks() {
 
       const projectsPromise = supabase
         .from("portfolio_items")
-        .select("id, title, description, images, results")
-        .order("date", { ascending: false })
-        .limit(3);
+        .select("id, title, description, images, results, is_featured, featured_order")
+        .eq("is_featured", true)
+        .order("featured_order", { ascending: true, nullsFirst: true })
+        .limit(12); // reasonable upper bound
 
       const [settingsResult, projectsResult] = await Promise.all([
         settingsPromise,
