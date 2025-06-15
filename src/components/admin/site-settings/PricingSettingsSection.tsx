@@ -1,10 +1,11 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { IconPicker, IconDisplay } from "@/components/admin/IconPicker";
+import { useEffect, useState } from "react";
 
 type Plan = {
   id: string;
@@ -30,6 +31,8 @@ export function PricingSettingsSection() {
   const [form, setForm] = useState<Partial<Plan>>({ features: [] });
   const [editId, setEditId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  // Add for current content
+  const [showCurrent, setShowCurrent] = useState(true);
 
   const mutation = useMutation({
     mutationFn: async (vals: Partial<Plan>) => {
@@ -51,6 +54,9 @@ export function PricingSettingsSection() {
     },
     onError: err => toast({ title: "Error", description: "" + err, variant: "destructive" }),
   });
+
+  // Add icon select for each plan if you wish (demo). We'll default, but can be extended.
+  // For now just implement the showCurrent section and scope for icons if needed later.
 
   const delMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -90,22 +96,26 @@ export function PricingSettingsSection() {
   }
 
   return (
-    <section className="mb-16">
+    <section className="mb-16 bg-[#18181a] border border-neutral-700 rounded-lg p-6">
       <h2 className="text-lg font-bold text-primary mb-3">Pricing</h2>
-      {isLoading ? <div>Loading…</div> : (
-        <div className="space-y-2">
-          {plans.map(plan => (
-            <div key={plan.id} className="border border-neutral-700 rounded-lg p-4 flex items-center gap-4 bg-[#18181a]">
-              <div className="flex-1">
-                <div className="font-semibold text-white">{plan.name}</div>
-                <div className="text-gray-400 text-sm">${plan.price_monthly}/mo, ${plan.price_yearly}/yr</div>
-              </div>
-              <Button size="sm" variant="ghost" onClick={() => handleEdit(plan)}>Edit</Button>
-              <Button size="sm" variant="ghost" onClick={() => delMutation.mutate(plan.id)}>Delete</Button>
+      {/* Current content display */}
+      <div className="mb-4">
+        <h4 className="text-sm text-neutral-400 font-semibold mb-2">Current Pricing Plans</h4>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {isLoading ? "Loading…" : plans.map(plan => (
+            <div key={plan.id} className="bg-neutral-900 border border-neutral-800 rounded p-3">
+              <div className="font-semibold text-white">{plan.name}</div>
+              <div className="text-gray-400 text-xs mb-2">{plan.description}</div>
+              <div className="text-xs text-primary font-bold">${plan.price_monthly}/mo • ${plan.price_yearly}/yr</div>
+              <ul className="mt-2 text-neutral-300 text-xs list-disc pl-6">
+                {plan.features?.length ? plan.features.map((f,i) => <li key={i}>{f}</li>) :
+                  <li>No features listed</li>
+                }
+              </ul>
             </div>
           ))}
         </div>
-      )}
+      </div>
       <Button className="mt-4" onClick={handleAdd}>Add Plan</Button>
       {modalOpen && (
         <div className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center">
@@ -135,4 +145,3 @@ export function PricingSettingsSection() {
     </section>
   );
 }
-

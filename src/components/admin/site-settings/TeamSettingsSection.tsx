@@ -1,10 +1,11 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { IconPicker, IconDisplay } from "@/components/admin/IconPicker";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 type TeamMember = {
   id: string;
@@ -85,22 +86,25 @@ export function TeamSettingsSection() {
   }
 
   return (
-    <section className="mb-16">
+    <section className="mb-16 bg-[#18181a] border border-neutral-700 rounded-lg p-6">
       <h2 className="text-lg font-bold text-primary mb-3">Team</h2>
-      {isLoading ? <div>Loading…</div> : (
-        <div className="space-y-2">
-          {members.map(t => (
-            <div key={t.id} className="border border-neutral-700 rounded-lg p-4 flex items-center gap-4 bg-[#18181a]">
-              <div className="flex-1">
+      <div className="mb-4">
+        <h4 className="text-sm text-neutral-400 font-semibold mb-2">Current Team</h4>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {isLoading ? "Loading…" : members.map(t => (
+            <div key={t.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex items-center gap-3">
+              {t.photo_url
+                ? <img src={t.photo_url} className="w-9 h-9 rounded object-cover border" alt="" />
+                : <span className="inline-block w-9 h-9 rounded-full bg-neutral-800"></span>}
+              <div>
                 <div className="font-semibold text-white">{t.name}</div>
-                <div className="text-gray-400 text-sm">{t.role}</div>
+                <div className="text-gray-400 text-xs">{t.role}</div>
+                {t.bio && <div className="text-neutral-300 text-xs mt-1">{t.bio}</div>}
               </div>
-              <Button size="sm" variant="ghost" onClick={() => handleEdit(t)}>Edit</Button>
-              <Button size="sm" variant="ghost" onClick={() => delMutation.mutate(t.id)}>Delete</Button>
             </div>
           ))}
         </div>
-      )}
+      </div>
       <Button className="mt-4" onClick={handleAdd}>Add Team Member</Button>
       {modalOpen && (
         <div className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center">
@@ -109,7 +113,7 @@ export function TeamSettingsSection() {
             <div className="space-y-2">
               <Input name="name" value={form.name || ""} onChange={handleChange} placeholder="Name" />
               <Input name="role" value={form.role || ""} onChange={handleChange} placeholder="Role" />
-              <Input name="photo_url" value={form.photo_url || ""} onChange={handleChange} placeholder="Photo URL" />
+              <ImageUpload value={form.photo_url || ""} onChange={v => setForm(f => ({ ...f, photo_url: v }))} label="Photo" />
               <textarea
                 name="bio"
                 rows={3}
@@ -129,4 +133,3 @@ export function TeamSettingsSection() {
     </section>
   );
 }
-

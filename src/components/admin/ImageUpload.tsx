@@ -1,72 +1,58 @@
 
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Upload } from 'lucide-react';
 
 interface ImageUploadProps {
-  bucketName: string;
-  currentImageUrl?: string | null;
-  onUpload: (url: string) => void;
-  folder?: string;
+  value?: string;
+  onChange: (url: string) => void;
+  label?: string;
+  disabled?: boolean;
 }
 
-export function ImageUpload({ bucketName, currentImageUrl, onUpload, folder = 'public' }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, label = "Image", disabled = false }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null);
 
+  // For demo and fallback, simply mock upload
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
-    try {
-      const fileName = `${folder}/${Date.now()}-${file.name}`;
-      const { data, error } = await supabase.storage
-        .from(bucketName)
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(data.path);
-      
-      onUpload(publicUrl);
-      setPreviewUrl(publicUrl);
-      toast({ title: "Image uploaded successfully!" });
-
-    } catch (error: any) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    } finally {
+    // Replace this with actual upload logic if integrating Supabase Storage
+    setTimeout(() => {
+      const url = URL.createObjectURL(file);
+      onChange(url);
+      toast({ title: "Image selected (not uploaded)", description: "Demo only. Plug in your upload logic." });
       setUploading(false);
-    }
+    }, 750);
   };
-  
-  const fileInputId = `file-upload-${Math.random().toString(36).substring(7)}`;
 
   return (
-    <div className="space-y-3">
-        <label className="block text-sm text-neutral-300 font-medium">Hero Image</label>
-        {previewUrl && (
-            <div className="mt-2">
-                <img src={previewUrl} alt="Current hero image" className="rounded-md max-h-48 w-auto object-cover border border-neutral-700" />
-            </div>
-        )}
+    <div className="space-y-2">
+      <label className="block text-xs font-medium text-neutral-300">{label}</label>
+      {value && (
         <div className="flex items-center gap-3">
-            <Input id={fileInputId} type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="hidden" />
-            <Button type="button" variant="outline" disabled={uploading} onClick={() => document.getElementById(fileInputId)?.click()}>
-                {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
-                <span className="ml-2">{uploading ? 'Uploading...' : 'Upload Image'}</span>
-            </Button>
+          <img src={value} alt="Selected" className="w-16 h-16 rounded border border-neutral-800 object-cover" />
+          <Button type="button" variant="secondary" size="sm" onClick={() => onChange("")}>Remove</Button>
         </div>
+      )}
+      <div className="flex gap-2">
+        <Input
+          type="file"
+          accept="image/*"
+          disabled={uploading || disabled}
+          onChange={handleFileChange}
+        />
+        <Input
+          type="url"
+          placeholder="Paste image URL"
+          value={value || ""}
+          onChange={e => onChange(e.target.value)}
+          disabled={uploading || disabled}
+        />
+      </div>
     </div>
   );
 }

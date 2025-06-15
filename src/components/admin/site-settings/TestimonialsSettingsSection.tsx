@@ -1,10 +1,11 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { IconPicker, IconDisplay } from "@/components/admin/IconPicker";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 type Testimonial = {
   id: string;
@@ -85,22 +86,28 @@ export function TestimonialsSettingsSection() {
   }
 
   return (
-    <section className="mb-16">
+    <section className="mb-16 bg-[#18181a] border border-neutral-700 rounded-lg p-6">
       <h2 className="text-lg font-bold text-primary mb-3">Testimonials</h2>
-      {isLoading ? <div>Loading…</div> : (
-        <div className="space-y-2">
-          {testimonials.map(t => (
-            <div key={t.id} className="border border-neutral-700 rounded-lg p-4 flex items-center gap-4 bg-[#18181a]">
-              <div className="flex-1">
+      {/* Current content display */}
+      <div className="mb-4">
+        <h4 className="text-sm text-neutral-400 font-semibold mb-2">Current Testimonials</h4>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {isLoading ? "Loading…" : testimonials.map(t => (
+            <div key={t.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex flex-col items-start">
+              <div className="flex items-center mb-2 gap-2">
+                {t.avatar_url ? (
+                  <img src={t.avatar_url} className="w-8 h-8 rounded object-cover border" alt="" />
+                ) : (
+                  <span className="inline-block w-8 h-8 rounded-full bg-neutral-800"></span>
+                )}
                 <div className="font-semibold text-white">{t.name}</div>
-                <div className="text-gray-400 text-sm">"{t.text}"</div>
+                <div className="ml-2 text-yellow-300 text-xs">{t.rating ? "★".repeat(Math.round(t.rating)) : ""}</div>
               </div>
-              <Button size="sm" variant="ghost" onClick={() => handleEdit(t)}>Edit</Button>
-              <Button size="sm" variant="ghost" onClick={() => delMutation.mutate(t.id)}>Delete</Button>
+              <div className="text-gray-400 text-xs mb-1">"{t.text}"</div>
             </div>
           ))}
         </div>
-      )}
+      </div>
       <Button className="mt-4" onClick={handleAdd}>Add Testimonial</Button>
       {modalOpen && (
         <div className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center">
@@ -108,7 +115,7 @@ export function TestimonialsSettingsSection() {
             <h3 className="font-bold mb-2">{editId ? "Edit Testimonial" : "Add Testimonial"}</h3>
             <div className="space-y-2">
               <Input name="name" value={form.name || ""} onChange={handleChange} placeholder="Name" />
-              <Input name="avatar_url" value={form.avatar_url || ""} onChange={handleChange} placeholder="Avatar URL" />
+              <ImageUpload value={form.avatar_url || ""} onChange={v => setForm(f => ({ ...f, avatar_url: v }))} label="Avatar" />
               <Input name="rating" type="number" value={form.rating || ""} onChange={handleChange} placeholder="Rating (e.g. 4.5)" />
               <textarea
                 name="text"
@@ -129,4 +136,3 @@ export function TestimonialsSettingsSection() {
     </section>
   );
 }
-
