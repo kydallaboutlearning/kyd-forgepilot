@@ -1,9 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchBlogPost } from "@/utils/fetchBlog";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "@/components/Footer";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -62,6 +62,7 @@ export default function BlogPostPage() {
           <span key={tag} className="bg-accent px-2 py-1 rounded-full text-xs">{tag}</span>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

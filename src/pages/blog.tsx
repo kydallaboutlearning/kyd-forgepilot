@@ -1,8 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { fetchBlogList } from "@/utils/fetchBlog";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "@/components/Footer";
 
 export default function BlogListPage() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -72,6 +72,7 @@ export default function BlogListPage() {
           </Link>
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

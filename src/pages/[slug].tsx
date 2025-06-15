@@ -1,9 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/utils/fetchPage";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import { useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import Footer from "@/components/Footer";
 
 export default function DynamicPage() {
   const { slug } = useParams();
@@ -36,12 +36,13 @@ export default function DynamicPage() {
           <Skeleton className="w-16 h-6 rounded-full" />
           <Skeleton className="w-16 h-6 rounded-full" />
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (!page)
-    return <div className="mt-32 text-center text-red-500">Page not found</div>;
+    return <div className="mt-32 text-center text-red-500">Page not found<Footer /></div>;
 
   return (
     <div className="max-w-2xl mx-auto mt-32 px-4">
@@ -54,6 +55,7 @@ export default function DynamicPage() {
       )}
       <h1 className="text-4xl font-bold mb-4">{page.title}</h1>
       <RichTextRenderer html={page.body || ""} />
+      <Footer />
     </div>
   );
 }

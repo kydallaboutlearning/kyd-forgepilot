@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 // Move MOCK_PROJECTS to a separate export so detail page can use it
 export const MOCK_PROJECTS = [
@@ -145,6 +146,7 @@ export default function Portfolio() {
           <span className="text-muted-foreground text-base">More projects coming soon…</span>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

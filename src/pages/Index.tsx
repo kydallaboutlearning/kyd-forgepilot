@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Hero from "@/components/landing/Hero";
 import PartnerLogos from "@/components/landing/PartnerLogos";
@@ -12,6 +11,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import Team from "@/components/landing/Team";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
+import Footer from "@/components/Footer";
 
 export default function Index() {
   return (
@@ -30,6 +30,7 @@ export default function Index() {
       <Team />
       <FAQ />
       <FinalCTA />
+      <Footer />
     </div>
   );
 }
