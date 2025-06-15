@@ -18,27 +18,42 @@ export default function ContactCTA() {
     },
   });
 
-  if (isLoading || !data) {
+  if (isLoading || !data || typeof data !== "object") {
     return null;
   }
 
-  const headline = data.contact_cta_headline || "AUTOMATE YOUR NEXT BIG IDEA TODAY";
+  // Defensive: if wrong shape, fallback
+  const headline =
+    typeof data.contact_cta_headline === "string"
+      ? data.contact_cta_headline
+      : "AUTOMATE YOUR NEXT BIG IDEA TODAY";
   const subtext =
-    data.contact_cta_subtext ||
-    "Ready to see what’s possible?\nWork with our team of AI automation experts.";
-  const btnLabel = data.contact_cta_button_label || "CONTACT US";
-  const btnUrl = data.contact_cta_button_url || "#contact";
+    typeof data.contact_cta_subtext === "string"
+      ? data.contact_cta_subtext
+      : "Ready to see what’s possible?\nWork with our team of AI automation experts.";
+  const btnLabel =
+    typeof data.contact_cta_button_label === "string"
+      ? data.contact_cta_button_label
+      : "CONTACT US";
+  const btnUrl =
+    typeof data.contact_cta_button_url === "string"
+      ? data.contact_cta_button_url
+      : "#contact";
 
   return (
     <section className="w-full flex flex-col items-center py-20 bg-neutral-900 border-b border-neutral-800">
-      <div className="bg-black rounded-3xl px-8 md:px-14 py-12 md:py-16 shadow-2xl text-center max-w-lg md:max-w-2xl w-full"
+      <div
+        className="bg-black rounded-3xl px-8 md:px-14 py-12 md:py-16 shadow-2xl text-center max-w-lg md:max-w-2xl w-full"
         style={{
-          boxShadow: "0 8px 50px 0 #000000aa"
-        }}>
+          boxShadow: "0 8px 50px 0 #000000aa",
+        }}
+      >
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FFA726] uppercase mb-5 tracking-wider font-sans">
           {headline}
         </h2>
-        <p className="text-gray-300 text-lg md:text-xl mb-10 font-sans whitespace-pre-line">{subtext}</p>
+        <p className="text-gray-300 text-lg md:text-xl mb-10 font-sans whitespace-pre-line">
+          {subtext}
+        </p>
         <a
           href={btnUrl}
           className="inline-block bg-[#FFA726] text-black px-10 md:px-12 py-3 md:py-4 rounded-lg shadow-xl text-base md:text-lg font-black uppercase tracking-wide hover:scale-105 transition-transform focus:outline-none hover:bg-[#ffc566] focus:bg-[#ffd993]"

@@ -50,30 +50,46 @@ export default function RecentWorks() {
     const fetchContent = async () => {
       setLoading(true);
 
-      const settingsPromise = supabase
-        .from("site_settings")
-        .select("recent_works_headline")
-        .limit(1)
-        .maybeSingle();
+      // Defensive: wrap fetches in try/catch
+      try {
+        const [settingsResult, projectsResult] = await Promise.all([
+          supabase
+            .from("site_settings")
+            .select("recent_works_headline")
+            .limit(1)
+            .maybeSingle(),
+          supabase
+            .from("portfolio_items")
+            .select(
+              "id, title, description, images, results, is_featured, featured_order"
+            )
+            .eq("is_featured", true)
+            .order("featured_order", { ascending: true, nullsFirst: true })
+            .limit(12),
+        ]);
 
-      const projectsPromise = supabase
-        .from("portfolio_items")
-        .select("id, title, description, images, results, is_featured, featured_order")
-        .eq("is_featured", true)
-        .order("featured_order", { ascending: true, nullsFirst: true })
-        .limit(12); // reasonable upper bound
+        if (
+          settingsResult &&
+          typeof settingsResult.data === "object" &&
+          settingsResult.data.recent_works_headline
+        ) {
+          setHeadline(settingsResult.data.recent_works_headline);
+        }
 
-      const [settingsResult, projectsResult] = await Promise.all([
-        settingsPromise,
-        projectsPromise,
-      ]);
-
-      if (settingsResult.data?.recent_works_headline) {
-        setHeadline(settingsResult.data.recent_works_headline);
-      }
-
-      if (projectsResult.data) {
-        setProjects(projectsResult.data as Project[]);
+        if (
+          projectsResult &&
+          Array.isArray(projectsResult.data) &&
+          projectsResult.data.length > 0 &&
+          projectsResult.data[0] &&
+          typeof projectsResult.data[0] === "object" &&
+          ("id" in projectsResult.data[0])
+        ) {
+          setProjects((projectsResult.data as any[]).filter((p) => !!p.id) as Project[]);
+        } else {
+          setProjects([]);
+        }
+      } catch (err) {
+        setProjects([]);
       }
 
       setLoading(false);
@@ -90,9 +106,13 @@ export default function RecentWorks() {
         {headline}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8 w-full">
-        {(loading ? Array(3).fill(null) : displayProjects).map((proj: Project, idx) =>
+        {(loading ? Array(3).fill(null) : displayProjects).map((proj: Project | null, idx) =>
           loading ? (
-            <div key={idx} className="bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-neutral-800 animate-pulse" style={{ minHeight: 410 }}>
+            <div
+              key={idx}
+              className="bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-neutral-800 animate-pulse"
+              style={{ minHeight: 410 }}
+            >
               <div className="w-full h-52 bg-neutral-800"></div>
               <div className="p-7">
                 <div className="h-6 w-3/4 bg-neutral-800 rounded mb-3"></div>
@@ -101,37 +121,41 @@ export default function RecentWorks() {
               </div>
             </div>
           ) : (
-            <motion.div
-              key={proj.id}
-              initial={{ opacity: 0, y: 52 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.65, delay: idx * 0.15 }}
-              className="bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-neutral-800 transition-transform hover:scale-105 hover:shadow-2xl animate-fade-in group"
-              style={{ minHeight: 410 }}
-            >
-              <img
-                src={proj.images?.[0] || "/placeholder.svg"}
-                alt={proj.title}
-                className="w-full h-52 object-cover group-hover:opacity-90 transition duration-150"
-              />
-              <div className="p-7">
-                <div className="text-lg font-bold uppercase text-white mb-2 font-sans">
-                  {proj.title}
+            proj && (
+              <motion.div
+                key={proj.id}
+                initial={{ opacity: 0, y: 52 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.65, delay: idx * 0.15 }}
+                className="bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-neutral-800 transition-transform hover:scale-105 hover:shadow-2xl animate-fade-in group"
+                style={{ minHeight: 410 }}
+              >
+                <img
+                  src={proj.images?.[0] || "/placeholder.svg"}
+                  alt={proj.title}
+                  className="w-full h-52 object-cover group-hover:opacity-90 transition duration-150"
+                />
+                <div className="p-7">
+                  <div className="text-lg font-bold uppercase text-white mb-2 font-sans">
+                    {proj.title}
+                  </div>
+                  <div className="text-gray-400 mb-4">
+                    {proj.description}
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {proj.results?.map((metric) => (
+                      <span
+                        key={metric.kpi}
+                        className="bg-accent text-accent-foreground rounded-full px-3 py-1 text-xs font-semibold"
+                      >
+                        {metric.kpi}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-gray-400 mb-4">{proj.description}</div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {proj.results?.map((metric) => (
-                    <span
-                      key={metric.kpi}
-                      className="bg-accent text-accent-foreground rounded-full px-3 py-1 text-xs font-semibold"
-                    >
-                      {metric.kpi}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )
           )
         )}
       </div>
