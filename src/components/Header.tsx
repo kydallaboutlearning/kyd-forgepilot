@@ -34,7 +34,7 @@ const nav = [
 
 function NavLinks() {
   return (
-    <nav className="flex items-center gap-7 font-sans text-base text-neutral-200">
+    <nav className="flex items-center gap-6 md:gap-7 font-sans text-base text-neutral-200">
       {nav.map((item) => {
         if ("dropdown" in item) {
           return (
@@ -84,7 +84,7 @@ export default function Header() {
   const isMobile = useIsMobile();
 
   return (
-    <header className="relative w-full flex items-center justify-center bg-transparent py-4 px-2 md:py-7 md:px-4 select-none z-50">
+    <header className="relative w-full flex items-center justify-center bg-transparent py-3 px-2 md:py-6 md:px-4 select-none z-50">
       {/* Dot grid background */}
       <svg
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-0"
@@ -100,24 +100,25 @@ export default function Header() {
       </svg>
       {/* Main header bar */}
       <div
-        className="
+        className={`
           relative z-10 w-full max-w-5xl
           flex items-center
           justify-between
-          py-3 md:py-[0.7rem] px-4 md:px-8
-          rounded-2xl md:rounded-full bg-black bg-opacity-[0.90] md:bg-opacity-[0.82]
+          py-3 md:py-[0.6rem] px-3 sm:px-4 md:px-8
+          rounded-2xl md:rounded-full bg-black bg-opacity-[0.92] md:bg-opacity-[0.82]
           border border-[#FFB74A]/40
           shadow-[0_0_0_1.5px_#FFB74A20]
-        "
+          transition-all
+        `}
         style={{
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30",
         }}
       >
-        {/* Mobile layout: logo left, hamburger right */}
+        {/* MOBILE: logo left, hamburger menu right */}
         <div className="flex w-full items-center justify-between md:hidden">
           <Link
             to="/"
-            className="font-sans text-xl md:text-2xl font-semibold tracking-tight flex items-baseline mx-1 md:mx-0"
+            className="font-sans text-xl font-semibold tracking-tight flex items-baseline"
             style={{
               color: "#FFB74A",
               letterSpacing: "-0.02em",
@@ -129,11 +130,12 @@ export default function Header() {
           </Link>
           <MobileNavDrawer />
         </div>
-        {/* Desktop: Logo left, center nav, CTA right */}
-        <div className="hidden md:flex flex-1 items-center justify-between w-full">
+        {/* TABLET & DESKTOP: logo left, nav center (hidden for tablet <lg), CTA right */}
+        <div className="hidden md:flex w-full items-center justify-between gap-2">
+          {/* Logo */}
           <Link
             to="/"
-            className="font-sans text-2xl font-semibold tracking-tight flex items-baseline mx-1 md:mx-0"
+            className="font-sans text-2xl font-semibold tracking-tight flex items-baseline"
             style={{
               color: "#FFB74A",
               letterSpacing: "-0.02em",
@@ -143,18 +145,24 @@ export default function Header() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          <div className="flex-1 flex items-center justify-center ml-0 md:ml-4">
-            <NavLinks />
+          {/* Navigation, center-aligned, reduces gap on mid screens */}
+          <div className="flex-1 flex items-center justify-center ml-0 lg:ml-4">
+            <div className="hidden md:flex md:gap-3 lg:gap-7">
+              <NavLinks />
+            </div>
           </div>
+          {/* CTA */}
           <a
             href="#contact"
             className="
-              group flex items-center gap-2 
-              rounded-xl bg-black/60 border border-[#FFB74A44] px-5 py-2.5
+              group flex items-center gap-2
+              rounded-xl bg-black/60 border border-[#FFB74A44] px-4 py-2.5
               font-semibold text-base text-neutral-200 hover:text-primary transition
               shadow-[0_0_9px_0_#FFB74A33]
               focus:outline-none
               relative
+              md:text-base md:px-4 md:py-2.5
+              lg:px-5 lg:py-2.5
             "
             style={{
               boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22",
