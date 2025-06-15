@@ -56,7 +56,7 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-5 md:px-4 select-none z-50"
+      className="fixed top-0 left-0 w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-3 lg:py-5 md:px-4 select-none z-50"
       style={{
         zIndex: 100,
         pointerEvents: "auto",
@@ -77,13 +77,14 @@ export default function Header() {
         </defs>
         <rect width="100%" height="100%" fill="url(#forgepilot-dot-header)" />
       </svg>
+      
       {/* Main header bar */}
       <div
         className={`
-          relative z-10 w-full max-w-5xl
+          relative z-10 w-full max-w-6xl
           flex items-center
           justify-between
-          py-2 md:py-[0.5rem] px-2 sm:px-4 md:px-8
+          py-2 md:py-[0.5rem] px-3 sm:px-4 md:px-6 lg:px-8
           rounded-2xl md:rounded-full
           shadow-[0_0_0_1.5px_#FFB74A20]
           transition-all duration-300
@@ -93,13 +94,11 @@ export default function Header() {
           boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30"
         }}
       >
-        {/* MOBILE: logo left, hamburger menu right */}
-        <HeaderMobileNav />
-        {/* TABLET & DESKTOP: logo left, nav center, CTA right */}
-        <div className="hidden md:flex w-full items-center justify-between gap-2 min-h-[56px]">
+        {/* MOBILE & SMALL TABLET: logo left, hamburger menu right */}
+        <div className="flex md:hidden w-full items-center justify-between h-12">
           <Link
             to="/"
-            className="font-sans text-2xl font-semibold tracking-tight flex items-baseline"
+            className="font-sans text-xl font-semibold tracking-tight flex items-baseline"
             style={{
               color: "#FFB74A",
               letterSpacing: "-0.02em",
@@ -109,29 +108,51 @@ export default function Header() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          <div className="flex-1 flex items-center justify-center ml-0 lg:ml-4">
-            <div className="hidden md:flex md:gap-3 lg:gap-7">
+          {/* Z-50 ensures drawer trigger stays clickable */}
+          <div className="z-50"><MobileNavDrawer /></div>
+        </div>
+
+        {/* TABLET & DESKTOP: logo left, nav center, CTA right */}
+        <div className="hidden md:flex w-full items-center justify-between gap-2 lg:gap-4 min-h-[56px]">
+          <Link
+            to="/"
+            className="font-sans text-xl lg:text-2xl font-semibold tracking-tight flex items-baseline flex-shrink-0"
+            style={{
+              color: "#FFB74A",
+              letterSpacing: "-0.02em",
+              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555"
+            }}
+          >
+            Forge
+            <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
+          </Link>
+          
+          {/* Navigation - Better tablet spacing */}
+          <div className="flex-1 flex items-center justify-center mx-2 lg:mx-4">
+            <div className="hidden md:flex md:gap-2 lg:gap-6 xl:gap-7">
               <NavLinks />
             </div>
           </div>
+          
+          {/* CTA Button - Responsive sizing */}
           <a
             href="#contact"
             className="
-              group flex items-center gap-2
-              rounded-xl bg-black/60 border border-[#FFB74A44] px-4 py-2.5
-              font-semibold text-base text-neutral-200 hover:text-primary transition
+              group flex items-center gap-1.5 lg:gap-2
+              rounded-xl bg-black/60 border border-[#FFB74A44] 
+              px-3 py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-2.5
+              font-semibold text-sm md:text-base text-neutral-200 hover:text-primary transition
               shadow-[0_0_9px_0_#FFB74A33]
               focus:outline-none
               relative
-              md:text-base md:px-4 md:py-2.5
-              lg:px-5 lg:py-2.5
+              flex-shrink-0
             "
             style={{
               boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22"
             }}
           >
-            Let&apos;s Talk
-            <ArrowUpRight className="w-4 h-4 ml-1 opacity-90 text-primary group-hover:translate-x-1 transition-transform" />
+            <span className="whitespace-nowrap">Let&apos;s Talk</span>
+            <ArrowUpRight className="w-3.5 h-3.5 lg:w-4 lg:h-4 opacity-90 text-primary group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       </div>
