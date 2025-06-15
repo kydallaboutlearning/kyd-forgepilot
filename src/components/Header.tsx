@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -88,11 +87,11 @@ export default function Header() {
         height="100%"
       >
         <defs>
-          <pattern id="automatix-dot-header" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+          <pattern id="forgepilot-dot-header" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
             <circle cx="2" cy="2" r="1.1" fill="#FFB74A" fillOpacity="0.12" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#automatix-dot-header)" />
+        <rect width="100%" height="100%" fill="url(#forgepilot-dot-header)" />
       </svg>
       {/* Main header bar */}
       <div
@@ -119,8 +118,8 @@ export default function Header() {
             textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
           }}
         >
-          Automa
-          <span style={{ color: "white", marginLeft: "-2px" }}>tix</span>
+          Forge
+          <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
         </Link>
         {/* Nav */}
         <div className="flex-1 flex items-center justify-center ml-4">

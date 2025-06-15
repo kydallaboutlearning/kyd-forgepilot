@@ -3,8 +3,8 @@ import Header from "@/components/Header";
 import PortfolioCard from "@/components/PortfolioCard";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search } from "lucide-react";
 
 type Project = {
   id: string;
@@ -63,19 +63,23 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <Header />
-      <main className="pt-28 px-4 md:px-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
+      <main className="pt-28 px-4 md:px-8 max-w-8xl mx-auto w-full flex-1 flex flex-col">
         <div className="w-full mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-primary font-sans">Portfolio</h1>
             <p className="text-lg text-muted-foreground max-w-xl">Explore our AI-driven projects, crafted for excellence in real estate, healthcare, and more.</p>
           </div>
           <div className="flex gap-4 flex-wrap items-center md:justify-end">
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search projects…"
-              className="w-52 bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-400 rounded-lg focus-visible:ring-primary"
-            />
+            <div className="relative w-52">
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search projects…"
+                className="w-52 bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-400 rounded-lg focus-visible:ring-primary"
+                style={{ paddingLeft: "2.3rem" }}
+              />
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+            </div>
             <Tabs value={filter || ""} onValueChange={(val) => setFilter(val || null)} className="min-w-[160px]">
               <TabsList className="bg-neutral-900 border border-neutral-800 rounded-md p-0">
                 <TabsTrigger value="">All</TabsTrigger>
@@ -89,20 +93,19 @@ export default function Portfolio() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-9">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-7 md:gap-10">
           {filtered.length === 0 && (
             <div className="col-span-full py-24 text-xl text-center text-muted-foreground font-semibold opacity-70">
               No projects found.
             </div>
           )}
           {filtered.map((p) => (
-            <div key={p.id} className="transition-transform duration-150 hover:scale-[1.025]">
+            <div key={p.id} className="transition-transform duration-150 hover:scale-[1.02]">
               <PortfolioCard project={p} />
             </div>
           ))}
         </div>
-        {/* Pagination/coming soon */}
-        <div className="mt-20 text-center">
+        <div className="mt-16 text-center">
           <span className="text-muted-foreground text-base">More projects coming soon…</span>
         </div>
       </main>
