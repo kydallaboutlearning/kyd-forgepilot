@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchBlogPost } from "@/utils/fetchBlog";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -22,7 +23,23 @@ export default function BlogPostPage() {
     });
   }, [slug]);
 
-  if (loading) return <div className="mt-32 text-center text-muted-foreground">Loading…</div>;
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in">
+        <Skeleton className="w-full h-44 rounded-xl mb-4" />
+        <Skeleton className="h-10 w-6/12 mb-3" />
+        <Skeleton className="h-4 w-3/12 mb-2" />
+        <Skeleton className="h-5 w-11/12 mb-2" />
+        <Skeleton className="h-5 w-9/12 mb-3" />
+        <Skeleton className="h-5 w-10/12 mb-3" />
+        <div className="flex gap-2 mt-6">
+          <Skeleton className="w-16 h-6 rounded-full" />
+          <Skeleton className="w-16 h-6 rounded-full" />
+        </div>
+      </div>
+    );
+  }
+
   if (!post)
     return <div className="mt-32 text-center text-red-500">Post not found</div>;
 

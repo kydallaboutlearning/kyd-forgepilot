@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { fetchBlogList } from "@/utils/fetchBlog";
 import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogListPage() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -14,7 +15,30 @@ export default function BlogListPage() {
     });
   }, []);
 
-  if (loading) return <div className="mt-32 text-center text-muted-foreground">Loading…</div>;
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in">
+        <Skeleton className="h-10 w-44 mb-8" />
+        <div className="space-y-8">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="block group rounded-xl shadow border border-border bg-card">
+              <Skeleton className="w-full rounded-t-xl max-h-[220px] h-[150px] object-cover" />
+              <div className="p-5">
+                <Skeleton className="h-6 w-8/12 mb-2" />
+                <Skeleton className="h-4 w-11/12 mb-3" />
+                <Skeleton className="h-3 w-3/12 mb-2" />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <Skeleton className="w-12 h-5 rounded-full" />
+                  <Skeleton className="w-12 h-5 rounded-full" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (!posts.length)
     return <div className="mt-32 text-center text-muted-foreground">No blog posts published yet.</div>;
 
