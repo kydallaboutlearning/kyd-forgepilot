@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,9 +21,19 @@ type SiteHeaderProps = {
     logo_url: string;
     favicon_url: string;
   };
-  current: typeof header;
+  current: {
+    site_title: string;
+    site_subtitle: string;
+    logo_url: string;
+    favicon_url: string;
+  };
   isPending: boolean;
-  onSubmit: (updates: typeof header) => void;
+  onSubmit: (updates: {
+    site_title: string;
+    site_subtitle: string;
+    logo_url: string;
+    favicon_url: string;
+  }) => void;
 };
 
 export function SiteHeaderSettings({ header, current, isPending, onSubmit }: SiteHeaderProps) {

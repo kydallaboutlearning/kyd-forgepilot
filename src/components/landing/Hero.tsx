@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
 import HeroAvailableTag from "./HeroAvailableTag";
@@ -14,33 +15,57 @@ type HeroSettings = {
 export default function Hero() {
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const latestSettingsRef = useRef<HeroSettings | null>(null);
 
-  // Manual reload button for admin
-  const [reloadCount, setReloadCount] = useState(0);
+  // Helper method to fetch current settings from Supabase
+  const fetchSettings = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("hero_headline, hero_subtext, hero_cta_label, hero_cta_link")
+      .limit(1)
+      .maybeSingle();
+    if (error) {
+      setHeroSettings(null);
+    } else {
+      setHeroSettings(data as HeroSettings);
+      latestSettingsRef.current = data as HeroSettings;
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    const fetchSettings = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("hero_headline, hero_subtext, hero_cta_label, hero_cta_link")
-        .limit(1)
-        .maybeSingle();
-      if (isMounted) {
-        if (error) {
-          setHeroSettings(null);
-        } else {
-          setHeroSettings(data as HeroSettings);
-        }
-        setIsLoading(false);
-      }
-    };
+    // Initial fetch
     fetchSettings();
+
+    // Subscribe to realtime postgres changes for hero settings
+    const channel = supabase
+      .channel("site_settings_hero_realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "site_settings",
+        },
+        (payload) => {
+          // Only react if a hero field is changed
+          const newData = payload.new as HeroSettings | null;
+          if (newData) {
+            setHeroSettings((prev) => ({
+              ...prev,
+              ...newData,
+            }));
+            latestSettingsRef.current = newData;
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
-      isMounted = false;
+      supabase.removeChannel(channel);
     };
-  }, [reloadCount]); // depend on reloadCount for refresh
+  }, []);
 
   // Optionally provide fallback content if nothing exists in DB yet
   const headline = heroSettings?.hero_headline || (
@@ -100,12 +125,11 @@ export default function Hero() {
         {ctaLabel}
         <svg className="ml-2 w-5 h-5 -mt-0.5 text-primary transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 18 18"><path d="M5 9h8M9 5l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
       </a>
-      <button
-        onClick={() => setReloadCount(rc => rc + 1)}
-        className="mt-6 ml-2 px-4 py-2 bg-neutral-800 text-white rounded text-xs shadow hover:bg-primary transition"
-      >
-        Refresh Hero Data
-      </button>
+      {/* Loader for sync */}
+      {isLoading && (
+        <div className="z-10 mt-4 text-sm text-neutral-400">Loading…</div>
+      )}
     </section>
   );
 }
+
