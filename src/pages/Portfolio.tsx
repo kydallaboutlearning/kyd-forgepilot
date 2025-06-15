@@ -1,9 +1,8 @@
-
 import Header from "@/components/Header";
 import PortfolioCard from "@/components/PortfolioCard";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -79,16 +78,16 @@ export const MOCK_PROJECTS = [
 export default function Portfolio() {
   const [projects, setProjects] = useState(MOCK_PROJECTS);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>("");
 
+  const categories = Array.from(new Set(projects.map((p) => p.category)));
   const filtered = projects.filter(
     (p) =>
-      (!filter || p.category === filter) &&
+      (!filter || filter === "" || p.category === filter) &&
       (search === "" ||
         p.title.toLowerCase().includes(search.toLowerCase()) ||
         p.description.toLowerCase().includes(search.toLowerCase()))
   );
-  const categories = Array.from(new Set(projects.map((p) => p.category)));
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -96,7 +95,7 @@ export default function Portfolio() {
       <main className="pt-28 px-4 md:px-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
         <div className="w-full mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-primary font-sans">Our Portfolio</h1>
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-[#FFB74A] font-sans">Our Portfolio</h1>
             <p className="text-lg text-muted-foreground max-w-xl">Explore our AI-driven projects, crafted for excellence in real estate, healthcare, and more.</p>
           </div>
           <div className="flex gap-4 flex-wrap items-center md:justify-end">
@@ -110,16 +109,17 @@ export default function Portfolio() {
               />
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
             </div>
-            <Tabs value={filter || ""} onValueChange={(val) => setFilter(val || null)} className="min-w-[160px]">
-              <TabsList className="bg-neutral-900 border border-neutral-800 rounded-md p-0">
-                <TabsTrigger value="">All</TabsTrigger>
-                {categories.map((c) => (
-                  <TabsTrigger key={c} value={c}>
-                    {c}
-                  </TabsTrigger>
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="min-w-[140px] bg-neutral-900 border-neutral-800 text-white focus:ring-primary/70">
+                <SelectValue placeholder="All Categories">{filter || "All"}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-neutral-900 border-neutral-800 text-white z-50">
+                <SelectItem key="all" value="">All</SelectItem>
+                {categories.map(c => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
                 ))}
-              </TabsList>
-            </Tabs>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-7 md:gap-10">

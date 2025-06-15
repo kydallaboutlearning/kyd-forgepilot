@@ -1,7 +1,7 @@
 
 import ImageGallery from "@/components/ImageGallery";
 import RichTextRenderer from "@/components/RichTextRenderer";
-import VideoPlayer from "@/components/VideoPlayer";
+-import VideoPlayer from "@/components/VideoPlayer";
 import { Image as ImageIcon } from "lucide-react";
 
 type Project = {
@@ -9,7 +9,7 @@ type Project = {
   title: string;
   description: string;
   images: string[];
-  video?: string;
+-  video?: string;
   date: string;
   category: string;
   tags: string[];
@@ -36,12 +36,12 @@ export default function PortfolioCard({ project }: { project: Project }) {
       <div className="w-full aspect-[16/9] bg-neutral-900 flex items-center justify-center rounded-none overflow-hidden relative border-y border-[#FFB74A]">
         <ImageGallery images={project.images} cardMode />
       </div>
-      {/* Video (if present) */}
-      {project.video && (
-        <div className="px-6 pt-4">
-          <VideoPlayer video={project.video} />
-        </div>
-      )}
+-      {/* Video (if present) */}
+-      {project.video && (
+-        <div className="px-6 pt-4">
+-          <VideoPlayer video={project.video} />
+-        </div>
+-      )}
       {/* Tags */}
       <div className="flex gap-2 flex-wrap mt-4 px-6 pb-6">
         {project.tags.map(tag => (
@@ -53,3 +53,4 @@ export default function PortfolioCard({ project }: { project: Project }) {
     </div>
   );
 }
+
