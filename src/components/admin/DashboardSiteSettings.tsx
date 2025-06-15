@@ -28,13 +28,15 @@ export default function DashboardSiteSettings() {
   // Fetch site settings on mount
   useEffect(() => {
     setLoading(true);
-    supabase
-      .from("site_settings")
-      .select("*")
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .single()
-      .then(({ data, error }) => {
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("*")
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .single();
+
         if (error) {
           toast({
             variant: "destructive",
@@ -44,8 +46,10 @@ export default function DashboardSiteSettings() {
         } else if (data) {
           setSettings(data);
         }
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   // Handle update or insert
