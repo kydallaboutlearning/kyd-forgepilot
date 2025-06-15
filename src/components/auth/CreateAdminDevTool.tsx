@@ -18,28 +18,34 @@ export default function CreateAdminDevTool() {
       // 1. Bcrypt hash the password
       const hash = await bcrypt.hash(ADMIN_PASSWORD, 10);
 
-      // 2. Insert/update admin credentials in site_settings
+      // 2. Upsert admin credentials in site_settings (correct way)
       await supabase
         .from("site_settings")
-        .insert([
+        .upsert([
           {
             admin_email: ADMIN_EMAIL,
             admin_password_hash: hash,
             updated_at: new Date().toISOString(),
           },
-        ], { upsert: true, onConflict: "admin_email" });
+        ]);
 
-      // 3. Try to create the Supabase Auth user
-      // First, check if user exists
-      const { data: existingUser, error: userLookupErr } = await supabase.auth.admin.listUsers({ email: ADMIN_EMAIL });
-      if (userLookupErr) {
-        toast({ variant: "destructive", title: "Error looking up user", description: userLookupErr.message });
+      // 3. List all users and find by email
+      const { data: userList, error: userListErr } = await supabase.auth.admin.listUsers();
+      if (userListErr) {
+        toast({ variant: "destructive", title: "Error looking up user", description: userListErr.message });
         setLoading(false);
         return;
       }
-      if (existingUser?.users?.length > 0) {
-        // User already exists, try to reset password
-        const { error: updateErr } = await supabase.auth.admin.updateUserById(existingUser.users[0].id, { password: ADMIN_PASSWORD, email_confirm: true });
+      const existingUser = userList?.users?.find(
+        (user: { email?: string }) => user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
+      );
+
+      if (existingUser) {
+        // User already exists, try to reset password and confirm email
+        const { error: updateErr } = await supabase.auth.admin.updateUserById(existingUser.id, {
+          password: ADMIN_PASSWORD,
+          email_confirm: true,
+        });
         if (updateErr) {
           toast({ variant: "destructive", title: "Error updating password", description: updateErr.message });
           setLoading(false);
