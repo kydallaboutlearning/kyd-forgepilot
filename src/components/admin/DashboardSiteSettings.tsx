@@ -2,8 +2,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
-import { SiteHeaderSettings } from "./SiteHeaderSettings";
-import { SiteHeroSettings } from "./SiteHeroSettings";
+import { HeaderSettingsSection } from "./site-settings/HeaderSettingsSection";
+import { HeroSettingsSection } from "./site-settings/HeroSettingsSection";
+import { BenefitsSettingsSection } from "./site-settings/BenefitsSettingsSection";
+import { RecentWorksSettingsSection } from "./site-settings/RecentWorksSettingsSection";
+import { ContactCTASettingsSection } from "./site-settings/ContactCTASettingsSection";
 import { type BenefitItem } from "@/types/cms";
 import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
 import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
@@ -209,33 +212,33 @@ export default function DashboardSiteSettings() {
 
   return (
     <div className="space-y-10">
-      <SiteHeaderSettings
+      <HeaderSettingsSection
         header={header}
-        current={currentHeader}
+        currentHeader={currentHeader}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
       />
-      <SiteHeroSettings
+      <HeroSettingsSection
         hero={hero}
-        current={currentHero}
+        currentHero={currentHero}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
-      <DashboardBenefitsSettings
-        settings={benefits}
-        current={currentBenefits}
+      <BenefitsSettingsSection
+        benefits={benefits}
+        currentBenefits={currentBenefits}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
       />
-      <DashboardRecentWorksSettings
-        settings={recentWorks}
-        current={currentRecentWorks}
+      <RecentWorksSettingsSection
+        recentWorks={recentWorks}
+        currentRecentWorks={currentRecentWorks}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
-      <DashboardContactCTASettings
-        settings={contactCTA}
-        current={currentContactCTA}
+      <ContactCTASettingsSection
+        contactCTA={contactCTA}
+        currentContactCTA={currentContactCTA}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
