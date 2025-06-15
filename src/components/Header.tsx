@@ -84,7 +84,15 @@ export default function Header() {
   const isMobile = useIsMobile();
 
   return (
-    <header className="relative w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-5 md:px-4 select-none z-50">
+    <header
+      className="fixed top-0 left-0 w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-5 md:px-4 select-none z-50"
+      style={{
+        zIndex: 100,
+        pointerEvents: "auto",
+        height: "80px",
+        minHeight: "56px" // for mobile toolbar height
+      }}
+    >
       {/* Dot grid background */}
       <svg
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-0"
@@ -111,7 +119,7 @@ export default function Header() {
           transition-all
         `}
         style={{
-          boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30",
+          boxShadow: "0 1.5px 28px 0 #FFB74A0C, 0 0 0 1.5px #FFB74A30"
         }}
       >
         {/* MOBILE: logo left, hamburger menu right */}
@@ -122,7 +130,7 @@ export default function Header() {
             style={{
               color: "#FFB74A",
               letterSpacing: "-0.02em",
-              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
+              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555"
             }}
           >
             Forge
@@ -139,7 +147,7 @@ export default function Header() {
             style={{
               color: "#FFB74A",
               letterSpacing: "-0.02em",
-              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555",
+              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555"
             }}
           >
             Forge
@@ -163,7 +171,7 @@ export default function Header() {
               lg:px-5 lg:py-2.5
             "
             style={{
-              boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22",
+              boxShadow: "0 0 2px #1f1603, 0 0 4px 0 #dba54a22"
             }}
           >
             Let&apos;s Talk

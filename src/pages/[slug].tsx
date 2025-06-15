@@ -25,7 +25,7 @@ export default function DynamicPage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in">
+      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in pt-16 md:pt-32">
         <Skeleton className="w-full h-44 rounded-xl mb-4" />
         <Skeleton className="h-10 w-7/12 mb-4" />
         <Skeleton className="h-5 w-11/12 mb-3" />
@@ -42,10 +42,10 @@ export default function DynamicPage() {
   }
 
   if (!page)
-    return <div className="mt-32 text-center text-red-500">Page not found<Footer /></div>;
+    return <div className="mt-32 text-center text-red-500 pt-16 md:pt-32">Page not found<Footer /></div>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-32 px-4">
+    <div className="max-w-2xl mx-auto mt-32 px-4 pt-16 md:pt-32">
       {page.featured_image && (
         <img
           src={page.featured_image}

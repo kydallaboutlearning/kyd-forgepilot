@@ -17,7 +17,7 @@ export default function BlogListPage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in">
+      <div className="max-w-2xl mx-auto mt-32 px-4 animate-fade-in pt-16 md:pt-32">
         <Skeleton className="h-10 w-44 mb-8" />
         <div className="space-y-8">
           {[...Array(3)].map((_, i) => (
@@ -40,10 +40,10 @@ export default function BlogListPage() {
   }
 
   if (!posts.length)
-    return <div className="mt-32 text-center text-muted-foreground">No blog posts published yet.</div>;
+    return <div className="mt-32 text-center text-muted-foreground pt-16 md:pt-32">No blog posts published yet.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-32 px-4">
+    <div className="max-w-2xl mx-auto mt-32 px-4 pt-16 md:pt-32">
       <h1 className="text-4xl font-bold mb-8">Blog</h1>
       <div className="space-y-8">
         {posts.map((post) => (

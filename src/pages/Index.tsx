@@ -16,9 +16,9 @@ import Footer from "@/components/Footer";
 
 export default function Index() {
   return (
-    <div className="w-full min-h-screen flex flex-col bg-black">
-      {/* Header visible at the very top */}
-      <Header />
+    <div className="w-full min-h-screen flex flex-col bg-black pt-8 md:pt-20">
+      {/* Header visible at the very top (now globally provided, so we remove it here) */}
+      {/* <Header /> */}
       <Hero />
       <PartnerLogos />
       <Benefits />
