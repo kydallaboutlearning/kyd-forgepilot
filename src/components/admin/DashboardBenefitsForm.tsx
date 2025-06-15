@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BenefitItem, BenefitItemIcon } from "@/types/cms";
@@ -71,14 +70,20 @@ export function DashboardBenefitsForm({
                     onValueChange={value => onItemChange(index, "icon", value)}
                   >
                     <SelectTrigger className="w-36">
-                      <SelectValue placeholder="Select an icon" />
+                      {/* Make the selected value always show the icon and name */}
+                      <SelectValue>
+                        <span className="flex items-center gap-2">
+                          {renderIcon(item.icon)}
+                          <span>{item.icon}</span>
+                        </span>
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {iconOptions.map(icon => (
-                        <SelectItem key={icon} value={icon}>
+                      {iconOptions.map(iconName => (
+                        <SelectItem key={iconName} value={iconName}>
                           <span className="flex items-center gap-2">
-                            {renderIcon(icon)}
-                            <span>{icon}</span>
+                            {renderIcon(iconName)}
+                            <span>{iconName}</span>
                           </span>
                         </SelectItem>
                       ))}
