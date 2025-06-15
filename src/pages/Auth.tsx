@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -68,41 +69,15 @@ export default function AuthPage() {
       // ignore
     }
 
-    // Try log in with Supabase Auth (register if user doesn't exist!)
+    // Try log in with Supabase Auth -- never allow sign up.
     const { error: signInErr } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (signInErr) {
-      // Try sign up if not exists
-      const { error: signUpErr } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: `${window.location.origin}/dashboard` },
-      });
-      if (signUpErr) {
-        // If this error is "Email not confirmed", show friendly message
-        if (
-          signUpErr.message &&
-          (signUpErr.message.toLowerCase().includes("confirm") ||
-            signUpErr.message.toLowerCase().includes("email not confirmed"))
-        ) {
-          setErr(
-            "Please check your email to confirm your account before logging in."
-          );
-        } else {
-          setErr("Error logging in: " + (signUpErr.message || "unknown"));
-        }
-        setLoading(false);
-        return;
-      } else {
-        // Show message for confirmation step
-        setErr(
-          "A confirmation email was sent to your address. Please confirm and log in again."
-        );
-        setLoading(false);
-        return;
-      }
+      setErr("Invalid credentials.");
+      setLoading(false);
+      return;
     }
     // Success: force full redirect
     window.location.href = "/dashboard";
@@ -181,7 +156,7 @@ export default function AuthPage() {
                 focus-visible:bg-zinc-900/90
                 focus-visible:ring-2 focus-visible:ring-primary transition-all
               "
-              placeholder={adminEmail || "admin@agency.ai"}
+              placeholder="Enter your email"
               autoComplete="username"
             />
           </div>
@@ -238,11 +213,7 @@ export default function AuthPage() {
               "Log in"
             )}
           </Button>
-          {/* Optionally, show a generic note for first-time signup */}
-          <div className="text-xs text-center text-zinc-400 mt-3 opacity-70">
-            {adminEmail &&
-              "If this is your first time logging in, you may need to confirm your email to activate your admin account."}
-          </div>
+          {/* No first-time login/signup info */}
         </form>
       </div>
       <div className="mt-12 text-zinc-700 text-xs text-center">
@@ -251,4 +222,3 @@ export default function AuthPage() {
     </div>
   );
 }
-// Auth.tsx is now much more maintainable. Please consider refactoring other long files in your codebase if needed!
