@@ -4,7 +4,7 @@ import { renderBenefitIcon } from "./benefitIcons";
 import React from "react";
 
 interface DashboardBenefitsCurrentContentProps {
-  current: { benefits_headline: string; benefits_items: BenefitItem[] };
+  current: { benefits_headline?: string | null; benefits_items?: BenefitItem[] | null };
 }
 
 export function DashboardBenefitsCurrentContent({ current }: DashboardBenefitsCurrentContentProps) {
@@ -15,13 +15,13 @@ export function DashboardBenefitsCurrentContent({ current }: DashboardBenefitsCu
         <div>
           <span className="font-medium text-neutral-300">Headline: </span>
           <span className="text-neutral-200">
-            {current.benefits_headline || <span className="italic text-neutral-600">Not set</span>}
+            {current?.benefits_headline || <span className="italic text-neutral-600">Not set</span>}
           </span>
         </div>
         <div className="pt-1">
           <span className="font-medium text-neutral-300">Benefit Items:</span>
           <ul className="mt-2 space-y-1">
-            {current.benefits_items && Array.isArray(current.benefits_items) && current.benefits_items.length > 0
+            {current?.benefits_items && Array.isArray(current.benefits_items) && current.benefits_items.length > 0
               ? current.benefits_items.map((item, idx) => (
                   <li key={idx} className="flex gap-2 items-center bg-neutral-800 rounded p-2">
                     {renderBenefitIcon(item.icon)}
