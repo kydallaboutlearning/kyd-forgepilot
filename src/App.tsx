@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import DynamicPage from "./pages/[slug]";
 import BlogListPage from "./pages/blog";
 import BlogPostPage from "./pages/blog/[slug]";
 import ProjectCaseStudy from "./pages/portfolio/[projectId]";
+import Auth from "./pages/Auth"; // <-- Correctly import the Auth page
 
 const queryClient = new QueryClient();
 
@@ -22,7 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<import('./pages/Auth').then(m => m.default)} /> {/* Fixed: Add auth page */}
+          <Route path="/auth" element={<Auth />} /> {/* Fixed: Correct usage of Auth page */}
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:projectId" element={<ProjectCaseStudy />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -46,3 +48,4 @@ const App = () => (
 );
 
 export default App;
+
