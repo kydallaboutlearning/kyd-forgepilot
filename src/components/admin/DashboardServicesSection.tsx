@@ -87,11 +87,12 @@ export function DashboardServicesSection() {
     e.preventDefault();
     // Only changed fields are sent; unchanged are not overridden
     const changes: Partial<Service> = {};
-    for (const key in form) {
-      if (form[key as keyof Service] !== editService?.[key as keyof Service]) {
-        changes[key as keyof Service] = form[key as keyof Service];
+    (Object.keys(form) as (keyof Service)[]).forEach(key => {
+      if (form[key] !== (editService?.[key] ?? undefined)) {
+        // @ts-expect-error -- dynamic form fields keyed by Service
+        changes[key] = form[key];
       }
-    }
+    });
     if (editService) changes.id = editService.id;
     mutation.mutate({ ...(editService || {}), ...changes });
   };
