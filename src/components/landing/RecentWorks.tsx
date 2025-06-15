@@ -1,5 +1,7 @@
 
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const projects = [
   {
@@ -24,9 +26,11 @@ const projects = [
 
 export default function RecentWorks() {
   return (
-    <section className="w-full py-20 px-4 max-w-6xl mx-auto bg-black border-b border-neutral-900">
-      <h2 className="text-2xl md:text-3xl font-black uppercase mb-12 text-primary tracking-wider text-center font-sans">Recent Works</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+    <section className="w-full py-20 px-4 max-w-6xl mx-auto bg-black border-b border-neutral-900 flex flex-col items-center">
+      <h2 className="text-2xl md:text-3xl font-black uppercase mb-12 text-primary tracking-wider text-center font-sans">
+        Recent Works
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-8 w-full">
         {projects.map((proj, idx) => (
           <motion.div
             key={proj.name}
@@ -37,19 +41,35 @@ export default function RecentWorks() {
             className="bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-neutral-800 transition-transform hover:scale-105 hover:shadow-2xl animate-fade-in group"
             style={{ minHeight: 410 }}
           >
-            <img src={proj.image} alt={proj.name} className="w-full h-52 object-cover group-hover:opacity-90 transition duration-150" />
+            <img
+              src={proj.image}
+              alt={proj.name}
+              className="w-full h-52 object-cover group-hover:opacity-90 transition duration-150"
+            />
             <div className="p-7">
-              <div className="text-lg font-bold uppercase text-white mb-2 font-sans">{proj.name}</div>
+              <div className="text-lg font-bold uppercase text-white mb-2 font-sans">
+                {proj.name}
+              </div>
               <div className="text-gray-400 mb-4">{proj.desc}</div>
               <div className="flex flex-wrap gap-2 mt-2">
-                {proj.metrics.map(metric => (
-                  <span key={metric} className="bg-zinc-800 text-orange-400 rounded-full px-3 py-1 text-xs font-semibold">{metric}</span>
+                {proj.metrics.map((metric) => (
+                  <span
+                    key={metric}
+                    className="bg-accent text-accent-foreground rounded-full px-3 py-1 text-xs font-semibold"
+                  >
+                    {metric}
+                  </span>
                 ))}
               </div>
             </div>
           </motion.div>
         ))}
       </div>
+      <Link to="/portfolio" className="mt-5">
+        <Button className="px-7 py-3 text-base rounded-lg shadow-lg bg-primary text-primary-foreground transition hover:scale-105 hover:bg-primary/90">
+          View Portfolio
+        </Button>
+      </Link>
     </section>
-  )
+  );
 }

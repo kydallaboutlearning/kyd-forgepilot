@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import PortfolioCard from "@/components/PortfolioCard";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Project = {
   id: string;
@@ -35,7 +37,7 @@ const MOCK_PROJECTS: Project[] = [
     date: "2024-03-15",
     category: "Healthcare",
     tags: ["AI", "Healthcare"],
-  }
+  },
 ];
 
 export default function Portfolio() {
@@ -49,41 +51,60 @@ export default function Portfolio() {
   }, []);
 
   const filtered = projects.filter(
-    p =>
+    (p) =>
       (!filter || p.category === filter) &&
-      (search === "" || p.title.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase()))
+      (search === "" ||
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.description.toLowerCase().includes(search.toLowerCase()))
   );
 
-  const categories = Array.from(new Set(projects.map(p => p.category)));
-  
+  const categories = Array.from(new Set(projects.map((p) => p.category)));
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-black flex flex-col">
       <Header />
-      <main className="pt-28 px-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+      <main className="pt-28 px-4 md:px-8 max-w-7xl mx-auto w-full flex-1 flex flex-col">
+        <div className="w-full mx-auto flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Portfolio</h1>
-            <p className="text-lg text-muted-foreground">Explore our latest AI projects for real estate and healthcare clients.</p>
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-primary font-sans">Portfolio</h1>
+            <p className="text-lg text-muted-foreground max-w-xl">Explore our AI-driven projects, crafted for excellence in real estate, healthcare, and more.</p>
           </div>
-          <div className="flex items-center gap-4 flex-wrap">
-            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search projects…" className="w-48" />
-            <select value={filter || ""} onChange={e => setFilter(e.target.value || null)}
-              className="bg-accent/30 border border-border rounded-md px-3 py-2 text-base"
-            >
-              <option value="">All</option>
-              {categories.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+          <div className="flex gap-4 flex-wrap items-center md:justify-end">
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search projects…"
+              className="w-52 bg-neutral-900 border-neutral-800 text-white placeholder:text-neutral-400 rounded-lg focus-visible:ring-primary"
+            />
+            <Tabs value={filter || ""} onValueChange={(val) => setFilter(val || null)} className="min-w-[160px]">
+              <TabsList className="bg-neutral-900 border border-neutral-800 rounded-md p-0">
+                <TabsTrigger value="">All</TabsTrigger>
+                {categories.map((c) => (
+                  <TabsTrigger key={c} value={c}>
+                    {c}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-          {filtered.map(p => (
-            <PortfolioCard key={p.id} project={p} />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-9">
+          {filtered.length === 0 && (
+            <div className="col-span-full py-24 text-xl text-center text-muted-foreground font-semibold opacity-70">
+              No projects found.
+            </div>
+          )}
+          {filtered.map((p) => (
+            <div key={p.id} className="transition-transform duration-150 hover:scale-[1.025]">
+              <PortfolioCard project={p} />
+            </div>
           ))}
         </div>
-        {/* TODO: Pagination controls if > X projects */}
-        <div className="mt-20 text-center text-muted-foreground">More projects coming soon…</div>
+        {/* Pagination/coming soon */}
+        <div className="mt-20 text-center">
+          <span className="text-muted-foreground text-base">More projects coming soon…</span>
+        </div>
       </main>
     </div>
   );
