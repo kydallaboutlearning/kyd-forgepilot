@@ -1,3 +1,4 @@
+
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -7,6 +8,15 @@ import { type BenefitItem, type BenefitItemIcon } from "@/types/cms";
 import { useEffect, useState } from "react";
 import DashboardBenefitsConfirmDialog from "./DashboardBenefitsConfirmDialog";
 import { DashboardBenefitItemEditor } from "./DashboardBenefitItemEditor";
+
+// Factory for a new, empty benefit item
+function createEmptyBenefitItem(): BenefitItem {
+  return {
+    title: "",
+    desc: "",
+    icon: "Brain",
+  };
+}
 
 // validation schemas
 const benefitItemSchema = z.object({
@@ -95,7 +105,7 @@ export function DashboardBenefitsSettings({
   const handleAddBenefit = () => {
     onFieldChange("benefits_items", [
       ...local.benefits_items,
-      { title: "", desc: "", icon: "Brain" } as BenefitItem,
+      createEmptyBenefitItem(),
     ]);
   };
 
