@@ -1,4 +1,3 @@
-
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,8 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
+// validation schemas
 const benefitItemSchema = z.object({
   title: z.string().min(1, "Title is required"),
   desc: z.string().min(1, "Description is required"),
@@ -51,14 +61,32 @@ export function DashboardBenefitsSettings({
   isPending,
   onSubmit,
 }: DashboardBenefitsSettingsProps) {
+  // Local state for editing values
+  const [local, setLocal] = useState<BenefitsFormValues>({
+    benefits_headline: settings.benefits_headline || "",
+    benefits_items: settings.benefits_items || [],
+  });
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Keep local in sync with latest settings
+  useEffect(() => {
+    setLocal({
+      benefits_headline: settings.benefits_headline || "",
+      benefits_items: settings.benefits_items || [],
+    });
+  }, [settings]);
+
+  // react-hook-form set up
   const form = useForm<BenefitsFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: settings,
+    defaultValues: local,
+    mode: "onChange",
+    values: local, // For controlled form from local state
   });
 
   useEffect(() => {
-    form.reset(settings);
-  }, [settings, form]);
+    form.reset(local);
+  }, [local, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -74,8 +102,37 @@ export function DashboardBenefitsSettings({
     return null;
   };
 
+  // Controlled input update
+  const onFieldChange = (key: keyof BenefitsFormValues, value: any) => {
+    setLocal((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  // Used for field array item
+  const onItemChange = (idx: number, key: keyof BenefitItem, value: any) => {
+    setLocal((prev) => {
+      const items = [...prev.benefits_items];
+      items[idx] = { ...items[idx], [key]: value };
+      return { ...prev, benefits_items: items };
+    });
+  };
+
+  // Save form triggers confirmation dialog
+  const handleForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  // Confirm (submit) changes
+  function confirm() {
+    onSubmit(local);
+    setShowConfirm(false);
+  }
+
   return (
-    <div>
+    <>
       {/* Current Content Display */}
       <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
         <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Why Automate with Us Section</h2>
@@ -105,109 +162,123 @@ export function DashboardBenefitsSettings({
         </div>
       </div>
 
-      {/* Editable Form */}
-      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4">
+      {/* Editable Form: match logic and design of hero section */}
+      <form onSubmit={handleForm} className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4">
         <h2 className="text-xl font-semibold text-white mb-1">Why Automate with Us Section</h2>
-        <Form {...form}>
-          <FormField
-            control={form.control}
+        <div className="space-y-3">
+          <label className="block text-sm text-neutral-300 font-medium">Headline</label>
+          <Input
             name="benefits_headline"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Headline</FormLabel>
-                <FormControl>
-                  <Input placeholder="Why Automate with Us" {...field} value={field.value ?? ""} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            value={local.benefits_headline}
+            onChange={e => onFieldChange("benefits_headline", e.target.value)}
+            placeholder="Why Automate with Us"
           />
-
-          {/* Editable benefit items */}
-          <div>
-            <FormLabel>Benefit Items</FormLabel>
-            <div className="space-y-4 mt-2">
-              {fields.map((field, index) => (
-                <div key={field.id} className="flex items-start gap-4 p-4 border rounded-md bg-neutral-900">
-                  <div className="flex-1 space-y-4">
-                    <FormField
-                      control={form.control}
-                      name={`benefits_items.${index}.title`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`benefits_items.${index}.desc`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`benefits_items.${index}.icon`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Icon</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select an icon" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {iconOptions.map(icon => (
-                                <SelectItem key={icon} value={icon}>
-                                  <span className="flex items-center gap-2">
-                                    {renderIcon(icon)}
-                                    <span>{icon}</span>
-                                  </span>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+        </div>
+        {/* Editable benefit items */}
+        <div>
+          <label className="block text-sm text-neutral-300 font-medium">Benefit Items</label>
+          <div className="space-y-4 mt-2">
+            {local.benefits_items.map((item, index) => (
+              <div key={index} className="flex items-start gap-4 p-4 border rounded-md bg-neutral-900">
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <label className="block text-xs text-neutral-300 font-medium">Title</label>
+                    <Input
+                      value={item.title}
+                      onChange={e => onItemChange(index, "title", e.target.value)}
                     />
                   </div>
-                  <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}>
-                    <Trash className="h-4 w-4" />
-                  </Button>
+                  <div>
+                    <label className="block text-xs text-neutral-300 font-medium">Description</label>
+                    <Input
+                      value={item.desc}
+                      onChange={e => onItemChange(index, "desc", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-neutral-300 font-medium">Icon</label>
+                    <Select
+                      value={item.icon}
+                      onValueChange={value => onItemChange(index, "icon", value)}
+                    >
+                      <SelectTrigger className="w-36">
+                        <SelectValue placeholder="Select an icon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {iconOptions.map(icon => (
+                          <SelectItem key={icon} value={icon}>
+                            <span className="flex items-center gap-2">
+                              {renderIcon(icon)}
+                              <span>{icon}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              ))}
-            </div>
-            {fields.length < 3 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-4"
-                onClick={() => append({ title: "", desc: "", icon: "Brain" })}
-              >
-                Add Benefit
-              </Button>
-            )}
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => onFieldChange(
+                    "benefits_items", local.benefits_items.filter((_, i) => i !== index)
+                  )}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
           </div>
-          <Button className="self-end mt-3" type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </Form>
+          {local.benefits_items.length < 3 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() =>
+                onFieldChange("benefits_items", [
+                  ...local.benefits_items,
+                  { title: "", desc: "", icon: "Brain" },
+                ])
+              }
+            >
+              Add Benefit
+            </Button>
+          )}
+        </div>
+        <Button className="self-end mt-3" type="submit" disabled={isPending}>
+          {isPending ? "Saving..." : "Save Changes"}
+        </Button>
       </form>
-    </div>
+
+      {/* Confirmation Dialog: same design/copy as hero section, but for benefits */}
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to update the "Why Automate with Us" section?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This will overwrite the previous content for this section. Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <button type="button" className="mt-0">Cancel</button>
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <button
+                type="button"
+                className="bg-primary text-white px-4 py-2 rounded"
+                onClick={confirm}
+              >
+                Yes, save changes
+              </button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
-
