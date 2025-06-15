@@ -1,9 +1,8 @@
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BenefitItem, BenefitItemIcon } from "@/types/cms";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// 1. Import relevant Lucide icons:
-import { Brain, LayoutDashboard, Users } from "lucide-react";
 
 interface FormProps {
   local: {
@@ -17,13 +16,6 @@ interface FormProps {
   renderIcon: (icon: BenefitItemIcon | undefined) => JSX.Element | null;
   onFormSubmit: (e: React.FormEvent) => void;
 }
-
-// 2. Map icon name string to Lucide icon component
-const iconMap: Record<BenefitItemIcon, React.FC<{className?: string}>> = {
-  Brain,
-  Users,
-  LayoutDashboard,
-};
 
 export function DashboardBenefitsForm({
   local,
@@ -79,26 +71,13 @@ export function DashboardBenefitsForm({
                     onValueChange={value => onItemChange(index, "icon", value)}
                   >
                     <SelectTrigger className="w-36">
-                      {/* Selected value: show icon and name */}
-                      <span className="flex items-center gap-2">
-                        {item.icon && typeof iconMap[item.icon] === "function" ? (
-                          <span className="inline-flex items-center">
-                            {iconMap[item.icon]!({ className: "w-4 h-4 mr-1" })}
-                            <span>{item.icon}</span>
-                          </span>
-                        ) : (
-                          <span>{item.icon}</span>
-                        )}
-                        <SelectValue placeholder="Select an icon" />
-                      </span>
+                      <SelectValue placeholder="Select an icon" />
                     </SelectTrigger>
                     <SelectContent>
                       {iconOptions.map(icon => (
                         <SelectItem key={icon} value={icon}>
                           <span className="flex items-center gap-2">
-                            {typeof iconMap[icon] === "function"
-                              ? iconMap[icon]!({ className: "w-4 h-4" })
-                              : null}
+                            {renderIcon(icon)}
                             <span>{icon}</span>
                           </span>
                         </SelectItem>
