@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/landing/Hero";
 import PartnerLogos from "@/components/landing/PartnerLogos";
 import Benefits from "@/components/landing/Benefits";
-import CTA from "@/components/landing/CTA";
+import ContactCTA from "@/components/landing/ContactCTA";
 import RecentWorks from "@/components/landing/RecentWorks";
 import Metrics from "@/components/landing/Metrics";
 import Services from "@/components/landing/Services";
@@ -12,7 +12,6 @@ import Team from "@/components/landing/Team";
 import FAQ from "@/components/landing/FAQ";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/Footer";
-import ContactCTA from "@/components/landing/ContactCTA";
 
 export default function Index() {
   return (
@@ -23,7 +22,6 @@ export default function Index() {
       <PartnerLogos />
       <Benefits />
       <ContactCTA />
-      <CTA />
       <RecentWorks />
       <Metrics />
       <Services />
