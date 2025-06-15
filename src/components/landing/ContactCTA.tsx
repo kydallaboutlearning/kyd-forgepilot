@@ -2,6 +2,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+// Helper to check if object has the expected CTA fields
+function isContactCTAData(data: any): data is {
+  contact_cta_headline?: string;
+  contact_cta_subtext?: string;
+  contact_cta_button_label?: string;
+  contact_cta_button_url?: string;
+} {
+  // Avoid nulls and unexpected error shapes
+  return (
+    data &&
+    typeof data === "object" &&
+    ("contact_cta_headline" in data ||
+      "contact_cta_subtext" in data ||
+      "contact_cta_button_label" in data ||
+      "contact_cta_button_url" in data)
+  );
+}
+
 export default function ContactCTA() {
   const { data, isLoading } = useQuery({
     queryKey: ["site_settings", "contact_cta"],
@@ -13,30 +31,30 @@ export default function ContactCTA() {
         )
         .limit(1)
         .maybeSingle();
-      if (error) throw error;
+      if (error) return { error: error.message }; // Do not throw, return error indicator
       return data;
     },
   });
 
-  if (isLoading || !data || typeof data !== "object") {
+  if (isLoading || !data) {
     return null;
   }
 
-  // Defensive: if wrong shape, fallback
+  // Defensive: if data is not ContactCTA expected shape, fallback to defaults
   const headline =
-    typeof data.contact_cta_headline === "string"
+    isContactCTAData(data) && typeof data.contact_cta_headline === "string"
       ? data.contact_cta_headline
       : "AUTOMATE YOUR NEXT BIG IDEA TODAY";
   const subtext =
-    typeof data.contact_cta_subtext === "string"
+    isContactCTAData(data) && typeof data.contact_cta_subtext === "string"
       ? data.contact_cta_subtext
       : "Ready to see what’s possible?\nWork with our team of AI automation experts.";
   const btnLabel =
-    typeof data.contact_cta_button_label === "string"
+    isContactCTAData(data) && typeof data.contact_cta_button_label === "string"
       ? data.contact_cta_button_label
       : "CONTACT US";
   const btnUrl =
-    typeof data.contact_cta_button_url === "string"
+    isContactCTAData(data) && typeof data.contact_cta_button_url === "string"
       ? data.contact_cta_button_url
       : "#contact";
 

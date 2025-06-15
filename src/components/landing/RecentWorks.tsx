@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+// Moved type definition for clarity
 type Project = {
   id: string;
   title: string;
@@ -41,6 +42,19 @@ const fallbackProjects: Project[] = [
   },
 ];
 
+function isProjectArray(arr: any): arr is Project[] {
+  return (
+    Array.isArray(arr) &&
+    arr.every(
+      (p) =>
+        p &&
+        typeof p === "object" &&
+        typeof p.id === "string" &&
+        typeof p.title === "string"
+    )
+  );
+}
+
 export default function RecentWorks() {
   const [headline, setHeadline] = useState(defaultHeadline);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -49,10 +63,9 @@ export default function RecentWorks() {
   useEffect(() => {
     const fetchContent = async () => {
       setLoading(true);
-
-      // Defensive: wrap fetches in try/catch
       try {
-        const [settingsResult, projectsResult] = await Promise.all([
+        // Use any to avoid deep instantiation type issue from supabase-js
+        const [settingsResult, projectsResult]: [any, any] = await Promise.all([
           supabase
             .from("site_settings")
             .select("recent_works_headline")
@@ -79,19 +92,15 @@ export default function RecentWorks() {
         if (
           projectsResult &&
           Array.isArray(projectsResult.data) &&
-          projectsResult.data.length > 0 &&
-          projectsResult.data[0] &&
-          typeof projectsResult.data[0] === "object" &&
-          ("id" in projectsResult.data[0])
+          isProjectArray(projectsResult.data)
         ) {
-          setProjects((projectsResult.data as any[]).filter((p) => !!p.id) as Project[]);
+          setProjects(projectsResult.data);
         } else {
           setProjects([]);
         }
       } catch (err) {
         setProjects([]);
       }
-
       setLoading(false);
     };
 
