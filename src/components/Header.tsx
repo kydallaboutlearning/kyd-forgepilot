@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -16,6 +15,8 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileNavDrawer } from "./MobileNavDrawer";
+import NavLinks from "./NavLinks";
+import HeaderMobileNav from "./HeaderMobileNav";
 
 const nav = [
   { to: "#whyus", label: "Why Us", icon: <Lightbulb className="w-4 h-4 mr-1.5" /> },
@@ -33,54 +34,6 @@ const nav = [
     ],
   },
 ];
-
-function NavLinks() {
-  return (
-    <nav className="flex items-center gap-6 md:gap-7 font-sans text-base text-neutral-200">
-      {nav.map((item) => {
-        if ("dropdown" in item) {
-          return (
-            <div className="group relative" key={item.label}>
-              <span className="cursor-pointer hover:text-primary transition flex items-center gap-1">
-                {item.icon}
-                {item.label}
-                <svg width={15} height={15} viewBox="0 0 20 20" className="ml-0.5 mt-0.5 opacity-70" fill="none">
-                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <div className="absolute left-0 mt-2 bg-[#101010] rounded-xl border border-neutral-800 shadow-xl min-w-[180px] z-30 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
-                <ul className="py-2">
-                  {item.dropdown.map((drop) => (
-                    <li key={drop.to}>
-                      <Link
-                        to={drop.to}
-                        className="flex items-center px-5 py-2 whitespace-nowrap text-neutral-200 hover:text-primary transition"
-                      >
-                        {drop.icon}
-                        {drop.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          );
-        }
-        return (
-          <a
-            key={item.to}
-            href={item.to}
-            className="hover:text-primary transition flex items-center"
-            style={{ fontWeight: 400 }}
-          >
-            {item.icon}
-            {item.label}
-          </a>
-        );
-      })}
-    </nav>
-  );
-}
 
 export default function Header() {
   const isMobile = useIsMobile();
@@ -141,22 +94,7 @@ export default function Header() {
         }}
       >
         {/* MOBILE: logo left, hamburger menu right */}
-        <div className="flex w-full items-center justify-between md:hidden h-12">
-          <Link
-            to="/"
-            className="font-sans text-xl font-semibold tracking-tight flex items-baseline"
-            style={{
-              color: "#FFB74A",
-              letterSpacing: "-0.02em",
-              textShadow: "0 0 3px #ffb84a44, 0 1.5px 8px #111, 0 0.5px 1px #ffd08555"
-            }}
-          >
-            Forge
-            <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
-          </Link>
-          {/* Z-50 ensures drawer trigger stays clickable */}
-          <div className="z-50"><MobileNavDrawer /></div>
-        </div>
+        <HeaderMobileNav />
         {/* TABLET & DESKTOP: logo left, nav center, CTA right */}
         <div className="hidden md:flex w-full items-center justify-between gap-2 min-h-[56px]">
           <Link
