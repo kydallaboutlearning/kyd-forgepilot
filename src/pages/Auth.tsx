@@ -21,7 +21,6 @@ export default function AuthPage() {
       }
     });
     // Auth redirect error handling
-    // If just redirected after email confirm, go to dashboard
     const params = new URLSearchParams(window.location.search);
     if (params.has("access_token") && params.has("type")) {
       window.location.href = "/dashboard";
@@ -34,17 +33,15 @@ export default function AuthPage() {
     setLoading(true);
 
     if (isLogin) {
-      // sign in
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
       else window.location.href = "/dashboard";
     } else {
-      // sign up
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth`
+          emailRedirectTo: `${window.location.origin}/auth`,
         }
       });
       setError(error ? error.message : "Check your email for confirmation.");
@@ -53,11 +50,19 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <form onSubmit={handleSubmit} className="space-y-6 bg-card shadow-lg rounded-xl p-8 w-full max-w-sm">
-        <h2 className="text-2xl font-bold">{isLogin ? "Admin Login" : "Sign Up"}</h2>
-        <div>
-          <Label htmlFor="email">Email</Label>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-card shadow-2xl rounded-2xl p-8 
+                  animate-fade-in border border-border flex flex-col gap-7"
+        style={{ animationDelay: "0.1s", animationFillMode: "both" }}
+      >
+        <h2 className="font-playfair text-3xl font-bold mb-1 text-center text-foreground leading-tight">
+          {isLogin ? "Admin Login" : "Create Account"}
+        </h2>
+        
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="email" className="text-base">Email</Label>
           <Input
             id="email"
             type="email"
@@ -65,29 +70,67 @@ export default function AuthPage() {
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="mt-1"
+            className="bg-muted/10 border border-input rounded-lg py-2 px-4 text-lg
+                       placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary
+                       transition-all"
+            placeholder="your@email.com"
           />
         </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="password" className="text-base">Password</Label>
           <Input
             id="password"
             type="password"
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            className="mt-1"
+            className="bg-muted/10 border border-input rounded-lg py-2 px-4 text-lg
+                     placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary
+                     transition-all"
+            placeholder="••••••••"
           />
         </div>
-        {error && <div className="text-destructive text-sm">{error}</div>}
-        <Button className="w-full" type="submit" disabled={loading}>
-          {loading ? "Working…" : isLogin ? "Log in" : "Sign up"}
+        {error && (
+          <div className="text-destructive text-sm text-center bg-destructive/10 px-3 py-2 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <Button
+          className="w-full mt-1 py-3 font-semibold text-base rounded-lg
+                     bg-primary hover:bg-primary/90 transition-colors shadow 
+                     disabled:bg-primary/60 disabled:hover:bg-primary/60"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? (
+            <span className="animate-pulse">Working…</span>
+          ) : isLogin ? "Log in" : "Sign up"}
         </Button>
-        <div className="text-center text-xs text-muted-foreground mt-2">
+
+        <div className="text-center text-sm text-muted-foreground mt-1">
           {isLogin
-            ? <>New here? <button type="button" onClick={() => setIsLogin(false)} className="underline">Sign up</button></>
-            : <>Already have an account? <button type="button" onClick={() => setIsLogin(true)} className="underline">Log in</button></>
-          }
+            ? (
+              <>New here?{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(false)}
+                  className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(true)}
+                  className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                >
+                  Log in
+                </button>
+              </>
+            )}
         </div>
       </form>
     </div>
