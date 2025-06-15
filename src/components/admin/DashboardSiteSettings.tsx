@@ -36,7 +36,7 @@ export default function DashboardSiteSettings() {
       const { data, error } = await supabase.from("site_settings").select("*").limit(1).maybeSingle();
       if (error) throw error;
       console.log("[DASHBOARD] Loaded site_settings from backend:", data);
-      return data as SiteSettings;
+      return data as unknown as SiteSettings;
     },
   });
 
@@ -173,7 +173,7 @@ export default function DashboardSiteSettings() {
         header={header}
         current={currentHeader}
         isPending={mutation.isPending}
-        onSubmit={vals => mutation.mutate(vals)}
+        onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
       />
       <SiteHeroSettings
         hero={hero}
@@ -185,7 +185,7 @@ export default function DashboardSiteSettings() {
         settings={benefits}
         current={currentBenefits}
         isPending={mutation.isPending}
-        onSubmit={vals => mutation.mutate(vals)}
+        onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
       />
       <DashboardRecentWorksSettings
         settings={recentWorks}

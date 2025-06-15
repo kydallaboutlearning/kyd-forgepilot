@@ -1,25 +1,11 @@
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect } from "react";
 
-const formSchema = z.object({
-  recent_works_headline: z.string().min(1, "Headline is required"),
-});
-
-type RecentWorksFormValues = z.infer<typeof formSchema>;
+type RecentWorksFormValues = {
+  recent_works_headline: string;
+};
 
 interface DashboardRecentWorksSettingsProps {
   settings: Partial<RecentWorksFormValues>;
@@ -29,42 +15,55 @@ interface DashboardRecentWorksSettingsProps {
 }
 
 export function DashboardRecentWorksSettings({ settings, current, isPending, onSubmit }: DashboardRecentWorksSettingsProps) {
-  const form = useForm<RecentWorksFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: settings,
-  });
+  const [local, setLocal] = useState(settings);
 
   useEffect(() => {
-    form.reset(settings);
-  }, [settings, form]);
-  
+    setLocal(settings);
+  }, [settings]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocal({
+      ...local,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({
+      recent_works_headline: local.recent_works_headline ?? "",
+    });
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Works Section</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="recent_works_headline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Headline</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Recent Works" {...field} value={field.value ?? ""} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    <>
+      <div className="bg-neutral-900/70 border border-neutral-800 rounded-lg px-4 py-4 mb-2">
+        <h2 className="text-sm text-neutral-400 font-semibold mb-2">Current Recent Works Section</h2>
+        <div className="space-y-1 text-sm">
+          <div>
+            <span className="font-medium text-neutral-300">Headline: </span>
+            <span className="text-neutral-200">{current.recent_works_headline || <span className="italic text-neutral-600">Not set</span>}</span>
+          </div>
+        </div>
+      </div>
+      <form 
+        onSubmit={handleForm}
+        className="bg-[#19191b] border border-neutral-800 rounded-xl p-6 flex flex-col gap-4"
+      >
+        <h2 className="text-xl font-semibold text-white mb-1">Recent Works Section</h2>
+        <div className="space-y-3">
+          <label className="block text-sm text-neutral-300 font-medium">Headline</label>
+          <Input
+            name="recent_works_headline"
+            value={local.recent_works_headline ?? ""}
+            onChange={handleChange}
+            placeholder="Our Recent Works"
+          />
+        </div>
+        <Button className="self-end mt-3" type="submit" disabled={isPending}>
+          {isPending ? "Saving..." : "Save Changes"}
+        </Button>
+      </form>
+    </>
   );
 }
