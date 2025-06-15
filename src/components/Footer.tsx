@@ -23,7 +23,7 @@ export default function Footer() {
     <footer className="bg-neutral-950 border-t border-neutral-800 py-8 px-4 mt-24">
       <div className="max-w-3xl mx-auto flex flex-col items-center gap-6">
         <nav className="flex flex-row gap-5 flex-wrap">
-          {socials.map(({ href, url, icon: iconName, label, id }) => {
+          {socials.map(({ url, icon: iconName, label, id }) => {
             // fallback if unknown icon
             const Icon =
               // @ts-ignore

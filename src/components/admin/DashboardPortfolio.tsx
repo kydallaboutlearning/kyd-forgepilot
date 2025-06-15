@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -123,28 +122,28 @@ export default function DashboardPortfolio() {
     setLoading(true);
     const item = editing!;
     const { id, ...fields } = item;
-    // Ensure arrays are indeed arrays
+    // Ensure arrays are indeed arrays—if not, fallback to empty arrays of string
     const prepared = {
       ...fields,
       tags: Array.isArray(fields.tags)
         ? fields.tags
         : typeof fields.tags === "string"
-        ? fields.tags.split(",").map((t: string) => t.trim())
+        ? (fields.tags as string).split(",").map((t: string) => t.trim())
         : [],
       problem: Array.isArray(fields.problem)
         ? fields.problem
         : typeof fields.problem === "string"
-        ? fields.problem.split("\n").filter(Boolean)
+        ? (fields.problem as string).split("\n").filter(Boolean)
         : [],
       solution: Array.isArray(fields.solution)
         ? fields.solution
         : typeof fields.solution === "string"
-        ? fields.solution.split("\n").filter(Boolean)
+        ? (fields.solution as string).split("\n").filter(Boolean)
         : [],
       tech_stack: Array.isArray(fields.tech_stack)
         ? fields.tech_stack
         : typeof fields.tech_stack === "string"
-        ? fields.tech_stack.split(",").map((x: string) => x.trim())
+        ? (fields.tech_stack as string).split(",").map((x: string) => x.trim())
         : [],
       images: fields.images,
       results: Array.isArray(fields.results) ? fields.results : [],
@@ -209,7 +208,15 @@ export default function DashboardPortfolio() {
           <Label>Category</Label>
           <Input value={editing.category} onChange={e => setEditing(s => ({ ...s!, category: e.target.value }))} />
           <Label>Tag(s) (comma separated)</Label>
-          <Input value={editing.tags.join(", ")} onChange={e => setEditing(s => ({ ...s!, tags: e.target.value.split(",").map(x => x.trim()).filter(Boolean) }))} />
+          <Input
+            value={Array.isArray(editing.tags) ? editing.tags.join(", ") : ""}
+            onChange={e =>
+              setEditing(s => ({
+                ...s!,
+                tags: e.target.value.split(",").map(x => x.trim()).filter(Boolean)
+              }))
+            }
+          />
           <Label>Images</Label>
           <div className="flex flex-wrap gap-2 mb-2">
             {editing.images.map((img, idx) => (
@@ -234,15 +241,42 @@ export default function DashboardPortfolio() {
           <Label>Video URL</Label>
           <Input value={editing.video_url} onChange={e => setEditing(s => ({ ...s!, video_url: e.target.value }))} />
           <Label>Problem (one per line)</Label>
-          <textarea className="w-full rounded bg-card p-2" rows={2}
-            value={editing.problem.join("\n")}
-            onChange={e => setEditing(s => ({ ...s!, problem: e.target.value.split("\n").filter(Boolean) }))} />
+          <textarea
+            className="w-full rounded bg-card p-2"
+            rows={2}
+            value={Array.isArray(editing.problem) ? editing.problem.join("\n") : ""}
+            onChange={e =>
+              setEditing(s => ({
+                ...s!,
+                problem: e.target.value.split("\n").filter(Boolean)
+              }))
+            }
+          />
           <Label>Solution (one per line)</Label>
-          <textarea className="w-full rounded bg-card p-2" rows={2}
-            value={editing.solution.join("\n")}
-            onChange={e => setEditing(s => ({ ...s!, solution: e.target.value.split("\n").filter(Boolean) }))} />
+          <textarea
+            className="w-full rounded bg-card p-2"
+            rows={2}
+            value={Array.isArray(editing.solution) ? editing.solution.join("\n") : ""}
+            onChange={e =>
+              setEditing(s => ({
+                ...s!,
+                solution: e.target.value.split("\n").filter(Boolean)
+              }))
+            }
+          />
           <Label>Tech Stack (comma separated)</Label>
-          <Input value={editing.tech_stack.join(", ")} onChange={e => setEditing(s => ({ ...s!, tech_stack: e.target.value.split(",").map(x => x.trim()).filter(Boolean) }))} />
+          <Input
+            value={Array.isArray(editing.tech_stack) ? editing.tech_stack.join(", ") : ""}
+            onChange={e =>
+              setEditing(s => ({
+                ...s!,
+                tech_stack: e.target.value
+                  .split(",")
+                  .map(x => x.trim())
+                  .filter(Boolean)
+              }))
+            }
+          />
           <Label>Results (format: kpi|desc per line)</Label>
           <textarea className="w-full rounded bg-card p-2" rows={2}
             value={editing.results.map(r => `${r.kpi}|${r.desc}`).join("\n")}
