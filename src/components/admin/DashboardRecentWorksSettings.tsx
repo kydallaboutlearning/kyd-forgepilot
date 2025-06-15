@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 
 type RecentWorksFormValues = {
   recent_works_headline: string;
+  highlighted_portfolio_limit: number;
 };
 
 interface DashboardRecentWorksSettingsProps {
@@ -22,9 +23,10 @@ export function DashboardRecentWorksSettings({ settings, current, isPending, onS
   }, [settings]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
     setLocal({
       ...local,
-      [e.target.name]: e.target.value,
+      [name]: type === "number" ? Number(value) : value,
     });
   };
 
@@ -32,6 +34,7 @@ export function DashboardRecentWorksSettings({ settings, current, isPending, onS
     e.preventDefault();
     onSubmit({
       recent_works_headline: local.recent_works_headline ?? "",
+      highlighted_portfolio_limit: Number(local.highlighted_portfolio_limit) || 3,
     });
   };
 
@@ -43,6 +46,10 @@ export function DashboardRecentWorksSettings({ settings, current, isPending, onS
           <div>
             <span className="font-medium text-neutral-300">Headline: </span>
             <span className="text-neutral-200">{current.recent_works_headline || <span className="italic text-neutral-600">Not set</span>}</span>
+          </div>
+          <div>
+            <span className="font-medium text-neutral-300">Number Shown: </span>
+            <span className="text-neutral-200">{current.highlighted_portfolio_limit ?? 3}</span>
           </div>
         </div>
       </div>
@@ -58,6 +65,18 @@ export function DashboardRecentWorksSettings({ settings, current, isPending, onS
             value={local.recent_works_headline ?? ""}
             onChange={handleChange}
             placeholder="Our Recent Works"
+          />
+        </div>
+        <div className="space-y-3">
+          <label className="block text-sm text-neutral-300 font-medium">Number of Projects to Display</label>
+          <Input
+            name="highlighted_portfolio_limit"
+            type="number"
+            min={1}
+            max={12}
+            value={local.highlighted_portfolio_limit ?? 3}
+            onChange={handleChange}
+            placeholder="3"
           />
         </div>
         <Button className="self-end mt-3" type="submit" disabled={isPending}>

@@ -78,7 +78,6 @@ export default function DashboardSiteSettings() {
     site_subtitle: "",
     logo_url: "",
     favicon_url: "",
-    highlighted_portfolio_limit: 3, // add for admin field
   });
 
   const [hero, setHero] = useState<{
@@ -105,6 +104,7 @@ export default function DashboardSiteSettings() {
 
   const [recentWorks, setRecentWorks] = useState({
     recent_works_headline: "",
+    highlighted_portfolio_limit: 3,
   });
 
   // Contact CTA
@@ -123,7 +123,6 @@ export default function DashboardSiteSettings() {
       site_subtitle: settings.site_subtitle ?? "",
       logo_url: settings.logo_url ?? "",
       favicon_url: settings.favicon_url ?? "",
-      highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3, // set initial
     });
     setHero({
       hero_headline: settings.hero_headline ?? "",
@@ -138,6 +137,7 @@ export default function DashboardSiteSettings() {
     });
     setRecentWorks({
       recent_works_headline: settings.recent_works_headline ?? "",
+      highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3,
     });
     setContactCTA({
       contact_cta_headline: settings.contact_cta_headline ?? "",
@@ -183,7 +183,6 @@ export default function DashboardSiteSettings() {
     site_subtitle: settings.site_subtitle ?? "",
     logo_url: settings.logo_url ?? "",
     favicon_url: settings.favicon_url ?? "",
-    highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3, // add for display
   };
 
   const currentHero = {
@@ -201,6 +200,7 @@ export default function DashboardSiteSettings() {
 
   const currentRecentWorks = {
     recent_works_headline: settings.recent_works_headline ?? "",
+    highlighted_portfolio_limit: settings.highlighted_portfolio_limit ?? 3,
   };
 
   const currentContactCTA = {
