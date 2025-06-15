@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/admin/AppSidebar";
@@ -37,8 +36,9 @@ export default function Dashboard() {
     };
 
     checkAuth();
-    // Set up an auth state listener to auto-redirect if logged out
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+
+    // Correct: Get subscription from { data: { subscription } }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       const loggedInEmail = session?.user?.email?.toLowerCase();
       const expectedEmail = adminEmail?.toLowerCase();
       if (!session || !loggedInEmail || !expectedEmail || loggedInEmail !== expectedEmail) {
