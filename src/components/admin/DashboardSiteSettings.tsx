@@ -11,6 +11,7 @@ import { type BenefitItem } from "@/types/cms";
 import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
 import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
 import { DashboardContactCTASettings } from "./DashboardContactCTASettings";
+import { DashboardServicesSection } from "./DashboardServicesSection";
 
 // Types
 type SiteSettings = {
@@ -242,6 +243,9 @@ export default function DashboardSiteSettings() {
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
+      {/* NEW: SERVICES ADMIN */}
+      <DashboardServicesSection />
+      {/* Repeat: <DashboardPricingSection />, <DashboardTestimonialsSection />, etc. */}
     </div>
   );
 }

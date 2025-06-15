@@ -489,6 +489,30 @@ export type Database = {
         }
         Relationships: []
       }
+      services: {
+        Row: {
+          description: string | null
+          icon: string | null
+          id: string
+          name: string | null
+          order_index: number | null
+        }
+        Insert: {
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string | null
+          order_index?: number | null
+        }
+        Update: {
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string | null
+          order_index?: number | null
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           admin_email: string | null
@@ -499,8 +523,12 @@ export type Database = {
           contact_cta_button_url: string | null
           contact_cta_headline: string | null
           contact_cta_subtext: string | null
+          faq_headline: string | null
           favicon_url: string | null
+          final_cta_headline: string | null
           footer_text: string | null
+          hero_available_tag_headline: string | null
+          hero_available_tag_spots_left: string | null
           hero_cta_label: string | null
           hero_cta_link: string | null
           hero_headline: string | null
@@ -509,11 +537,17 @@ export type Database = {
           highlighted_portfolio_limit: number | null
           id: string
           logo_url: string | null
+          metrics_headline: string | null
+          partner_logos_headline: string | null
+          pricing_headline: string | null
           recent_works_headline: string | null
+          services_headline: string | null
           show_footer: boolean | null
           show_hero: boolean | null
           site_subtitle: string | null
           site_title: string | null
+          team_headline: string | null
+          testimonials_headline: string | null
           updated_at: string | null
         }
         Insert: {
@@ -525,8 +559,12 @@ export type Database = {
           contact_cta_button_url?: string | null
           contact_cta_headline?: string | null
           contact_cta_subtext?: string | null
+          faq_headline?: string | null
           favicon_url?: string | null
+          final_cta_headline?: string | null
           footer_text?: string | null
+          hero_available_tag_headline?: string | null
+          hero_available_tag_spots_left?: string | null
           hero_cta_label?: string | null
           hero_cta_link?: string | null
           hero_headline?: string | null
@@ -535,11 +573,17 @@ export type Database = {
           highlighted_portfolio_limit?: number | null
           id?: string
           logo_url?: string | null
+          metrics_headline?: string | null
+          partner_logos_headline?: string | null
+          pricing_headline?: string | null
           recent_works_headline?: string | null
+          services_headline?: string | null
           show_footer?: boolean | null
           show_hero?: boolean | null
           site_subtitle?: string | null
           site_title?: string | null
+          team_headline?: string | null
+          testimonials_headline?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -551,8 +595,12 @@ export type Database = {
           contact_cta_button_url?: string | null
           contact_cta_headline?: string | null
           contact_cta_subtext?: string | null
+          faq_headline?: string | null
           favicon_url?: string | null
+          final_cta_headline?: string | null
           footer_text?: string | null
+          hero_available_tag_headline?: string | null
+          hero_available_tag_spots_left?: string | null
           hero_cta_label?: string | null
           hero_cta_link?: string | null
           hero_headline?: string | null
@@ -561,11 +609,17 @@ export type Database = {
           highlighted_portfolio_limit?: number | null
           id?: string
           logo_url?: string | null
+          metrics_headline?: string | null
+          partner_logos_headline?: string | null
+          pricing_headline?: string | null
           recent_works_headline?: string | null
+          services_headline?: string | null
           show_footer?: boolean | null
           show_hero?: boolean | null
           site_subtitle?: string | null
           site_title?: string | null
+          team_headline?: string | null
+          testimonials_headline?: string | null
           updated_at?: string | null
         }
         Relationships: []
