@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight } from "lucide-react";
@@ -15,6 +14,9 @@ type HeroSettings = {
 export default function Hero() {
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Manual reload button for admin
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,7 +40,7 @@ export default function Hero() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [reloadCount]); // depend on reloadCount for refresh
 
   // Optionally provide fallback content if nothing exists in DB yet
   const headline = heroSettings?.hero_headline || (
@@ -98,6 +100,12 @@ export default function Hero() {
         {ctaLabel}
         <svg className="ml-2 w-5 h-5 -mt-0.5 text-primary transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 18 18"><path d="M5 9h8M9 5l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
       </a>
+      <button
+        onClick={() => setReloadCount(rc => rc + 1)}
+        className="mt-6 ml-2 px-4 py-2 bg-neutral-800 text-white rounded text-xs shadow hover:bg-primary transition"
+      >
+        Refresh Hero Data
+      </button>
     </section>
   );
 }
