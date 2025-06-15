@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import BlogListPage from "./pages/blog";
 import BlogPostPage from "./pages/blog/[slug]";
 import ProjectCaseStudy from "./pages/portfolio/[projectId]";
 import Header from "@/components/Header";
+import AdminLogin from "@/pages/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +28,7 @@ const App = () => (
         <div style={{ paddingTop: HEADER_HEIGHT }}>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/portfolio/:projectId" element={<ProjectCaseStudy />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -52,4 +53,3 @@ const App = () => (
 );
 
 export default App;
-

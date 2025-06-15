@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { hashPassword } from "@/utils/hash";
+import AddAdminForm from "./AddAdminForm";
 
 type SiteSettings = {
   id?: string;
@@ -178,45 +178,51 @@ export default function DashboardAdminSettings() {
   };
 
   return (
-    <div className="max-w-lg mx-auto w-full p-6 bg-card rounded-lg shadow">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <h2 className="font-bold text-2xl mb-2">Admin Account</h2>
-        <div className="grid gap-2">
-          <Label>Admin Login Email</Label>
-          <Input
-            value={settings.admin_email || ""}
-            onChange={e => setSettings(s => ({ ...s, admin_email: e.target.value }))}
-            placeholder="admin@agency.ai"
-            type="email"
-            autoComplete="username"
-            disabled={loading}
-          />
-          <Label>Set New Password (leave blank to keep current):</Label>
-          <Input
-            type="password"
-            value={adminPass}
-            autoComplete="new-password"
-            onChange={e => setAdminPass(e.target.value)}
-            placeholder="New password"
-            disabled={loading}
-          />
-          <Input
-            type="password"
-            value={adminPass2}
-            autoComplete="new-password"
-            onChange={e => setAdminPass2(e.target.value)}
-            placeholder="Repeat new password"
-            disabled={loading}
-          />
-          <div className="text-xs text-muted-foreground pt-1">Note: Saving will update admin email and password if provided. It will update the current logged in account (if available).</div>
+    <section>
+      <div className="max-w-lg mx-auto w-full p-6 bg-card rounded-lg shadow">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <h2 className="font-bold text-2xl mb-2">Admin Account</h2>
+          <div className="grid gap-2">
+            <Label>Admin Login Email</Label>
+            <Input
+              value={settings.admin_email || ""}
+              onChange={e => setSettings(s => ({ ...s, admin_email: e.target.value }))}
+              placeholder="admin@agency.ai"
+              type="email"
+              autoComplete="username"
+              disabled={loading}
+            />
+            <Label>Set New Password (leave blank to keep current):</Label>
+            <Input
+              type="password"
+              value={adminPass}
+              autoComplete="new-password"
+              onChange={e => setAdminPass(e.target.value)}
+              placeholder="New password"
+              disabled={loading}
+            />
+            <Input
+              type="password"
+              value={adminPass2}
+              autoComplete="new-password"
+              onChange={e => setAdminPass2(e.target.value)}
+              placeholder="Repeat new password"
+              disabled={loading}
+            />
+            <div className="text-xs text-muted-foreground pt-1">Note: Saving will update admin email and password if provided. It will update the current logged in account (if available).</div>
+          </div>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </Button>
+        </form>
+        <div className="text-xs text-zinc-400 mt-3">
+          Current admin email: <span className="font-mono">{settings.admin_email || "not set"}</span>
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Saving..." : "Save"}
-        </Button>
-      </form>
-      <div className="text-xs text-zinc-400 mt-3">
-        Current admin email: <span className="font-mono">{settings.admin_email || "not set"}</span>
       </div>
-    </div>
+      <div className="my-8">
+        <h3 className="font-semibold text-lg mb-2">Add New Admin</h3>
+        <AddAdminForm />
+      </div>
+    </section>
   );
 }

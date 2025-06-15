@@ -7,6 +7,7 @@ import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
 import DashboardAdminSettings from "@/components/admin/DashboardAdminSettings";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard } from "lucide-react";
+import RequireAdminAuth from "@/components/RequireAdminAuth";
 
 export default function Dashboard() {
   const [tab, setTab] = useState("site");
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const HEADER_HEIGHT = 80;
 
   return (
-    <SidebarProvider>
+    <RequireAdminAuth>
       <div className="flex min-h-screen bg-[#101013] w-full">
         {/* Sidebar */}
         <AppSidebar />
@@ -55,6 +56,6 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
-    </SidebarProvider>
+    </RequireAdminAuth>
   );
 }
