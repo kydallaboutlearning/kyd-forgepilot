@@ -103,7 +103,7 @@ export default function Header() {
   return (
     <header
       className={`
-        fixed top-0 left-0 w-full flex items-center justify-center
+        sticky top-0 w-full flex items-center justify-center
         transition-all duration-300 z-[100]
         ${scrolled ? "bg-black/95 shadow-[0_2px_32px_0_#ffb74a16] backdrop-blur-sm animate-fade-in" : "bg-transparent"}
       `}
@@ -198,4 +198,3 @@ export default function Header() {
     </header>
   );
 }
-
