@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+import { Mail } from "lucide-react";
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -86,7 +86,9 @@ export default function AuthPage() {
           onClick={handleGoogleLogin}
           disabled={loading}
         >
-          <span className="text-xl"><FcGoogle /></span>
+          <span className="text-xl">
+            <Mail className="w-6 h-6" />
+          </span>
           Continue with Google
         </Button>
         <div className="flex items-center text-muted-foreground mt-2 mb-[-17px]" aria-hidden>
