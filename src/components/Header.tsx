@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -84,7 +83,7 @@ export default function Header() {
   const isMobile = useIsMobile();
 
   return (
-    <header className="relative w-full flex items-center justify-center bg-transparent py-3 px-2 md:py-6 md:px-4 select-none z-50">
+    <header className="relative w-full flex items-center justify-center bg-transparent py-2 px-1 md:py-5 md:px-4 select-none z-50">
       {/* Dot grid background */}
       <svg
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none z-0"
@@ -104,8 +103,8 @@ export default function Header() {
           relative z-10 w-full max-w-5xl
           flex items-center
           justify-between
-          py-3 md:py-[0.6rem] px-3 sm:px-4 md:px-8
-          rounded-2xl md:rounded-full bg-black bg-opacity-[0.92] md:bg-opacity-[0.82]
+          py-2 md:py-[0.5rem] px-2 sm:px-4 md:px-8
+          rounded-2xl md:rounded-full bg-black bg-opacity-[0.95] md:bg-opacity-[0.82]
           border border-[#FFB74A]/40
           shadow-[0_0_0_1.5px_#FFB74A20]
           transition-all
@@ -115,7 +114,7 @@ export default function Header() {
         }}
       >
         {/* MOBILE: logo left, hamburger menu right */}
-        <div className="flex w-full items-center justify-between md:hidden">
+        <div className="flex w-full items-center justify-between md:hidden h-12">
           <Link
             to="/"
             className="font-sans text-xl font-semibold tracking-tight flex items-baseline"
@@ -128,11 +127,11 @@ export default function Header() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          <MobileNavDrawer />
+          {/* Z-50 ensures drawer trigger stays clickable */}
+          <div className="z-50"><MobileNavDrawer /></div>
         </div>
-        {/* TABLET & DESKTOP: logo left, nav center (hidden for tablet <lg), CTA right */}
-        <div className="hidden md:flex w-full items-center justify-between gap-2">
-          {/* Logo */}
+        {/* TABLET & DESKTOP: logo left, nav center, CTA right */}
+        <div className="hidden md:flex w-full items-center justify-between gap-2 min-h-[56px]">
           <Link
             to="/"
             className="font-sans text-2xl font-semibold tracking-tight flex items-baseline"
@@ -145,13 +144,11 @@ export default function Header() {
             Forge
             <span style={{ color: "white", marginLeft: "-2px" }}>Pilot</span>
           </Link>
-          {/* Navigation, center-aligned, reduces gap on mid screens */}
           <div className="flex-1 flex items-center justify-center ml-0 lg:ml-4">
             <div className="hidden md:flex md:gap-3 lg:gap-7">
               <NavLinks />
             </div>
           </div>
-          {/* CTA */}
           <a
             href="#contact"
             className="
@@ -176,4 +173,3 @@ export default function Header() {
     </header>
   );
 }
-

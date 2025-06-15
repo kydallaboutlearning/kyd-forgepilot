@@ -85,7 +85,7 @@ export default function Hero() {
     : undefined;
 
   return (
-    <section className="relative flex flex-col items-center justify-center py-40 md:py-56 px-4 text-center bg-black overflow-hidden min-h-[65vh]">
+    <section className="relative flex flex-col items-center justify-center py-20 md:py-28 px-4 text-center bg-black overflow-hidden min-h-[55vh]">
       {/* Bg dot grid */}
       <svg
         className="absolute left-0 top-0 w-full h-full pointer-events-none z-0"
@@ -145,3 +145,4 @@ export default function Hero() {
     </section>
   );
 }
+

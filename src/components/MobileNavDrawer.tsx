@@ -40,18 +40,19 @@ const nav = [
 ];
 
 export function MobileNavDrawer() {
+  // focus trap: menu button stays visible and clickable
   return (
-    <Drawer>
+    <Drawer shouldScaleBackground={true}>
       <DrawerTrigger
         asChild
         className="outline-none border-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label="Open navigation menu"
       >
-        <button className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center">
+        <button className="p-2 rounded-full hover:bg-neutral-900 transition flex items-center justify-center" type="button">
           <MenuIcon className="w-7 h-7 text-primary" />
         </button>
       </DrawerTrigger>
-      <DrawerContent className="px-4 py-6 !rounded-t-2xl bg-black border border-primary/10 animate-slide-in-right min-h-[70vh] flex flex-col gap-4 relative">
+      <DrawerContent className="px-3 py-5 !rounded-t-2xl bg-black border border-primary/10 animate-slide-in-right min-h-[65vh] flex flex-col gap-4 relative z-[60]">
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -127,4 +128,3 @@ export function MobileNavDrawer() {
     </Drawer>
   );
 }
-
