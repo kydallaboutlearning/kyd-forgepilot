@@ -1,34 +1,20 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminCredentials } from "@/hooks/useAdminCredentials";
+import { validateAdminPassword } from "@/utils/adminAuthUtils";
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { adminEmail, adminPasswordHash, loading: loadingAdminCreds } = useAdminCredentials();
   const navigate = useNavigate();
-
-  // Pull admin credentials for validation
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
-  const [adminPasswordHash, setAdminPasswordHash] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Fetch latest credentials
-    (async () => {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("admin_email, admin_password_hash")
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      setAdminEmail(data?.admin_email ?? null);
-      setAdminPasswordHash(data?.admin_password_hash ?? null);
-    })();
-  }, []);
 
   // Redirect if signed in as admin
   useEffect(() => {
@@ -56,22 +42,8 @@ export default function AuthPage() {
       return;
     }
 
-    // Skip bcryptjs in browser, compare plain for now:
-    // The hardcoded bcrypt hash is for 'admin123'
-    // So we check for password === 'admin123'
-    let passwordOk = false;
-    // Allow future upgrade to plain-text hash (not recommended for prod)
-    if (adminPasswordHash === "admin123") {
-      passwordOk = password === "admin123";
-    } else if (
-      adminPasswordHash ===
-      "$2a$10$RwLTx5ZQSQ12Kbnrjpf6yexu/vGOCJMTcdrcIDi.8sCsrhD24YVzW"
-    ) {
-      passwordOk = password === "admin123";
-    } else {
-      // fallback: check plain
-      passwordOk = password === adminPasswordHash;
-    }
+    // Use the new util for password validation
+    const passwordOk = await validateAdminPassword(password, adminPasswordHash);
 
     if (!passwordOk) {
       setErr("Invalid credentials.");
@@ -223,10 +195,10 @@ export default function AuthPage() {
               disabled:opacity-60
             "
             type="submit"
-            disabled={loading}
+            disabled={loading || loadingAdminCreds}
             style={{ background: "#FFB74A", color: "#101018" }}
           >
-            {loading ? (
+            {(loading || loadingAdminCreds) ? (
               <span className="animate-pulse">Verifying…</span>
             ) : (
               "Log in"
@@ -245,3 +217,4 @@ export default function AuthPage() {
     </div>
   );
 }
+// Auth.tsx is now much more maintainable. Please consider refactoring other long files in your codebase if needed!
