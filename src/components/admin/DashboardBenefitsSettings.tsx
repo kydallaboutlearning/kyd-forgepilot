@@ -5,7 +5,8 @@ import { DashboardBenefitsCurrentContent } from "./DashboardBenefitsCurrentConte
 import { DashboardBenefitsConfirmDialog } from "./DashboardBenefitsConfirmDialog";
 import { IconPicker, AVAILABLE_ICONS, IconDisplay } from "./IconPicker";
 
-const iconOptions = AVAILABLE_ICONS.map(x => x.value);
+// Only include allowed BenefitItemIcon values:
+const iconOptions: BenefitItemIcon[] = ["Brain", "LayoutDashboard", "Users"];
 
 interface DashboardBenefitsSettingsProps {
   settings: {
