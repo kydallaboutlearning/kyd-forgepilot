@@ -1,32 +1,135 @@
 
-import { Brain, LayoutDashboard, Users } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Brain, LayoutDashboard, Users, type LucideProps } from "lucide-react";
 
-const items = [
+// --- DYNAMIC ICON LOGIC ---
+const icons = {
+  Brain,
+  LayoutDashboard,
+  Users,
+};
+export type IconName = keyof typeof icons;
+const DynamicIcon = ({ name, ...props }: { name: IconName } & LucideProps) => {
+  const LucideIcon = icons[name];
+  if (!LucideIcon) return null;
+  return <LucideIcon {...props} />;
+};
+// --- END DYNAMIC ICON LOGIC ---
+
+type BenefitItem = {
+  title: string;
+  desc: string;
+  icon: IconName;
+};
+
+type BenefitsSettings = {
+  benefits_headline: string | null;
+  benefits_items: BenefitItem[] | null;
+};
+
+// Default data to be used as a fallback
+const defaultItems: BenefitItem[] = [
   {
     title: "Innovative Approach",
     desc: "Cutting-edge automation strategies tailored for your unique workflows, leveraging the latest in AI advancements.",
-    icon: <Brain className="w-9 h-9 text-white" />,
+    icon: "Brain",
   },
   {
     title: "Seamless Experience",
     desc: "From onboarding to delivery — enjoy frictionless integration and delightfully simple user journeys.",
-    icon: <LayoutDashboard className="w-9 h-9 text-white" />,
+    icon: "LayoutDashboard",
   },
   {
     title: "Ongoing Partnership",
     desc: "We’re invested in your long-term success, offering proactive support and future-proof solutions.",
-    icon: <Users className="w-9 h-9 text-white" />,
+    icon: "Users",
   },
 ];
+const defaultHeadline = "Why Automate with Us";
 
 export default function Benefits() {
+  const [settings, setSettings] = useState<BenefitsSettings | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    mounted.current = true;
+    const fetchSettings = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("benefits_headline, benefits_items")
+        .limit(1)
+        .maybeSingle();
+
+      if (mounted.current) {
+        if (error || !data) {
+          setSettings(null);
+        } else {
+          // Manually parse benefits_items if it's a string
+          if (data && typeof data.benefits_items === 'string') {
+            try {
+              data.benefits_items = JSON.parse(data.benefits_items);
+            } catch (e) {
+              console.error("Failed to parse benefits_items:", e);
+              data.benefits_items = null;
+            }
+          }
+          setSettings(data as BenefitsSettings);
+        }
+        setIsLoading(false);
+      }
+    };
+
+    fetchSettings();
+
+    const channel = supabase
+      .channel("site_settings_benefits_realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "site_settings",
+        },
+        (payload) => {
+          if (mounted.current) {
+            const newData = payload.new as BenefitsSettings | null;
+            if (newData) {
+               if (newData && typeof newData.benefits_items === 'string') {
+                try {
+                  newData.benefits_items = JSON.parse(newData.benefits_items);
+                } catch (e) {
+                  console.error("Failed to parse real-time benefits_items:", e);
+                  newData.benefits_items = null;
+                }
+              }
+              setSettings({ ...newData });
+            } else {
+              setSettings(null);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      mounted.current = false;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const headline = settings?.benefits_headline || defaultHeadline;
+  const items = settings?.benefits_items && settings.benefits_items.length > 0 ? settings.benefits_items : defaultItems;
+
   return (
     <section
       className="w-full flex flex-col px-4 py-20 md:py-28 items-center bg-black border-b border-neutral-900"
       id="whyus"
     >
       <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wider text-primary mb-12 text-center font-sans">
-        Why Automate with Us
+        {isLoading ? "Loading..." : headline}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl w-full">
         {items.map((b, idx) => (
@@ -36,16 +139,13 @@ export default function Benefits() {
             style={{ minHeight: 340 }}
           >
             <div className="mb-7 w-full flex items-center justify-center">
-              {/* Grid background with animated orange circle icon */}
               <span className="relative inline-flex items-center justify-center" style={{ width: 110, height: 82 }}>
-                {/* Subtle grid/star background */}
                 <svg
                   viewBox="0 0 110 82"
                   fill="none"
                   className="absolute left-0 top-0 w-full h-full"
                   style={{ zIndex: 1 }}
                 >
-                  {/* Star grid points */}
                   {[...Array(6)].map((_, i) =>
                     <circle
                       key={i}
@@ -56,7 +156,6 @@ export default function Benefits() {
                       fillOpacity="0.13"
                     />
                   )}
-                  {/* Grid squares */}
                   {Array.from({ length: 3 }).map((_, r) =>
                     Array.from({ length: 4 }).map((_, c) => (
                       <rect
@@ -72,7 +171,6 @@ export default function Benefits() {
                     ))
                   )}
                 </svg>
-                {/* Orange animated icon circle */}
                 <span
                   className="relative z-10 flex items-center justify-center rounded-full shadow-lg animate-bounce-benefit"
                   style={{
@@ -81,7 +179,7 @@ export default function Benefits() {
                     background: "linear-gradient(135deg,#FFB74A,#FDD47E)",
                   }}
                 >
-                  {b.icon}
+                  <DynamicIcon name={b.icon} className="w-9 h-9 text-white" />
                 </span>
               </span>
             </div>
@@ -92,7 +190,6 @@ export default function Benefits() {
           </div>
         ))}
       </div>
-      {/* Local bounce keyframes for animated icon */}
       <style>{`
         @keyframes bounce-benefit {
           0%, 100% { transform: translateY(0);}
@@ -107,4 +204,3 @@ export default function Benefits() {
     </section>
   );
 }
-
