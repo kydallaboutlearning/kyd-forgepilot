@@ -7,6 +7,7 @@ import { SiteHeroSettings } from "./SiteHeroSettings";
 import { type BenefitItem } from "@/types/cms";
 import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
 import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
+import DashboardCtaSettings from "./DashboardCtaSettings";
 
 // Types
 type SiteSettings = {
@@ -24,6 +25,10 @@ type SiteSettings = {
   benefits_headline: string | null;
   benefits_items: BenefitItem[] | null;
   recent_works_headline: string | null;
+  cta_headline: string | null;
+  cta_subtext: string | null;
+  cta_label: string | null;
+  cta_url: string | null;
 };
 
 export default function DashboardSiteSettings() {
@@ -97,6 +102,18 @@ export default function DashboardSiteSettings() {
     recent_works_headline: "",
   });
 
+  const [cta, setCta] = useState<{
+    cta_headline: string;
+    cta_subtext: string;
+    cta_label: string;
+    cta_url: string;
+  }>({
+    cta_headline: "",
+    cta_subtext: "",
+    cta_label: "",
+    cta_url: "",
+  });
+
   // Keep form state in-sync with backend, but only for editing — display always uses backend directly!
   useEffect(() => {
     if (!settings) return;
@@ -119,6 +136,12 @@ export default function DashboardSiteSettings() {
     });
     setRecentWorks({
       recent_works_headline: settings.recent_works_headline ?? "",
+    });
+    setCta({
+      cta_headline: (settings as any).cta_headline ?? "",
+      cta_subtext: (settings as any).cta_subtext ?? "",
+      cta_label: (settings as any).cta_label ?? "",
+      cta_url: (settings as any).cta_url ?? "",
     });
   }, [settings]);
 
@@ -177,6 +200,13 @@ export default function DashboardSiteSettings() {
     recent_works_headline: settings.recent_works_headline ?? "",
   };
 
+  const currentCta = {
+    cta_headline: (settings as any).cta_headline ?? "",
+    cta_subtext: (settings as any).cta_subtext ?? "",
+    cta_label: (settings as any).cta_label ?? "",
+    cta_url: (settings as any).cta_url ?? "",
+  };
+
   return (
     <div className="space-y-10">
       <SiteHeaderSettings
@@ -194,6 +224,12 @@ export default function DashboardSiteSettings() {
       <DashboardBenefitsSettings
         settings={benefits}
         current={currentBenefits}
+        isPending={mutation.isPending}
+        onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
+      />
+      <DashboardCtaSettings
+        cta={cta}
+        current={currentCta}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals as Partial<SiteSettings>)}
       />
