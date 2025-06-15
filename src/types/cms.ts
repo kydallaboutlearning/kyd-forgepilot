@@ -1,4 +1,3 @@
-
 export type Page = {
   id: string;
   slug: string;
@@ -22,4 +21,12 @@ export type Blog = {
   seo_title?: string;
   seo_description?: string;
   last_updated?: string;
+};
+
+export type BenefitItemIcon = "Brain" | "LayoutDashboard" | "Users";
+
+export type BenefitItem = {
+  title: string;
+  desc: string;
+  icon: BenefitItemIcon;
 };

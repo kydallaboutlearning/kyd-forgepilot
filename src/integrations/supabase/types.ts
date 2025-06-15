@@ -490,6 +490,8 @@ export type Database = {
         Row: {
           admin_email: string | null
           admin_password_hash: string | null
+          benefits_headline: string | null
+          benefits_items: Json | null
           favicon_url: string | null
           footer_text: string | null
           hero_cta_label: string | null
@@ -498,6 +500,7 @@ export type Database = {
           hero_subtext: string | null
           id: string
           logo_url: string | null
+          recent_works_headline: string | null
           show_footer: boolean | null
           show_hero: boolean | null
           site_subtitle: string | null
@@ -507,6 +510,8 @@ export type Database = {
         Insert: {
           admin_email?: string | null
           admin_password_hash?: string | null
+          benefits_headline?: string | null
+          benefits_items?: Json | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null
@@ -515,6 +520,7 @@ export type Database = {
           hero_subtext?: string | null
           id?: string
           logo_url?: string | null
+          recent_works_headline?: string | null
           show_footer?: boolean | null
           show_hero?: boolean | null
           site_subtitle?: string | null
@@ -524,6 +530,8 @@ export type Database = {
         Update: {
           admin_email?: string | null
           admin_password_hash?: string | null
+          benefits_headline?: string | null
+          benefits_items?: Json | null
           favicon_url?: string | null
           footer_text?: string | null
           hero_cta_label?: string | null
@@ -532,6 +540,7 @@ export type Database = {
           hero_subtext?: string | null
           id?: string
           logo_url?: string | null
+          recent_works_headline?: string | null
           show_footer?: boolean | null
           show_hero?: boolean | null
           site_subtitle?: string | null

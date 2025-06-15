@@ -1,7 +1,7 @@
-
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Brain, LayoutDashboard, Users, type LucideProps } from "lucide-react";
+import { type BenefitItem, type BenefitItemIcon } from "@/types/cms";
 
 // --- DYNAMIC ICON LOGIC ---
 const icons = {
@@ -16,12 +16,6 @@ const DynamicIcon = ({ name, ...props }: { name: IconName } & LucideProps) => {
   return <LucideIcon {...props} />;
 };
 // --- END DYNAMIC ICON LOGIC ---
-
-type BenefitItem = {
-  title: string;
-  desc: string;
-  icon: IconName;
-};
 
 type BenefitsSettings = {
   benefits_headline: string | null;

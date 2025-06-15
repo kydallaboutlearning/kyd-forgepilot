@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "@/hooks/use-toast";
 import { SiteHeaderSettings } from "./SiteHeaderSettings";
 import { SiteHeroSettings } from "./SiteHeroSettings";
+import { type BenefitItem } from "@/types/cms";
+import { DashboardBenefitsSettings } from "./DashboardBenefitsSettings";
+import { DashboardRecentWorksSettings } from "./DashboardRecentWorksSettings";
 
 // Types
 type SiteSettings = {
@@ -17,6 +20,9 @@ type SiteSettings = {
   hero_cta_label: string | null;
   hero_cta_link: string | null;
   footer_text: string | null;
+  benefits_headline: string | null;
+  benefits_items: BenefitItem[] | null;
+  recent_works_headline: string | null;
 };
 
 export default function DashboardSiteSettings() {
@@ -71,7 +77,19 @@ export default function DashboardSiteSettings() {
     hero_cta_link: "",
   });
 
-  // Keep form state in-sync with backend, but only for editing — display always uses backend directly!
+  const [benefits, setBenefits] = useState<{
+    benefits_headline: string;
+    benefits_items: BenefitItem[];
+  }>({
+    benefits_headline: "",
+    benefits_items: [],
+  });
+
+  const [recentWorks, setRecentWorks] = useState({
+    recent_works_headline: "",
+  });
+
+  // Keep form state in-sync with backend, but only for editing — display always uses backend directly!
   useEffect(() => {
     if (!settings) return;
     setHeader({
@@ -85,6 +103,13 @@ export default function DashboardSiteSettings() {
       hero_subtext: settings.hero_subtext ?? "",
       hero_cta_label: settings.hero_cta_label ?? "",
       hero_cta_link: settings.hero_cta_link ?? "",
+    });
+    setBenefits({
+      benefits_headline: settings.benefits_headline ?? "",
+      benefits_items: (settings.benefits_items as BenefitItem[]) ?? [],
+    });
+    setRecentWorks({
+      recent_works_headline: settings.recent_works_headline ?? "",
     });
   }, [settings]);
 
@@ -133,6 +158,15 @@ export default function DashboardSiteSettings() {
     hero_cta_link: settings.hero_cta_link ?? "",
   };
 
+  const currentBenefits = {
+    benefits_headline: settings.benefits_headline ?? "",
+    benefits_items: (settings.benefits_items as BenefitItem[]) ?? [],
+  };
+
+  const currentRecentWorks = {
+    recent_works_headline: settings.recent_works_headline ?? "",
+  };
+
   return (
     <div className="space-y-10">
       <SiteHeaderSettings
@@ -144,6 +178,18 @@ export default function DashboardSiteSettings() {
       <SiteHeroSettings
         hero={hero}
         current={currentHero}
+        isPending={mutation.isPending}
+        onSubmit={vals => mutation.mutate(vals)}
+      />
+      <DashboardBenefitsSettings
+        settings={benefits}
+        current={currentBenefits}
+        isPending={mutation.isPending}
+        onSubmit={vals => mutation.mutate(vals)}
+      />
+      <DashboardRecentWorksSettings
+        settings={recentWorks}
+        current={currentRecentWorks}
         isPending={mutation.isPending}
         onSubmit={vals => mutation.mutate(vals)}
       />
