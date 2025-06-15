@@ -1,4 +1,5 @@
-import { Brain, ThumbsUp, Users } from "lucide-react";
+
+import { Brain, LayoutDashboard, Users } from "lucide-react";
 
 const items = [
   {
@@ -9,7 +10,7 @@ const items = [
   {
     title: "Seamless Experience",
     desc: "From onboarding to delivery — enjoy frictionless integration and delightfully simple user journeys.",
-    icon: <ThumbsUp className="w-9 h-9 text-white" />,
+    icon: <LayoutDashboard className="w-9 h-9 text-white" />,
   },
   {
     title: "Ongoing Partnership",
@@ -106,3 +107,4 @@ export default function Benefits() {
     </section>
   );
 }
+
