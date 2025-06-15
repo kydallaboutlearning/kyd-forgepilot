@@ -4,7 +4,7 @@ import { renderBenefitIcon } from "./benefitIcons";
 import React from "react";
 
 interface DashboardBenefitsCurrentContentProps {
-  current: { benefits_headline?: string; benefits_items?: BenefitItem[] };
+  current: { benefits_headline: string; benefits_items: BenefitItem[] };
 }
 
 export function DashboardBenefitsCurrentContent({ current }: DashboardBenefitsCurrentContentProps) {
