@@ -71,7 +71,11 @@ export function DashboardBenefitsForm({
                     onValueChange={value => onItemChange(index, "icon", value)}
                   >
                     <SelectTrigger className="w-36">
-                      <SelectValue placeholder="Select an icon" />
+                      <span className="flex items-center gap-2">
+                        {/* Show selected icon visually, fallback to text if no icon */}
+                        {renderIcon(item.icon)}
+                        <SelectValue placeholder="Select an icon" />
+                      </span>
                     </SelectTrigger>
                     <SelectContent>
                       {iconOptions.map(icon => (
@@ -129,3 +133,4 @@ export function DashboardBenefitsForm({
     </form>
   );
 }
+
