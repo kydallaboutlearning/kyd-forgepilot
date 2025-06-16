@@ -6,6 +6,7 @@ import DashboardSiteSettings from "@/components/admin/DashboardSiteSettings";
 import DashboardPortfolio from "@/components/admin/DashboardPortfolio";
 import DashboardSocialLinks from "@/components/admin/DashboardSocialLinks";
 import DashboardTokenSettings from "@/components/admin/DashboardTokenSettings";
+import DashboardAnalytics from "@/components/admin/DashboardAnalytics";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { LayoutDashboard } from "lucide-react";
 import RequireAdminAuth from "@/components/RequireAdminAuth";
@@ -41,6 +42,7 @@ export default function Dashboard() {
                   <TabsTrigger value="site">Site Settings</TabsTrigger>
                   <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
                   <TabsTrigger value="social">Social Links</TabsTrigger>
+                  <TabsTrigger value="analytics">Analytics</TabsTrigger>
                 </TabsList>
                 <TabsContent value="tokens" className="w-full">
                   <DashboardTokenSettings />
@@ -53,6 +55,9 @@ export default function Dashboard() {
                 </TabsContent>
                 <TabsContent value="social" className="w-full">
                   <DashboardSocialLinks />
+                </TabsContent>
+                <TabsContent value="analytics" className="w-full">
+                  <DashboardAnalytics />
                 </TabsContent>
               </Tabs>
             </div>
