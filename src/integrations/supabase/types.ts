@@ -516,6 +516,7 @@ export type Database = {
           order_index: number | null
           price_monthly: number | null
           price_yearly: number | null
+          pricing_type: string | null
         }
         Insert: {
           description?: string | null
@@ -525,6 +526,7 @@ export type Database = {
           order_index?: number | null
           price_monthly?: number | null
           price_yearly?: number | null
+          pricing_type?: string | null
         }
         Update: {
           description?: string | null
@@ -534,6 +536,7 @@ export type Database = {
           order_index?: number | null
           price_monthly?: number | null
           price_yearly?: number | null
+          pricing_type?: string | null
         }
         Relationships: []
       }

@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+
+import { Link, useLocation } from "react-router-dom";
 import {
   Lightbulb,
   DollarSign,
@@ -29,6 +30,23 @@ const nav = [
 ];
 
 function NavLinks() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  const handleSectionClick = (sectionId: string, e: React.MouseEvent) => {
+    if (isHomePage) {
+      // On homepage, scroll to section
+      e.preventDefault();
+      const element = document.querySelector(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // On other pages, navigate to homepage with hash
+      // Let the browser handle the navigation naturally
+    }
+  };
+
   return (
     <nav className="flex items-center gap-3 md:gap-4 lg:gap-6 xl:gap-7 font-sans text-sm lg:text-base text-neutral-200">
       {nav.map((item) => {
@@ -61,15 +79,16 @@ function NavLinks() {
           );
         }
         return (
-          <a
+          <Link
             key={item.to}
-            href={item.to}
+            to={isHomePage ? item.to : `/${item.to}`}
+            onClick={(e) => handleSectionClick(item.to, e)}
             className="hover:text-primary transition flex items-center whitespace-nowrap"
             style={{ fontWeight: 400 }}
           >
             <span className="hidden lg:inline">{item.icon}</span>
             {item.label}
-          </a>
+          </Link>
         );
       })}
     </nav>
