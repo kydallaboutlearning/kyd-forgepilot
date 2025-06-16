@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { IconPicker, IconDisplay } from "@/components/admin/IconPicker";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { Trash2, Edit } from "lucide-react";
 
 type TeamMember = {
   id: string;
@@ -85,6 +87,12 @@ export function TeamSettingsSection() {
     mutation.mutate({ ...form });
   }
 
+  function handleDelete(id: string) {
+    if (window.confirm("Are you sure you want to delete this team member?")) {
+      delMutation.mutate(id);
+    }
+  }
+
   return (
     <section className="mb-16 bg-[#18181a] border border-neutral-700 rounded-lg p-6">
       <h2 className="text-lg font-bold text-primary mb-3">Team</h2>
@@ -92,7 +100,25 @@ export function TeamSettingsSection() {
         <h4 className="text-sm text-neutral-400 font-semibold mb-2">Current Team</h4>
         <div className="grid gap-3 sm:grid-cols-2">
           {isLoading ? "Loading…" : members.map(t => (
-            <div key={t.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex items-center gap-3">
+            <div key={t.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex items-center gap-3 relative group">
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleEdit(t)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleDelete(t.id)}
+                  className="h-8 w-8 p-0 text-red-400 hover:text-red-300"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
               {t.photo_url
                 ? <img src={t.photo_url} className="w-9 h-9 rounded object-cover border" alt="" />
                 : <span className="inline-block w-9 h-9 rounded-full bg-neutral-800"></span>}

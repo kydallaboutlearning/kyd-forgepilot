@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IconPicker, IconDisplay } from "./IconPicker";
 import { ImageUpload } from "./ImageUpload";
+import { Trash2, Edit } from "lucide-react";
 
 // For initial demo, populate with mock/professional services if empty
 const DEMO_SERVICES = [
@@ -94,6 +95,12 @@ export function DashboardServicesSection() {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
   };
 
+  function handleDelete(id: string) {
+    if (window.confirm("Are you sure you want to delete this service?")) {
+      deleteMutation.mutate(id);
+    }
+  }
+
   return (
     <section className="mb-16 bg-[#18181a] border border-neutral-700 rounded-lg p-6">
       <h2 className="text-lg font-bold text-primary mb-3">Services (Our Expertise)</h2>
@@ -102,7 +109,25 @@ export function DashboardServicesSection() {
         <h4 className="text-sm text-neutral-400 font-semibold mb-2">Current Services</h4>
         <div className="grid gap-3 sm:grid-cols-2">
           {isLoading ? "Loading…" : services.map(s => (
-            <div key={s.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex items-center gap-3">
+            <div key={s.id} className="bg-neutral-900 border border-neutral-800 rounded p-3 flex items-center gap-3 relative group">
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => startEdit(s)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleDelete(s.id!)}
+                  className="h-8 w-8 p-0 text-red-400 hover:text-red-300"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
               {s.image_url
                 ? <img src={s.image_url} className="w-9 h-9 rounded object-cover border mr-2" alt="" />
                 : <IconDisplay name={s.icon} className="w-8 h-8 text-primary mr-2" />}
@@ -131,9 +156,6 @@ export function DashboardServicesSection() {
               <Button type="submit" disabled={mutation.isPending}>{mutation.isPending ? "Saving…" : "Save"}</Button>
               <Button type="button" variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
             </div>
-            {editService?.id && (
-              <Button type="button" variant="destructive" className="mt-4 w-full" onClick={() => deleteMutation.mutate(editService.id!)}>Delete</Button>
-            )}
             <div className="mt-2 bg-amber-800/70 py-1 px-2 rounded text-amber-300 text-xs flex items-center gap-1">
               <span>⚠️</span> Saving will update the live site.
             </div>
