@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -56,20 +55,33 @@ export default function DashboardSiteSettings() {
   return (
     <div className="space-y-8">
       <HeaderSettingsSection
-        settings={siteSettings}
+        header={siteSettings}
+        currentHeader={siteSettings}
         isPending={mutation.isPending}
         onSubmit={(vals) => mutation.mutate(vals)}
       />
       
       <HeroSettingsSection
-        settings={siteSettings}
+        hero={siteSettings}
+        currentHero={siteSettings}
         isPending={mutation.isPending}
         onSubmit={(vals) => mutation.mutate(vals)}
       />
 
       <CTALinksSettingsSection />
 
-      <BenefitsSettingsSection />
+      <BenefitsSettingsSection
+        benefits={{
+          benefits_headline: siteSettings.benefits_headline || "",
+          benefits_items: siteSettings.benefits_items || []
+        }}
+        currentBenefits={{
+          benefits_headline: siteSettings.benefits_headline || "",
+          benefits_items: siteSettings.benefits_items || []
+        }}
+        isPending={mutation.isPending}
+        onSubmit={(vals) => mutation.mutate(vals)}
+      />
 
       <DashboardServicesSection />
 
@@ -96,7 +108,18 @@ export default function DashboardSiteSettings() {
         onSubmit={(vals) => mutation.mutate(vals)}
       />
 
-      <RecentWorksSettingsSection />
+      <RecentWorksSettingsSection
+        recentWorks={{
+          recent_works_headline: siteSettings.recent_works_headline || "",
+          highlighted_portfolio_limit: siteSettings.highlighted_portfolio_limit || 3
+        }}
+        currentRecentWorks={{
+          recent_works_headline: siteSettings.recent_works_headline || "",
+          highlighted_portfolio_limit: siteSettings.highlighted_portfolio_limit || 3
+        }}
+        isPending={mutation.isPending}
+        onSubmit={(vals) => mutation.mutate(vals)}
+      />
 
       <FinalCTASettingsSection />
     </div>
